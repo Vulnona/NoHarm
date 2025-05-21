@@ -161,6 +161,11 @@ git pull origin main
    sudo systemctl status noharm.service
    ```
 
+### 5️⃣  Check mock API output
+
+https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
+   
+
 If the service is running correctly, NoHarm should be updated and live at:  
 ➡️ **[https://noharm.dhc-lab.hpi.de/](https://noharm.dhc-lab.hpi.de/)**
 

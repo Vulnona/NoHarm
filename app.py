@@ -1,11 +1,12 @@
 
-from flask import Flask, render_template, request, redirect, session, Response, url_for, jsonify
-import csv
-import sqlite3
-import random
-import os
 import datetime
+import random
 import socket
+import sqlite3
+
+from flask import Flask, render_template, request, redirect, session, Response, jsonify
+
+from api_call import send_post_request
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'  # Secret key for session management
@@ -15,6 +16,11 @@ app.secret_key = 'secret_key'  # Secret key for session management
 def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
+    return conn
+
+# Connect to the database
+def get_db_conn():
+    conn = sqlite3.connect('database.db')
     return conn
 
 
@@ -575,6 +581,19 @@ def thank_you():
         ''', (session_end, session['user_id']))
         conn.commit()
         conn.close()
+
+        # mock api call after survey completion sending the last row of the user input in the user_responses table
+        # check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
+        conn_read = get_db_conn()
+        cursor = conn_read.cursor()
+        data_string = cursor.execute('''
+                                     SELECT *
+                                     FROM user_responses
+                                     ORDER BY id DESC LIMIT 1;
+                                     ''').fetchone()
+        print(data_string)
+        send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
+        conn_read.close()
     
     return render_template('thank_you.html', language=session.get('language'))
 
@@ -671,6 +690,22 @@ def download_csv():
 def logout():
     session.pop('admin', None)
     return redirect('/admin')
+
+# mock api call without survey completion via an endpoint to send last row of user responses table
+# check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
+@app.route('/mock_api_call')
+def webhook_output():
+    conn = get_db_conn()
+    cursor = conn.cursor()
+    data_string = cursor.execute('''
+                               SELECT *
+                               FROM user_responses
+                               ORDER BY id DESC LIMIT 1;
+                               ''').fetchone()
+    print(data_string)
+    send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
+    conn.close()
+    return "success"
 
 
 if __name__ == '__main__':
