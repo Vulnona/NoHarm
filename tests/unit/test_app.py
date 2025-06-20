@@ -7,5 +7,7 @@ def test_webhook_output(client):
     response = client.get("/mock_api_call")
     assert response.status_code == 200
     data = json.loads(response.data)
+    # Check if the expected keys (message IDs) are present
+    assert "success" in data
     # Check content of a specific message
-    assert data == "success"
+    assert data["success"]== True
