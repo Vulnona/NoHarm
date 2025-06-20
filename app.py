@@ -7,28 +7,49 @@ import sqlite3
 from flask import Flask, render_template, request, redirect, session, Response, jsonify
 
 from api_call import send_post_request
-
+import logging
 app = Flask(__name__)
 app.secret_key = 'secret_key'  # Secret key for session management
 
+# Set the logging level
+app.logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+app.logger.addHandler(handler)
 
 # Connect to the database
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        conn = sqlite3.connect('database.db')
+        conn.row_factory = sqlite3.Row
+        app.logger.info('db connection established')
+        return conn
+    except:
+        app.logger.error('db connection failed')
+        return None
 
 # Connect to the database
 def get_db_conn():
-    conn = sqlite3.connect('database.db')
-    return conn
+    try:
+        conn = sqlite3.connect('database.db')
+        app.logger.info('db connection established')
+        return conn
+    except:
+        app.logger.error('db connection failed')
+        return None
 
 
 # Middleware to ensure the language is set for each page
 @app.before_request
 def set_language():
-    if 'language' not in session:
-        session['language'] = 'en'  # Default language is English
+    try:
+        if 'language' not in session:
+            session['language'] = 'en'  # Default language is English
+            app.logger.info('default language set to english')
+        else:
+            app.logger.error('no language set in session ')
+    except:
+        app.logger.error('set default language error')
+
 
 
 # Function to get random images for choice experiments
@@ -42,13 +63,16 @@ def get_user_location():
         # This is a simplified example - you might want to use a geolocation API
         ip = request.remote_addr
         hostname = socket.gethostbyaddr(ip)[0] if ip != '127.0.0.1' else 'localhost'
+        app.logger.info('session ip recorded')
         return {
             'ip_address': ip,
             'city': 'Unknown',
             'region': 'Unknown',
             'country': 'Unknown'
         }
+
     except:
+        app.logger.warning('session ip unknown')
         return {
             'ip_address': 'Unknown',
             'city': 'Unknown',
@@ -57,9 +81,11 @@ def get_user_location():
         }
 
 
+
 # Home route to display the intro page
 @app.route('/')
 def intro():
+    app.logger.info('rendering main page')
     return render_template('intro.html', language=session.get('language'))
 
 
@@ -68,6 +94,7 @@ def intro():
 def change_language():
     language = request.form.get('language')
     session['language'] = language
+    app.logger.info('language changed to '+str(language))
     return redirect(request.referrer)  # Redirect back to the page the user was on
 
 
@@ -126,8 +153,10 @@ def submit():
         session['popup_shown'] = False
         session.pop('stored_images', None)
 
+        app.logger.info('session data recorded by consent in db')
         return redirect('/choice-experiment')
     else:
+        app.logger.warning('session data not consented')
         return redirect('/no-consent')
 
 
@@ -161,6 +190,7 @@ for image in IMAGES:
 @app.route('/choice-experiment', methods=['GET', 'POST'])
 def choice_experiment():
     if 'user_id' not in session:
+        app.logger.info('user id not set in session')
         return redirect('/')
 
     # Initialize session variables only once
@@ -176,6 +206,7 @@ def choice_experiment():
 
     # Check if we've already completed 3 choices
     if len(session.get('selected_images', [])) >= 3:
+        app.logger.info('image selection tests concluded')
         return redirect('/procedural-ratings')
     
     if request.method == 'POST':
@@ -208,7 +239,7 @@ def choice_experiment():
             ''', (selected_image, initial_choice, selected_image, session['user_id']))
             conn.commit()
             conn.close()
-            
+            app.logger.info('db updated with both initial and final choices')
             return jsonify({'show_reconsider': False})
         
         # Handle initial selection
@@ -227,7 +258,7 @@ def choice_experiment():
             # Get descriptions for both images
             original_desc = next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == selected_image.split('/')[-1]), "Unknown")
             suggestion_desc = next((img['description'] for img in IMAGES if img['filename'] == other_image), "Unknown")
-            
+            app.logger.info('initial image selection recorded')
             return jsonify({
                 'show_reconsider': True,
                 'original': selected_image,
@@ -252,14 +283,14 @@ def choice_experiment():
         '''.format(current_set), (selected_image, selected_image, selected_image, session['user_id']))
         conn.commit()
         conn.close()
-
+        app.logger.info('db initialised with both initial and final choices')
         return jsonify({'show_reconsider': False})
 
     # Handle GET request
     available_images = [img for img in IMAGES if img["filename"] not in session.get('selected_images', [])]
     images = random.sample(available_images, 2)
     session['current_images'] = [img["filename"] for img in images]
-
+    app.logger.info('rendered choice experiment successfully with selected images')
     return render_template('choice_experiment.html',
                          images=images,
                          current_set=len(session.get('selected_images', [])) + 1)
@@ -269,11 +300,13 @@ def choice_experiment():
 def reconsider():
     data = request.get_json()
     if not data or 'change_decision' not in data:
+        app.logger.error('invalid data error')
         return jsonify({'error': 'Invalid data'}), 400
 
     # Check for required session data
     required_session_keys = ['reconsider_set', 'data_driven_tool_suggestion', 'initial_choices', 'user_id']
     if any(key not in session for key in required_session_keys):
+        app.logger.error('session data missing')
         return jsonify({'error': 'Session data missing'}), 400
 
     changed_decision = data['change_decision']
@@ -303,10 +336,12 @@ def reconsider():
         conn.commit()
     except sqlite3.Error as e:
         conn.close()
+        app.logger.error('db connection error: '+ str(e))
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
 
+    app.logger.info('reconsider popup successful')
     return jsonify({'success': True})
 
 
@@ -385,9 +420,11 @@ def procedural_ratings():
 
         # Redirect to the next section if all questions are answered
         if next_index >= len(questions):
+            app.logger.info('all ratings done, now moving on to user infor instructions')
             return redirect('/instructions')
 
         # Redirect to the next question
+        app.logger.info('next rating question')
         return redirect(f'/procedural-ratings?index={next_index}')
 
     # Get the current question based on the index in the query parameter
@@ -396,6 +433,7 @@ def procedural_ratings():
         return redirect('/instructions')  # Redirect to next section if all are answered
     question = questions[current_index]
 
+    app.logger.info('user procedural ratings successfully rendered')
     return render_template('procedural_ratings.html', question=question, index=current_index)
 
 
@@ -404,7 +442,9 @@ def procedural_ratings():
 def instructions():
     if request.method == 'POST':
         # Once the user is ready, redirect them to the demography page.
+        app.logger.info('redirected to demography page')
         return redirect('/demography')
+    app.logger.info('instruction page successfully rendered')
     return render_template('instructions.html')
 
 
@@ -454,8 +494,10 @@ def demography():
             try:
                 age = int(answer)
                 if age < 16 or age > 120:
+                    app.logger.warning('invalid age error: number beyond scope')
                     return "Invalid age. Please enter a value between 16 and 120.", 400
             except ValueError:
+                app.logger.warning('invalid age error: invalid datatype')
                 return "Invalid age input. Please enter a number.", 400
 
         # Save the response to the database immediately
@@ -484,14 +526,17 @@ def demography():
 
         # If all questions are answered, redirect to the next section
         if next_index >= len(questions):
+            app.logger.info('redirected to group preferences')
             return redirect('/group-preferences')
 
         # Redirect to the next question
+        app.logger.info('move onto next question within demography')
         return redirect(f'/demography?index={next_index}')
 
     # Get the current question based on the index in the query parameter
     current_index = int(request.args.get('index', 0))
     question = questions[current_index]
+    app.logger.info('demography page successfully rendered')
     return render_template('demography.html', question=question, index=current_index)
 
 
@@ -526,6 +571,7 @@ def group_preferences():
 
         # Prevent empty submissions
         if not answer:
+            app.logger.warning('group preference has an empty submission')
             return redirect(f'/group-preferences?index={request.form.get("current_index")}')
 
         # Save the response to the database
@@ -551,8 +597,9 @@ def group_preferences():
 
         # Redirect to the thank-you page if all questions are answered
         if next_index >= len(questions):
+            app.logger.info('survey successfully completed')
             return redirect('/thank-you')
-
+        app.logger.info('move onto next question within group preferences')
         return redirect(f'/group-preferences?index={next_index}')
 
     # Get the current question based on the index in the query parameter
@@ -560,9 +607,11 @@ def group_preferences():
 
     # Prevent index out of range
     if current_index >= len(questions):
+        app.logger.info('survey successfully completed')
         return redirect('/thank-you')
 
     question = questions[current_index]
+    app.logger.info('group preferences page successfully rendered')
     return render_template('group_preferences.html', question=question, index=current_index)
 
 
@@ -594,12 +643,14 @@ def thank_you():
         print(data_string)
         send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
         conn_read.close()
-    
+
+    app.logger.info('survey recorded and final thank you page rendered successfully')
     return render_template('thank_you.html', language=session.get('language'))
 
 # Route for no consent page
 @app.route('/no-consent')
 def no_consent():
+    app.logger.warning('session data not consented')
     return render_template('no_consent.html', language=session.get('language'))
 
 
@@ -610,9 +661,12 @@ def admin():
         password = request.form.get('password')
         if password == 'admin':
             session['admin'] = True
+            app.logger.info('admin: survey results sheet')
             return redirect('/results')
         else:
+            app.logger.warning('admin: incorrect password')
             return "Incorrect password. Try again."
+    app.logger.info('admin: login page rendered and language set successfully')
     return render_template('admin_login.html', language=session.get('language'))
 
 
@@ -631,16 +685,20 @@ def results():
             conn.close()
 
             # Render the results page with user responses
+
             return render_template('results.html', user_responses=user_responses)
 
         except sqlite3.OperationalError as e:
             # Handle the case where the table does not exist
             if "no such table" in str(e):
+                app.logger.error('user table not found error:'+str(e))
                 return "Error: The 'user_responses' table does not exist. Please ensure the database is initialized.", 500
             else:
+                app.logger.error('db error:' + str(e))
                 return f"Database error: {str(e)}", 500
 
     # If the user is not logged in as admin, redirect to admin login
+    app.logger.warning('user not logged in, redirecting to admin login')
     return redirect('/admin')
 
 
@@ -670,7 +728,7 @@ def download_csv():
             # Write each row
             for row in user_responses:
                 output.append(",".join([str(row[key]) for key in row.keys()]))
-
+            app.logger.info('user response recorded for csv')
             return "\n".join(output)
 
         # Generate the CSV content
@@ -679,8 +737,9 @@ def download_csv():
         # Create a Response object for the CSV file
         response = Response(csv_content, mimetype='text/csv')
         response.headers.set("Content-Disposition", "attachment", filename="survey_results.csv")
+        app.logger.info('csv successfully generated')
         return response
-
+    app.logger.warning('user not logged in, redirecting to admin login')
     return redirect('/admin')  # Redirect to admin login if not logged in
 
 
@@ -689,6 +748,7 @@ def download_csv():
 @app.route('/logout')
 def logout():
     session.pop('admin', None)
+    app.logger.warning('logged out, redirecting to admin login')
     return redirect('/admin')
 
 # mock api call without survey completion via an endpoint to send last row of user responses table
@@ -705,6 +765,7 @@ def webhook_output():
     print(data_string)
     send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
     conn.close()
+    app.logger.warning('mock api call successfully recorded at: https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58')
     return "success"
 
 
