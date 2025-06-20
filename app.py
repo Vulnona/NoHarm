@@ -765,7 +765,7 @@ def webhook_output():
     print(data_string)
     send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
     conn.close()
-    app.logger.warning('mock api call successfully recorded at: https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58')
+    app.logger.warning('(mock) api call successfully recorded at: https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58')
     return "success"
 
 
