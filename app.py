@@ -46,9 +46,10 @@ def set_language():
             session['language'] = 'en'  # Default language is English
             app.logger.info('default language set to english')
         else:
-            app.logger.error('no language set in session ')
+            app.logger.error('session language set to '+session['language'])
     except:
-        app.logger.error('set default language error')
+        if not session:
+            app.logger.error('session not found')
 
 
 
@@ -190,8 +191,10 @@ for image in IMAGES:
 @app.route('/choice-experiment', methods=['GET', 'POST'])
 def choice_experiment():
     if 'user_id' not in session:
-        app.logger.info('user id not set in session')
+        app.logger.info('session: user id not set')
         return redirect('/')
+    else:
+        app.logger.info('session: user id set to '+ str(session['user_id']))
 
     # Initialize session variables only once
     if 'reconsider_set' not in session:
@@ -203,15 +206,20 @@ def choice_experiment():
         session['current_images'] = None
         session['popup_shown'] = False
         session['awaiting_final_selection'] = False
+    else:
+        app.logger.info('session: reconsider_set set to ' + str(session['reconsider_set']))
 
     # Check if we've already completed 3 choices
     if len(session.get('selected_images', [])) >= 3:
         app.logger.info('image selection tests concluded')
         return redirect('/procedural-ratings')
-    
+    else:
+        app.logger.info('image selection test ongoing')
+
     if request.method == 'POST':
         selected_image = request.form.get('selected_image')
         current_set = len(session.get('selected_images', [])) + 1
+        app.logger.info('POST request initiated')
         
         # Handle final selection after reconsider popup
         if session.get('awaiting_final_selection', False):
@@ -285,15 +293,20 @@ def choice_experiment():
         conn.close()
         app.logger.info('db initialised with both initial and final choices')
         return jsonify({'show_reconsider': False})
-
-    # Handle GET request
-    available_images = [img for img in IMAGES if img["filename"] not in session.get('selected_images', [])]
-    images = random.sample(available_images, 2)
-    session['current_images'] = [img["filename"] for img in images]
-    app.logger.info('rendered choice experiment successfully with selected images')
-    return render_template('choice_experiment.html',
-                         images=images,
-                         current_set=len(session.get('selected_images', [])) + 1)
+    elif request.method == 'GET':
+        # Handle GET request
+        available_images = [img for img in IMAGES if img["filename"] not in session.get('selected_images', [])]
+        images = random.sample(available_images, 2)
+        session['current_images'] = [img["filename"] for img in images]
+        app.logger.info('GET request initiated')
+        app.logger.info('rendered choice experiment successfully with selected images')
+        return render_template('choice_experiment.html',
+                             images=images,
+                             current_set=len(session.get('selected_images', [])) + 1)
+    else:
+        app.logger.error('POST/GET request not found')
+        app.logger.error(str(request.method) + ' request initiated')
+        return jsonify({'error': 'Invalid request '+str(request.method)}), 400
 
 
 @app.route('/reconsider', methods=['POST'])
@@ -302,12 +315,16 @@ def reconsider():
     if not data or 'change_decision' not in data:
         app.logger.error('invalid data error')
         return jsonify({'error': 'Invalid data'}), 400
+    else:
+        app.logger.info('valid data: ' + str(data))
 
     # Check for required session data
     required_session_keys = ['reconsider_set', 'data_driven_tool_suggestion', 'initial_choices', 'user_id']
     if any(key not in session for key in required_session_keys):
         app.logger.error('session data missing')
         return jsonify({'error': 'Session data missing'}), 400
+    else:
+        app.logger.info('valid session data: ' + str(session))
 
     changed_decision = data['change_decision']
     current_set = session['reconsider_set']
@@ -404,6 +421,8 @@ def procedural_ratings():
             cursor.execute('INSERT INTO user_responses DEFAULT VALUES')
             session['user_id'] = cursor.lastrowid
             conn.commit()
+        else:
+            app.logger.info('session user_id set to {}'.format(session['user_id']))
 
         # Store the response for the current question
         conn.execute(f'''
@@ -413,6 +432,7 @@ def procedural_ratings():
         ''', (rating, session['user_id']))
         conn.commit()
         conn.close()
+        app.logger.info('current ratings Q&A stored')
 
         # Move to the next question
         current_index = next((i for i, q in enumerate(questions) if q['id'] == question_id), -1)
@@ -420,17 +440,24 @@ def procedural_ratings():
 
         # Redirect to the next section if all questions are answered
         if next_index >= len(questions):
-            app.logger.info('all ratings done, now moving on to user infor instructions')
+            app.logger.info('all ratings Q&A done, now moving on to user instructions')
             return redirect('/instructions')
+        else:
+            app.logger.info('ratings Q&A continued')
 
         # Redirect to the next question
         app.logger.info('next rating question')
         return redirect(f'/procedural-ratings?index={next_index}')
+    else:
+        app.logger.info('POST request not found')
+        app.logger.info(str(request.method) + ' request initiated')
 
     # Get the current question based on the index in the query parameter
     current_index = int(request.args.get('index', 0))
     if current_index >= len(questions):
         return redirect('/instructions')  # Redirect to next section if all are answered
+    else:
+        app.logger.info('ratings Q&A cntd..')
     question = questions[current_index]
 
     app.logger.info('user procedural ratings successfully rendered')
@@ -444,8 +471,14 @@ def instructions():
         # Once the user is ready, redirect them to the demography page.
         app.logger.info('redirected to demography page')
         return redirect('/demography')
-    app.logger.info('instruction page successfully rendered')
-    return render_template('instructions.html')
+    elif request.method == 'GET':
+        app.logger.info('instruction page successfully rendered')
+        return render_template('instructions.html')
+    else:
+        app.logger.error('POST/GET request not found')
+        app.logger.error(str(request.method) + ' request initiated')
+        return jsonify({'error': 'Invalid request ' + str(request.method)}), 400
+
 
 
 @app.route('/demography', methods=['GET', 'POST'])
@@ -532,12 +565,16 @@ def demography():
         # Redirect to the next question
         app.logger.info('move onto next question within demography')
         return redirect(f'/demography?index={next_index}')
-
-    # Get the current question based on the index in the query parameter
-    current_index = int(request.args.get('index', 0))
-    question = questions[current_index]
-    app.logger.info('demography page successfully rendered')
-    return render_template('demography.html', question=question, index=current_index)
+    elif request.method == 'GET':
+        # Get the current question based on the index in the query parameter
+        current_index = int(request.args.get('index', 0))
+        question = questions[current_index]
+        app.logger.info('demography page successfully rendered')
+        return render_template('demography.html', question=question, index=current_index)
+    else:
+        app.logger.error('POST/GET request not found')
+        app.logger.error(str(request.method) + ' request initiated')
+        return jsonify({'error': 'Invalid request ' + str(request.method)}), 400
 
 
 @app.route('/group-preferences', methods=['GET', 'POST'])
@@ -601,18 +638,22 @@ def group_preferences():
             return redirect('/thank-you')
         app.logger.info('move onto next question within group preferences')
         return redirect(f'/group-preferences?index={next_index}')
+    elif request.method == 'GET':
+        # Get the current question based on the index in the query parameter
+        current_index = int(request.args.get('index', 0))
 
-    # Get the current question based on the index in the query parameter
-    current_index = int(request.args.get('index', 0))
+        # Prevent index out of range
+        if current_index >= len(questions):
+            app.logger.info('survey successfully completed')
+            return redirect('/thank-you')
 
-    # Prevent index out of range
-    if current_index >= len(questions):
-        app.logger.info('survey successfully completed')
-        return redirect('/thank-you')
-
-    question = questions[current_index]
-    app.logger.info('group preferences page successfully rendered')
-    return render_template('group_preferences.html', question=question, index=current_index)
+        question = questions[current_index]
+        app.logger.info('group preferences page successfully rendered')
+        return render_template('group_preferences.html', question=question, index=current_index)
+    else:
+        app.logger.error('POST/GET request not found')
+        app.logger.error(str(request.method) + ' request initiated')
+        return jsonify({'error': 'Invalid request ' + str(request.method)}), 400
 
 
 
@@ -643,7 +684,8 @@ def thank_you():
         print(data_string)
         send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
         conn_read.close()
-
+    else:
+        app.logger.warning('session: user_id not set in session')
     app.logger.info('survey recorded and final thank you page rendered successfully')
     return render_template('thank_you.html', language=session.get('language'))
 
@@ -666,8 +708,13 @@ def admin():
         else:
             app.logger.warning('admin: incorrect password')
             return "Incorrect password. Try again."
-    app.logger.info('admin: login page rendered and language set successfully')
-    return render_template('admin_login.html', language=session.get('language'))
+    elif request.method == 'GET':
+        app.logger.info('admin: login page rendered and language set successfully')
+        return render_template('admin_login.html', language=session.get('language'))
+    else:
+        app.logger.error('POST/GET request not found')
+        app.logger.error(str(request.method) + ' request initiated')
+        return jsonify({'error': 'Invalid request ' + str(request.method)}), 400
 
 
 @app.route('/results')
@@ -696,10 +743,10 @@ def results():
             else:
                 app.logger.error('db error:' + str(e))
                 return f"Database error: {str(e)}", 500
-
-    # If the user is not logged in as admin, redirect to admin login
-    app.logger.warning('user not logged in, redirecting to admin login')
-    return redirect('/admin')
+    else:
+        # If the user is not logged in as admin, redirect to admin login
+        app.logger.warning('user not logged in, redirecting to admin login')
+        return redirect('/admin')
 
 
 @app.route('/download-csv')
@@ -739,8 +786,9 @@ def download_csv():
         response.headers.set("Content-Disposition", "attachment", filename="survey_results.csv")
         app.logger.info('csv successfully generated')
         return response
-    app.logger.warning('user not logged in, redirecting to admin login')
-    return redirect('/admin')  # Redirect to admin login if not logged in
+    else:
+        app.logger.warning('user not logged in, redirecting to admin login')
+        return redirect('/admin')  # Redirect to admin login if not logged in
 
 
 
