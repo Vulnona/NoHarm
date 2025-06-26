@@ -46,7 +46,7 @@ def set_language():
             session['language'] = 'en'  # Default language is English
             app.logger.info('default language set to english')
         else:
-            app.logger.error('session language set to '+session['language'])
+            app.logger.info('session language set to '+session['language'])
     except:
         if not session:
             app.logger.error('session not found')
