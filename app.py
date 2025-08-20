@@ -8,29 +8,27 @@ from flask import Flask, render_template, request, redirect, session, Response, 
 
 from api_call import send_post_request
 import logging
-app = Flask(__name__)
-app.secret_key = 'secret_key'  # Secret key for session management
 
-# Set the logging level
-app.logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-app.logger.addHandler(handler)
+
+# create flask function for structural testing
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = 'secret_key'  # Secret key for session management
+
+    # Set the logging level
+    app.logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    app.logger.addHandler(handler)
+    return app
+
+# create flask app object
+app = create_app()
 
 # Connect to the database
 def get_db_connection():
     try:
         conn = sqlite3.connect('database.db')
         conn.row_factory = sqlite3.Row
-        app.logger.info('db connection established')
-        return conn
-    except:
-        app.logger.error('db connection failed')
-        return None
-
-# Connect to the database
-def get_db_conn():
-    try:
-        conn = sqlite3.connect('database.db')
         app.logger.info('db connection established')
         return conn
     except:
@@ -46,7 +44,7 @@ def set_language():
             session['language'] = 'en'  # Default language is English
             app.logger.info('default language set to english')
         else:
-            app.logger.info('session language set to '+session['language'])
+            app.logger.info('session language set to {}'.format(session['language']))
     except:
         if not session:
             app.logger.error('session not found')
@@ -95,7 +93,7 @@ def intro():
 def change_language():
     language = request.form.get('language')
     session['language'] = language
-    app.logger.info('language changed to '+str(language))
+    app.logger.info('language changed to {}'.format(session['language']))
     return redirect(request.referrer)  # Redirect back to the page the user was on
 
 
@@ -674,7 +672,7 @@ def thank_you():
 
         # mock api call after survey completion sending the last row of the user input in the user_responses table
         # check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
-        conn_read = get_db_conn()
+        conn_read = get_db_connection()
         cursor = conn_read.cursor()
         data_string = cursor.execute('''
                                      SELECT *
@@ -803,7 +801,7 @@ def logout():
 # check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
 @app.route('/mock_api_call')
 def webhook_output():
-    conn = get_db_conn()
+    conn = get_db_connection()
     cursor = conn.cursor()
     data_string = cursor.execute('''
                                SELECT *

@@ -262,7 +262,7 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
+    animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 
@@ -273,22 +273,22 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 1.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 0.5s;
 }
 
 /* First patient image - appears third */
 .patient-card:nth-child(1) .patient-image {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 2.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 1.0s;
 }
 
 /* First patient description - appears fourth */
 .patient-card:nth-child(1) .hover-description {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 3.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 1.5s;
     display: block; /* Make sure it's visible without hover */
     text-align: center;
     margin-top: 0.5rem;
@@ -303,22 +303,22 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 4.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 2.0s;
 }
 
 /* Second patient image - appears sixth */
 .patient-card:nth-child(3) .patient-image {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 5.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 2.5s;
 }
 
 /* Second patient description - appears seventh */
 .patient-card:nth-child(3) .hover-description {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 6.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 3.0s;
     display: block; /* Make sure it's visible without hover */
     text-align: center;
     margin-top: 0.5rem;
@@ -334,8 +334,8 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-top: 1rem;
     margin-bottom: 1rem;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 7.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 3.0s;
 }
 
 /* Arrow controls - appears last (ninth) */
@@ -347,8 +347,8 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 15px;
     justify-content: center;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 8.5s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 3.5s;
 }
 
 /* Make descriptions visible by default */
