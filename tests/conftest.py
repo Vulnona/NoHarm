@@ -1,5 +1,5 @@
 import pytest
-from app import create_app, get_db_connection
+from app import create_app
 
 # Dummy classes to simulate database behavior for testing
 class DummyDBResponse:
@@ -45,7 +45,7 @@ def client(monkeypatch, app):
     # app.config["TESTING"] = True
 
     # monkeypatch get_db_connection to return a dummy connection.
-    monkeypatch.setattr(app, "get_db_connection", lambda: DummyDBConnection())
+    monkeypatch.setattr("app.get_db_connection", lambda: DummyDBConnection())
 
     # Optionally, patch render_template to use dummy templates.
     def dummy_render(template_name, **context):
@@ -66,7 +66,7 @@ def client(monkeypatch, app):
             # Fallback
             return ""
 
-    monkeypatch.setattr(app, "render_template", dummy_render)
+    monkeypatch.setattr("flask.render_template", dummy_render)
 
     # Patch abort to raise an exception.
     from werkzeug.exceptions import HTTPException
@@ -74,6 +74,6 @@ def client(monkeypatch, app):
     def dummy_abort(status_code):
         raise HTTPException(description="Aborted", response=None)
 
-    monkeypatch.setattr(app, "abort", dummy_abort)
+    monkeypatch.setattr("werkzeug.exceptions.HTTPException", dummy_abort)
 
     return app.test_client()
