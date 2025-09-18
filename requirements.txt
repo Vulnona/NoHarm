@@ -5,7 +5,7 @@ colorama==0.4.4
 decorator==5.0.7
 Flask==3.0.3
 future==0.18.2
-h5py==2.10.0
+h5py>=3.10.0
 importlib_metadata==8.4.0
 ipykernel==5.5.4
 ipython==7.23.1
@@ -13,14 +13,14 @@ ipython-genutils==0.2.0
 itsdangerous==2.2.0
 jedi==0.18.0
 Jinja2==3.1.4
-joblib==0.15.1
+joblib>=1.2.0
 jupyter-client==6.1.12
 jupyter-core==4.7.1
 Keras==2.4.3
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.2
 nolds==0.5.2
-numpy==1.19.0
+numpy>=1.23,<2
 parso==0.8.2
 pickleshare==0.7.5
 Pillow==9.3.0
@@ -29,9 +29,9 @@ Pygments==2.9.0
 python-dateutil==2.8.1
 
 PyYAML==5.3.1
-pyzmq==22.0.3
-scikit-learn==0.23.1
-scipy==1.5.0
+pyzmq>=25.1,<26
+scikit-learn>=1.2,<2
+scipy>=1.11,<2
 six==1.15.0
 sklearn==0.0
 threadpoolctl==2.1.0
