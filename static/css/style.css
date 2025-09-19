@@ -1333,3 +1333,120 @@ p {
     }
 
 }
+
+
+/* Make the form a normal block so margin auto works on the button */
+.intro-container .consent-section form {
+  display: block !important;
+}
+
+/* Center only the submit button */
+#start-btn {
+  display: block !important;      /* takes its own line */
+  width: max-content;             /* shrink to the button’s content */
+  margin: 30px auto 0 !important; /* <-- centers horizontally */
+}
+
+
+
+
+
+/* Make the card a positioning context */
+body[data-page="choice_experiment"] .choice-container {
+  position: relative;
+  padding-top: 64px; /* keeps the pill from overlapping the heading */
+}
+
+/* Put the switcher inside the card, top-right (LTR/RTL safe) */
+body[data-page="choice_experiment"] .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;   /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important;
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+/* Keep hover scale without shifting */
+body[data-page="choice_experiment"] .language-switcher:hover {
+  transform: scale(1.05) !important;
+}
+
+/* Make the intro card a positioning context and leave space for the pill */
+body[data-page="intro"] .intro-container {
+  position: relative;
+  padding-top: 64px; /* so it doesn't overlap the heading */
+}
+
+/* Place the switcher in the intro card’s top-right (LTR/RTL safe) */
+body[data-page="intro"] .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;   /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important;   /* cancel old translateX */
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+/* Keep hover scale without shifting */
+body[data-page="intro"] .language-switcher:hover {
+  transform: scale(1.05) !important;
+}
+
+
+/* no-consent page: put the switcher top-right inside the white card */
+body[data-page="no_consent"] .thank-you-container {
+  position: relative;
+  padding-top: 64px;          /* space so it doesn't overlap the title */
+}
+
+body[data-page="no_consent"] .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;     /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important; /* cancel old translateX */
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+body[data-page="no_consent"] .language-switcher:hover {
+  transform: scale(1.05) !important;
+}
+
+/* (optional) smaller on mobile */
+@media (max-width: 768px) {
+  body[data-page="no_consent"] .language-switcher {
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 55px;
+    height: 35px;
+  }
+}
+
