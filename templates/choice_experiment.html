@@ -48,10 +48,34 @@
                      class="doctor-image"
                      id="draggableDoctor"
                      style="cursor: grab;">
-                <div class="arrow-controls">
-                    <button class="arrow-btn left" onclick="moveDoctor('left')">←</button>
-                    <button class="arrow-btn right" onclick="moveDoctor('right')">→</button>
-                </div>
+
+
+
+
+                    <div class="arrow-controls">
+                    <button class="arrow-btn left"  onclick="moveDoctor('left')"  aria-label="Move left">
+                        <svg class="arrow-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <button class="arrow-btn right" onclick="moveDoctor('right')" aria-label="Move right">
+                        <svg class="arrow-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M10 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    </div>
+
+
+
+
+
+
+
+
+
                 <div class="doctor-instruction">Move the physician to the patient to be treated!</div>
             </div>
         

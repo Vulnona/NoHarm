@@ -1,3 +1,4 @@
+
 function submitChoice(selectedImage) {
     console.log("Submitting choice:", selectedImage);
     
@@ -60,27 +61,40 @@ function submitChoice(selectedImage) {
 function moveDoctor(direction) {
     const doctor = document.getElementById('draggableDoctor');
     const patients = document.querySelectorAll('.patient-card');
-    const target = direction === 'left' ? patients[0] : patients[1];
-    
-    // Add smooth animation class
+    if (!doctor || patients.length < 2) return;
+
+    // NEW: detect RTL and map indices accordingly
+    const isRTL =
+      document.documentElement.getAttribute('dir') === 'rtl' ||
+      getComputedStyle(document.body).direction === 'rtl' ||
+      ['ar', 'ur'].includes(localStorage.getItem('selectedLanguage'));
+
+    const leftIndex  = isRTL ? 1 : 0;   // in RTL, DOM[1] is visually left
+    const rightIndex = 1 - leftIndex;
+
+    const target = (direction === 'left') ? patients[leftIndex] : patients[rightIndex];
+
+    // (unchanged) animation + movement
     doctor.classList.remove('move-right', 'move-left');
     doctor.classList.add(direction === 'left' ? 'move-left' : 'move-right');
     doctor.style.transition = 'transform 0.5s ease';
-    
+
     const targetRect = target.getBoundingClientRect();
     const doctorRect = doctor.getBoundingClientRect();
-    
-    const moveX = targetRect.left + (targetRect.width/2) - doctorRect.left - (doctorRect.width/2);
-    const moveY = targetRect.top + (targetRect.height/2) - doctorRect.top - (doctorRect.height/2);
-    
+
+    const moveX = (targetRect.left + targetRect.width / 2)  - (doctorRect.left + doctorRect.width / 2);
+    const moveY = (targetRect.top  + targetRect.height / 2) - (doctorRect.top  + doctorRect.height / 2);
+
     doctor.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    
-    // Submit the patient's image after animation completes
+
     setTimeout(() => {
         const patientImage = target.querySelector('.patient-image');
-        submitChoice(patientImage.dataset.filename);
+        if (patientImage && patientImage.dataset.filename) {
+            submitChoice(patientImage.dataset.filename);
+        }
     }, 500);
 }
+
 
 function initDraggableDoctor() {
     const doctor = document.getElementById('draggableDoctor');
@@ -334,3 +348,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1000);
 });
+
+

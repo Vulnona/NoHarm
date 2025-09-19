@@ -20,6 +20,30 @@ body {
 }
 
 
+
+
+
+.arrow-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Swap the *positions* in RTL so left button stays visually left */
+html[dir="rtl"] .arrow-controls { flex-direction: row-reverse; }
+
+/* Icon size (SVGs never mirror) */
+.arrow-svg { width: 18px; height: 18px; display: block; }
+
+/* If any global RTL rule flips icons, neutralize it */
+html[dir="rtl"] .arrow-controls svg { transform: none !important; }
+
+
+
+
+
+
+
 .top-space {
     width: 100%;
     height: 60px; /* Space height at the top */
