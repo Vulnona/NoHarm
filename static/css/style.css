@@ -19,6 +19,26 @@ body {
     /* Additional custom styles */
 }
 
+/* 1) Freeze the visual order so RTL doesn't reverse the two buttons */
+.arrow-controls { direction: ltr; }
+
+/* 2) Lock the arrow glyph’s bidi so it never mirrors */
+.arrow-btn, .arrow-btn .arrow-icon {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* 3) Actually draw the arrows (your span is empty) */
+.arrow-btn.left  .arrow-icon::before  { content: "\2190"; } /* ← */
+.arrow-btn.right .arrow-icon::before  { content: "\2192"; } /* → */
+
+/* 4) Safety: cancel any global RTL flips from frameworks */
+[dir="rtl"] .arrow-btn,
+[dir="rtl"] .arrow-btn .arrow-icon,
+[dir="rtl"] .arrow-btn .arrow-icon::before { transform: none !important; }
+
+
+
 
 .top-space {
     width: 100%;
