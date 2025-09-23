@@ -1,17 +1,23 @@
 /* General Styling */
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0 20px;
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    transform: scale(0.90); /*  zoom-out controlling */
-    transform-origin: top center; /* Ensure the scaling starts from the top center */
+  display: flex;
+  justify-content: center;   /* centers horizontally */
+  align-items: center;       /* centers vertically */
+  min-height: 100vh;         /* ensures it takes full screen height */
+  margin: 0;                 /* remove browser default margin */
+  background-color: #f9f9f9; /* optional: add a nice background */
 }
+
+
+.intro-container {
+  max-width: 800px;          /* keeps content readable */
+  width: 100%;               /* responsive shrink on smaller screens */
+  background: #fff;          /* white box */
+  padding: 2rem;             /* spacing */
+  border-radius: 12px;       /* rounded corners */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1); /* subtle shadow */
+}
+
 
 .signature {
     margin-bottom: 0;
