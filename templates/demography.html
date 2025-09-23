@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="demography">
-    <!-- Language switcher in the corner -->
-
 
     <div class="demography-container">
+
+        <!-- Language Switcher -->
         <div class="language-switcher">
             <select id="language-switcher">
                 <option value="ar">العربية</option>
@@ -25,30 +25,39 @@
                 <option value="es">Español</option>
                 <option value="ur">اردو</option>
             </select>
-         </div>
+        </div>
+
+        <!-- Page Title -->
+        <h2 class="demography-title">Demographic Questions</h2>
 
         <form method="POST" action="/demography" id="demography-form">
             <input type="hidden" name="question_id" value="{{ question.id }}">
             <input type="hidden" name="current_index" value="{{ index }}">
 
             <div class="question-block">
-                <label>{{ question.label }}</label>
+                <label class="question-label">{{ question.label }}</label>
+
                 {% if question.type == "radio" %}
-                    {% for option in question.options %}
-                        <div class="radio-container">
-                            <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}" onchange="this.form.submit()">
-                            <label for="{{ option.value }}">{{ option.label }}</label>
-                        </div>
-                    {% endfor %}
+                    <div class="radio-group">
+                        {% for option in question.options %}
+                            <label class="custom-radio">
+                                <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}" onchange="this.form.submit()">
+                                <span class="radio-mark"></span>
+                                {{ option.label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+
                 {% elif question.type == "text" %}
-                    <input type="text" name="answer" placeholder="{{ question.placeholder }}" onchange="this.form.submit()">
+                    <input type="text" name="answer" class="text-input" placeholder="{{ question.placeholder }}" onchange="this.form.submit()">
+
                 {% elif question.type == "number" %}
-                    <input type="number" name="answer" id="age-input" placeholder="{{ question.placeholder }}" min="16" max="120" onchange="this.form.submit()">
+                    <input type="number" name="answer" class="number-input" id="age-input" placeholder="{{ question.placeholder }}" min="16" max="120" onchange="this.form.submit()">
                 {% endif %}
             </div>
         </form>
     </div>
-    <script src="{{ url_for('static', filename='js/language.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='js/language.js') }}"></script>
 </body>
 </html>

@@ -66,7 +66,14 @@
     "consent_message": "Please decide now if you want to give your consent to the use of your answers for scientific purposes. If you do not agree, you will be redirected to the end of the survey.",
     "yes_label": "I consent to the use of my data submitted as part of this questionnaire for research purposes.",
     "no_label": "I do not consent to the use of my data submitted as part of this questionnaire for research purposes.",
-    "start_button": "Submit Consent"
+    "start_button": "Submit Consent",
+    "callout-1": "Participation is voluntary.",
+    "callout-2": "Answers are collected anonymously and handled under data protection rules.",
+    "callout-3": "You can stop at any time without any disadvantage.",
+    "yes-desc": "You allow us to use your anonymous answers for research.",
+    "no-desc": "Your decision will be respected and the survey will end."
+
+    
   },
   "no_consent": {
     "no_consent_title": "Thank you for your time!",
@@ -76,8 +83,8 @@
     "rating_title": "Procedural Fairness Ratings",
     "rating_intro": "Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.",
     "scale_indicator": "Please rate on a scale from 1 to 6:",
-    "not_fair": "Not fair at all",
-    "very_fair": "Very fair",
+    "not_fair": "Not Fair at All",
+    "very_fair": "Very Fair",
     "rating_save_life_years": "Treating patients who will gain the most life years",
     "rating_advantage_disadvantaged": "Giving priority to disadvantaged patients",
     "rating_benefit_future": "Treating patients who will benefit others in the future",

@@ -48,6 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('yes-label-span').textContent = data.intro.yes_label;
                     document.getElementById('no-label-span').textContent = data.intro.no_label;
                     document.getElementById('start-btn').textContent = data.intro.start_button;
+                    document.getElementById('callout-1').textContent = data.intro["callout-1"];
+                    document.getElementById('callout-2').textContent = data.intro["callout-2"];
+                    document.getElementById('callout-3').textContent = data.intro["callout-3"];
+                    document.getElementById('yes-desc').textContent = data.intro["yes-desc"];
+                    document.getElementById('no-desc').textContent = data.intro["no-desc"];
+
+
                     
                     initConsentLogic(data.intro);
                 } else if (currentPage === "choice_experiment") {

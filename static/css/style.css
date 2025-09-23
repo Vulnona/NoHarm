@@ -25,6 +25,21 @@ body {
     /* Additional custom styles */
 }
 
+#intro-title {
+  font-size: 1.5rem;  /* smaller than default h2 */
+  font-weight: 600;   /* optional: adjust boldness */
+  margin-bottom: 1rem; /* add spacing if needed */
+  text-align: center; /* keep it centered */
+}
+
+
+
+#consent-title {
+  font-size: 1.5rem;  /* smaller than default h2 */
+  font-weight: 600;   /* optional: adjust boldness */
+  margin-bottom: 1rem; /* add spacing if needed */
+  text-align: center; /* keep it centered */
+}
 
 
 
@@ -1516,6 +1531,8 @@ body[data-page="demography"] .demography-container .language-switcher {
   z-index: 10;
 }
 
+
+
 /* optional: smaller on mobile */
 @media (max-width: 768px) {
   body[data-page="demography"] .demography-container .language-switcher {
@@ -1710,4 +1727,218 @@ body{ font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-ser
   margin-top: 0.5rem;
   font-size: 0.9rem;
   color: #444;
+}
+
+
+.doctor-image {
+    width: 90px;           /* Adjust size as needed */
+    height: auto;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    z-index: 1000;
+    margin-bottom: 20px;
+    image-rendering: -webkit-optimize-contrast; /* Crisp scaling */
+    image-rendering: crisp-edges;               /* Makes PNG sharper */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Optional: make it slightly transparent */
+.doctor-image.transparent {
+    opacity: 0.85; /* Adjust transparency */
+}
+
+.doctor-image:active {
+    transform: scale(1.05); /* Slight zoom when dragged */
+    opacity: 0.9;
+}
+
+.instruction-text p {
+    font-size: 1rem; 
+    color: #444; 
+    line-height: 1.5;
+}
+.principle-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #222;
+}
+.principle-description {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+
+.scale-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.circle-btn input {
+  display: none;
+}
+.circle-btn .circle {
+  width: 19px;
+  height: 19px;
+  border: 2px solid #555;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+.circle-btn input:checked + .circle {
+  background-color: #0056b3; /* HPI blue */
+  border-color: #0056b3;
+}
+.circle-btn .circle:hover {
+  transform: scale(1.1);
+  border-color: #0056b3;
+}
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+/* Use the same width for the bar and the circles row */
+:root {
+  --scale-width: clamp(420px, 55vw, 760px);
+}
+
+.rating-components {
+  width: var(--scale-width);
+}
+
+/* gradient bar uses full width of the rating-components box */
+.gradient-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d9d9d9, #000);
+  margin-bottom: 16px;
+}
+
+/* ============ NEW: grid for even spacing ============ */
+.rating-scale {
+  width: var(--scale-width);  /* matches .rating-components */
+}
+
+.scale-buttons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 equal columns */
+  width: 100%;
+  align-items: start;
+  /* no justify-content/gaps that could skew the ends */
+}
+
+.circle-btn {
+  display: grid;
+  justify-items: center;   /* center the circle horizontally */
+  align-content: start;
+  row-gap: 8px;            /* space between circle and (optional) label */
+}
+
+/* hide the native radio */
+.circle-btn input { display: none; }
+
+/* the visible circle */
+.circle-btn .circle {
+  width: 19px;             /* adjust size to taste */
+  height: 19px;
+  border: 2px solid #666;
+  border-radius: 50%;
+  transition: background-color .2s, border-color .2s, transform .15s;
+}
+
+/* selected state */
+.circle-btn input:checked + .circle {
+  background-color: #1976d2;
+  border-color: #1976d2;
+  transform: scale(1.02);
+}
+
+/* captions under only the 1st and 6th circles */
+.circle-label {
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+  min-height: 1.2em;  /* keeps row height stable even if translation changes */
+}
+
+
+/* Page title */
+.demography-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #222;
+}
+
+/* Question blocks */
+.question-block {
+    margin-bottom: 2rem;
+}
+
+.question-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Radio group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-radio {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #444;
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+}
+
+.custom-radio input {
+    display: none;
+}
+
+.radio-mark {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 18px;
+    width: 18px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.custom-radio input:checked + .radio-mark {
+    background: #1976d2;
+    border-color: #1976d2;
+}
+
+/* Inputs */
+.text-input, .number-input {
+    width: 250px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.text-input:focus, .number-input:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 4px rgba(25, 118, 210, 0.3);
 }

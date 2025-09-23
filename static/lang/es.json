@@ -66,7 +66,12 @@
     "consent_message": "Por favor, decida ahora si desea dar su consentimiento para el uso de sus respuestas con fines científicos. Si no está de acuerdo, será redirigido al final de la encuesta.",
     "yes_label": "Doy mi consentimiento para el uso de mis datos enviados como parte de este cuestionario con fines de investigación.",
     "no_label": "No doy mi consentimiento para el uso de mis datos enviados como parte de este cuestionario con fines de investigación.",
-    "start_button": "Enviar Consentimiento"
+    "start_button": "Enviar Consentimiento",
+    "callout-1": "La participación es voluntaria.",
+    "callout-2": "Las respuestas se recopilan de forma anónima y se tratan según las normas de protección de datos.",
+    "callout-3": "Puede dejar de participar en cualquier momento sin ninguna desventaja.",
+    "yes-desc": "Usted nos permite usar sus respuestas anónimas para la investigación.",
+    "no-desc": "Su decisión será respetada y la encuesta finalizará."
   },
   "no_consent": {
     "no_consent_title": "¡Gracias por su tiempo!",

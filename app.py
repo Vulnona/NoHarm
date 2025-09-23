@@ -10,6 +10,8 @@ from api_call import send_post_request
 import logging
 
 
+
+
 # create flask function for structural testing
 def create_app():
     app = Flask(__name__)

@@ -66,7 +66,13 @@
     "consent_message": "Bitte entscheiden Sie jetzt, ob Sie der Verwendung Ihrer Antworten für wissenschaftliche Zwecke zustimmen möchten. Wenn Sie nicht einverstanden sind, werden Sie zum Ende der Umfrage weitergeleitet.",
     "yes_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke zu.",
     "no_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke nicht zu.",
-    "start_button": "Einwilligung abschicken"
+    "start_button": "Einwilligung abschicken",
+    "callout-1": "Die Teilnahme ist freiwillig.",
+    "callout-2": "Ihre Antworten werden anonym gesammelt und gemäß den Datenschutzbestimmungen verarbeitet.",
+    "callout-3": "Sie können jederzeit ohne Nachteil abbrechen.",
+    "yes-desc": "Sie erlauben uns, Ihre anonymen Antworten für Forschungszwecke zu verwenden.",
+    "no-desc": "Ihre Entscheidung wird respektiert und die Umfrage wird beendet."
+
   },
   "no_consent": {
     "no_consent_title": "Vielen Dank für Ihre Zeit!",

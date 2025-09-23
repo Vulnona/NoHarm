@@ -29,7 +29,12 @@
         </select>
     </div>
 
-    <p>Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.</p>
+    <h2 class="rating-title">Procedural Fairness Ratings</h2>
+    <p class="rating-intro">
+        Not every patient can be treated in a medical emergency. 
+        There are procedures that can be used to determine which patients should be treated 
+        in such situations. In the following, please indicate how morally fair you find these procedures.
+    </p>
 
     <!-- Question Block -->
     <form method="POST" action="/procedural-ratings">
@@ -42,22 +47,25 @@
                 <p class="question-description">{{ question.full_text.replace(question.label + ': ', '') }}</p>
             </div>
             <div class="rating-components">
-                <div class="gradient-bar"></div>
-                <div class="rating-scale">
-                    <div class="scale-buttons">
-                        {% for i in range(1, 7) %}
-                            <label class="circle-btn">
-                                <input type="radio" name="rating" value="{{ i }}" onchange="this.form.submit()">
-                                <div class="circle"></div>
-                            </label>
-                        {% endfor %}
-                    </div>
-                    <div class="scale-labels">
-                        <span class="scale-label">Not fair at all</span>
-                        <span class="scale-label">Very fair</span>
-                    </div>
-                </div>
+            <div class="gradient-bar"></div>
+            <div class="scale-buttons">
+                {% for i in range(1, 7) %}
+                <label class="circle-btn">
+                    <input type="radio" name="rating" value="{{ i }}" onchange="this.form.submit()">
+                    <div class="circle"></div>
+                    {% if i == 1 %}
+                    <span class="circle-label">Not Fair at All</span>
+                    {% elif i == 6 %}
+                    <span class="circle-label">Very Fair</span>
+                    {% endif %}
+                </label>
+                {% endfor %}
             </div>
+            </div>
+
+
+
+
         </div>
     </form>
 </div>
