@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/static/lang/${language}.json`)
             .then(response => response.json())
             .then(data => {
+                console.log("Current page is:", currentPage);
                 if (currentPage === "admin_login") {
                     // For admin_login.html
                     document.querySelector('h1').textContent = data.admin_login.title;
@@ -47,6 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('yes-label-span').textContent = data.intro.yes_label;
                     document.getElementById('no-label-span').textContent = data.intro.no_label;
                     document.getElementById('start-btn').textContent = data.intro.start_button;
+                    
+                    initConsentLogic(data.intro);
                 } else if (currentPage === "choice_experiment") {
                     // For choice_experiment.html
                     document.querySelector('.instruction-text p').textContent = data.choice_experiment.instruction_text;
@@ -189,6 +192,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
+
+
     
     // Function to update rating questions
     function updateRatingQuestions(questions) {
@@ -216,7 +221,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    }
+    } 
+    
+    function initConsentLogic(texts) {
+        const radios = document.querySelectorAll('input[name="consent"]');
+        const btn = document.getElementById('start-btn');
+        const live = document.getElementById('consent-live');
+        console.log("Found radios:", radios.length);
+
+
+        function updateConsentButton() {
+            const chosen = document.querySelector('input[name="consent"]:checked');
+            if (!chosen) {
+                btn.disabled = true;
+                btn.textContent = texts.start_button || 'Choose an option to continue';
+                if (live) live.textContent = '';
+                return;
+            }
+            btn.disabled = false;
+            if (chosen.value === 'yes') {
+                btn.textContent = texts.agree_button || 'Agree and continue';
+                if (live) live.textContent = 'Agree and continue selected.';
+            } else {
+                btn.textContent = texts.disagree_button || 'Do not consent, finish survey';
+                if (live) live.textContent = 'Do not consent selected. Survey will end.';
+            }
+        }
+
+        radios.forEach(r => r.addEventListener('change', updateConsentButton));
+        updateConsentButton();
+}
+
+
+
+
+
 });
 
 // Add this outside the DOMContentLoaded event handler
@@ -243,4 +282,5 @@ window.updateModalTranslations = function() {
         })
         .catch(error => console.error('Error loading modal translations:', error));
 };
+
 

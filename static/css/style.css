@@ -1450,3 +1450,220 @@ body[data-page="no_consent"] .language-switcher:hover {
   }
 }
 
+
+/* Procedural ratings: keep the language pill inside the white card */
+body[data-page="procedural_ratings"] .rating-container {
+  position: relative;        /* make the card a positioning context */
+  padding-top: 64px;         /* space so the pill doesn't overlap the title */
+}
+
+body[data-page="procedural_ratings"] .rating-container .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;    /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important;/* cancel any old translateX */
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+/* optional: smaller on mobile */
+@media (max-width: 768px) {
+  body[data-page="procedural_ratings"] .rating-container .language-switcher {
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 55px;
+    height: 35px;
+  }
+}
+
+
+/* Demography page: keep switcher inside the white card, top-right */
+body[data-page="demography"] .demography-container {
+  position: relative;        /* card becomes positioning context */
+  padding-top: 64px;         /* space so the pill doesn't overlap content */
+}
+
+body[data-page="demography"] .demography-container .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;    /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important;/* cancel old translateX */
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+/* optional: smaller on mobile */
+@media (max-width: 768px) {
+  body[data-page="demography"] .demography-container .language-switcher {
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 55px;
+    height: 35px;
+  }
+}
+
+
+/* Admin page: keep language switcher inside the white card, top-right */
+body[data-page="admin"] .login-container {
+  position: relative;        /* make card a positioning context */
+  padding-top: 64px;         /* space so pill doesn't overlap title */
+}
+
+body[data-page="admin"] .login-container .language-switcher {
+  position: absolute !important;
+  top: 12px;
+  inset-inline-end: 12px;    /* right in LTR, left in RTL */
+  left: auto;
+  bottom: auto;
+  transform: none !important;/* cancel any old translateX */
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  z-index: 10;
+}
+
+/* Optional: smaller on mobile */
+@media (max-width: 768px) {
+  body[data-page="admin"] .login-container .language-switcher {
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 55px;
+    height: 35px;
+  }
+}
+
+
+
+
+:root{
+  --bg:#f7fafc;
+  --card:#ffffff;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --brand:#2563eb;
+  --brand-weak:#dbeafe;
+  --ok:#059669;
+  --ring: rgba(37,99,235,.35);
+  --radius:16px;
+}
+
+body{ font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif; color:var(--ink); background:#f5f6f8; }
+
+.intro-container{ max-width: 880px; margin: 0 auto; padding: 32px 20px; }
+
+.callout{
+  background: var(--brand-weak);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 20px 0 28px;
+}
+
+.callout-list{ list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+.callout-list li{ display:flex; align-items:flex-start; gap:10px; color:#0f172a; line-height:1.35; }
+.callout .ico{ display:inline-flex; width:22px; height:22px; color:var(--brand); margin-top:1px; }
+
+
+
+.consent-section{
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 6px 20px rgba(15,23,42,.06);
+  border: 1px solid #e5e7eb;
+}
+
+.option-grid{
+  margin: 16px 0 20px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:16px;
+}
+@media (max-width:720px){ .option-grid{ grid-template-columns:1fr; } }
+
+.option-card{
+  display:block;
+  cursor:pointer;
+  border-radius: 14px;
+  border: 1.5px solid #e5e7eb;
+  background:#fff;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .05s ease;
+  user-select:none;
+}
+.option-card:hover{ box-shadow: 0 6px 18px rgba(0,0,0,.06); border-color:#d1d5db; }
+.option-card:active{ transform: scale(.998); }
+
+.option-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: auto;  /* ✅ allow clicks */
+  width: 0;
+  height: 0;
+}
+
+
+.option-visual{ padding:18px; display:grid; gap:6px; }
+.badge{
+  width:32px; height:32px; display:inline-grid; place-items:center;
+  border-radius: 10px; font-weight:700; color:#fff;
+}
+.badge.yes{ background: var(--ok); }
+.badge.no{ background:#ef4444; }
+
+.option-title{ font-weight:600; font-size:1.05rem; }
+.option-desc{ color:var(--muted); font-size:.95rem; }
+
+/* checked state */
+.option-card input[type="radio"]:checked + .option-visual{
+  outline: 3px solid var(--ring);
+  border-radius: 12px;
+}
+.option-card input[type="radio"]:checked + .option-visual .option-title{
+  color: var(--brand);
+}
+
+/* primary button */
+.btn{
+  display:inline-block;
+  width:100%;
+  padding:14px 16px;
+  font-weight:600;
+  border-radius:12px;
+  background: var(--brand);
+  color:#fff;
+  border: none;
+  cursor:pointer;
+  transition: filter .2s ease, transform .05s ease, background .2s ease;
+}
+.btn:disabled{ opacity:.55; cursor:not-allowed; }
+.btn:not(:disabled):hover{ filter:brightness(1.05); }
+.btn.outline{
+  background:#fff; color:#111827; border:1.5px solid #e5e7eb;
+}
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
