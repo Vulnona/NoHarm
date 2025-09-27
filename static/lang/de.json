@@ -32,6 +32,8 @@
     "christian_label": "Christentum",
     "islam_label": "Islam",
     "hinduism_label": "Hinduismus",
+    "previous_button": "Zurück",
+"next_button": "Weiter",
     "buddhism_label": "Buddhismus",
     "other_label": "Andere"
   },
@@ -51,6 +53,8 @@
     "children_question": "Haben Sie Kinder oder planen Sie, Kinder zu bekommen?",
     "children_yes": "Ja",
     "children_no": "Nein",
+      "previous_button": "Zurück",
+  "next_button": "Weiter",
     "submit_button": "Absenden"
   },
   "instructions": {
@@ -72,7 +76,7 @@
     "callout-3": "Sie können jederzeit ohne Nachteil abbrechen.",
     "yes-desc": "Sie erlauben uns, Ihre anonymen Antworten für Forschungszwecke zu verwenden.",
     "no-desc": "Ihre Entscheidung wird respektiert und die Umfrage wird beendet."
-
+    
   },
   "no_consent": {
     "no_consent_title": "Vielen Dank für Ihre Zeit!",
@@ -93,6 +97,8 @@
     "rating_medication_effect": "Auswahl von Patienten, bei denen Medikamente am wirksamsten sind",
     "rating_random_selection": "Zufällige Auswahl von Patienten",
     "select_answer": "Bewertung auswählen",
+    "previous_button": "Zurück",
+  "next_button": "Weiter",
     "questions": [
       {
         "id": "save_life_years",

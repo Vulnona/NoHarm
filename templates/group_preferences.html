@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group-Related Preferences</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body data-page="group_preferences">
 
- <!-- Language switcher in the corner -->
-<div class="language-switcher">
-    <select id="language-switcher">
-        <option value="ar">العربية</option>
-        <option value="bn">বাংলা</option>
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option>
-        <option value="ru">Русский</option>
-        <option value="es">Español</option>
-        <option value="ur">اردو</option>
-    </select>
-</div>
 
 
-<div class="group-preferences-container">
-    <form method="POST" action="/group-preferences">
-        <input type="hidden" name="question_id" value="{{ question.id }}">
-        <input type="hidden" name="current_index" value="{{ index }}">
 
-        <div class="question-block">
-            {% if question.id == 'general_health' %}
+    <div class="group-preferences-container">
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <!-- Language switcher in the corner -->
+        <div class="language-switcher">
+            <select id="language-switcher">
+                <option value="ar">العربية</option>
+                <option value="bn">বাংলা</option>
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ja">日本語</option>
+                <option value="ru">Русский</option>
+                <option value="es">Español</option>
+                <option value="ur">اردو</option>
+            </select>
+        </div>
+
+        <form method="POST" action="/group-preferences" id="group-form" novalidate>
+            <input type="hidden" name="question_id" value="{{ question.id }}">
+            <input type="hidden" name="current_index" value="{{ index }}">
+            <input type="hidden" name="direction" id="nav-direction" value="next">
+
+            <div class="question-block">
+                {% if question.id == 'general_health' %}
                 <!-- Health Gradient Question -->
                 <div class="health-question-container">
                     <label class="health-question-label">{{ question.label }}</label>
@@ -54,26 +63,176 @@
                         </div>
                     </div>
 
-                    <!-- Hidden input to store the selected value -->
                     <input type="hidden" name="answer" id="healthValue">
                 </div>
-            {% else %}
-                <!-- Radio Button Questions -->
+                {% else %}
+                <!-- Radio Question -->
                 <label class="question-label">{{ question.label }}</label>
                 {% for option in question.options %}
                 <label class="radio-container">
-                    <input type="radio" name="answer" value="{{ option.value }}" required onchange="this.form.submit()">
+                    <input type="radio" name="answer" value="{{ option.value }}">
                     <span class="radio-label">{{ option.label }}</span>
                 </label>
                 {% endfor %}
-            {% endif %}
-        </div>
-    </form>
-</div>
+                <div id="radio-error" class="error-message" style="display:none;"></div>
+                {% endif %}
+            </div>
+
+            <div class="form-navigation">
+                <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>Previous</button>
+                <button type="submit" class="next-btn" disabled>Next</button>
+            </div>
+        </form>
+    </div>
 
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>
     <script src="{{ url_for('static', filename='js/health.js') }}"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("group-form");
+            const prevBtn = form.querySelector(".prev-btn");
+            const nextBtn = form.querySelector(".next-btn");
+            const dir = document.getElementById("nav-direction");
+
+            const radios = form.querySelectorAll('input[type="radio"][name="answer"]');
+            const healthBtns = form.querySelectorAll(".health-circle-btn");
+            const healthValue = document.getElementById("healthValue");
+            const radioError = document.getElementById("radio-error");
+
+            const questionId = document.querySelector('input[name="question_id"]').value;
+            const currentIndex = parseInt(document.querySelector('input[name="current_index"]').value, 10);
+
+            // ---- NEW: last-question handling ----
+            const isLast = (questionId === "children") || (currentIndex === 2);
+
+            const submitLabels = {
+                en: "Submit Survey",
+                fr: "Soumettre le questionnaire",
+                de: "Umfrage absenden",
+                es: "Enviar encuesta",
+                ru: "Отправить опрос",
+                zh: "提交问卷",
+                hi: "सर्वे सबमिट करें",
+                bn: "সার্ভে জমা দিন",
+                ja: "アンケートを送信",
+                ar: "إرسال الاستبيان",
+                ur: "سروے جمع کریں"
+            };
+            const lang = (localStorage.getItem("selectedLanguage") || "en").toLowerCase();
+            const submitText = submitLabels[lang] || submitLabels.en;
+
+            function enforceSubmitLabel() {
+                if (isLast && nextBtn && nextBtn.textContent.trim() !== submitText) {
+                    nextBtn.textContent = submitText;
+                }
+            }
+
+            enforceSubmitLabel();
+
+            if (isLast && nextBtn) {
+                const mo = new MutationObserver(enforceSubmitLabel);
+                mo.observe(nextBtn, { childList: true, characterData: true, subtree: true });
+            }
+            // ---- END last-question block ----
+
+            // ---- NEW: save & restore answers ----
+            const saved = localStorage.getItem("answer_" + questionId);
+            if (saved) {
+                if (radios.length) {
+                    radios.forEach(r => { if (r.value === saved) r.checked = true; });
+                }
+                if (healthValue) {
+                    healthValue.value = saved;
+                    healthBtns.forEach(b => {
+                        if (b.dataset.value === saved) b.classList.add("selected");
+                    });
+                }
+            }
+
+            radios.forEach(r => r.addEventListener("change", () => {
+                localStorage.setItem("answer_" + questionId, r.value);
+                updateNext();
+            }));
+
+            if (healthBtns.length) {
+                healthBtns.forEach(btn => {
+                    btn.addEventListener("click", e => {
+                        e.preventDefault();
+                        healthBtns.forEach(b => b.classList.remove("selected"));
+                        btn.classList.add("selected");
+                        healthValue.value = btn.dataset.value || "";
+                        localStorage.setItem("answer_" + questionId, healthValue.value);
+                        updateNext();
+                    });
+                });
+            }
+            // ---- END save & restore ----
+
+            prevBtn.disabled = false;
+
+            function isValid() {
+                if (healthValue) return healthValue.value.trim() !== "";
+                if (radios.length) return Array.from(radios).some(r => r.checked);
+                return false;
+            }
+
+            function showRadioError(msg) {
+                if (!radioError) return;
+                radioError.textContent = msg;
+                radioError.style.display = msg ? "" : "none";
+            }
+
+            function updateNext() {
+                const ok = isValid();
+                if (nextBtn) nextBtn.disabled = !ok;
+                if (ok) showRadioError("");
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    window.history.back();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener("click", (e) => {
+                    if (!isValid()) {
+                        e.preventDefault();
+                        showRadioError("⚠️ Please select an option.");
+                        return;
+                    }
+                    dir.value = "next";
+                });
+            }
+
+            updateNext();
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const progressBar = document.getElementById("progress-bar");
+
+            // Map pages to steps
+            const steps = {
+                "choice_experiment": 1,
+                "procedural_ratings": 2,
+                "demography": 3,
+                "group_preferences": 4
+            };
+
+            const currentPage = document.body.getAttribute("data-page");
+            const totalSteps = 4;
+
+            if (steps[currentPage]) {
+                const percent = (steps[currentPage] / totalSteps) * 100;
+                progressBar.style.width = percent + "%";
+            }
+        });
+    </script>
+
 </body>
+
 </html>

@@ -29,6 +29,8 @@
     "age_placeholder": "अपनी उम्र दर्ज करें",
     "religion_question": "आपका धर्म क्या है?",
     "no_religion": "नहीं, मेरा कोई धर्म नहीं है",
+    "previous_button": "पिछला",
+"next_button": "अगला",
     "christian_label": "ईसाई",
     "islam_label": "इस्लाम",
     "hinduism_label": "हिंदू धर्म",
@@ -51,7 +53,10 @@
     "children_question": "क्या आपके बच्चे हैं या आप बच्चे पैदा करने की योजना बना रहे हैं?",
     "children_yes": "हां",
     "children_no": "नहीं",
+      "previous_button": "पिछला",
+  "next_button": "अगला",
     "submit_button": "जमा करें"
+    
   },
   "instructions": {
     "title": "बहुत-बहुत धन्यवाद! आगे हम आपसे कुछ और सामान्य प्रश्न पूछना चाहेंगे।",
@@ -92,6 +97,8 @@
     "rating_medication_effect": "उन मरीजों का चयन करना जिनके लिए दवा सबसे अधिक प्रभावी है",
     "rating_random_selection": "मरीजों का यादृच्छिक चयन",
     "select_answer": "एक रेटिंग चुनें",
+     "previous_button": "पिछला",
+  "next_button": "अगला",
     "questions": [
       {
         "id": "save_life_years",

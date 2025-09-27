@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demographic Questions</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
+
 <body data-page="demography">
 
     <div class="demography-container">
 
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
         <!-- Language Switcher -->
         <div class="language-switcher">
             <select id="language-switcher">
@@ -27,37 +39,181 @@
             </select>
         </div>
 
-        <!-- Page Title -->
-        <h2 class="demography-title">Demographic Questions</h2>
-
-        <form method="POST" action="/demography" id="demography-form">
+        <!-- Main Form -->
+        <form method="POST" action="/demography" id="demography-form" novalidate>
             <input type="hidden" name="question_id" value="{{ question.id }}">
             <input type="hidden" name="current_index" value="{{ index }}">
 
             <div class="question-block">
-                <label class="question-label">{{ question.label }}</label>
+                <label>{{ question.label }}</label>
 
                 {% if question.type == "radio" %}
-                    <div class="radio-group">
-                        {% for option in question.options %}
-                            <label class="custom-radio">
-                                <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}" onchange="this.form.submit()">
-                                <span class="radio-mark"></span>
-                                {{ option.label }}
-                            </label>
-                        {% endfor %}
-                    </div>
+                {% for option in question.options %}
+                <div class="radio-container">
+                    <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}">
+                    <label for="{{ option.value }}">{{ option.label }}</label>
+                </div>
+                {% endfor %}
 
                 {% elif question.type == "text" %}
-                    <input type="text" name="answer" class="text-input" placeholder="{{ question.placeholder }}" onchange="this.form.submit()">
+                <input type="text" name="answer" placeholder="{{ question.placeholder }}">
 
                 {% elif question.type == "number" %}
-                    <input type="number" name="answer" class="number-input" id="age-input" placeholder="{{ question.placeholder }}" min="16" max="120" onchange="this.form.submit()">
+                {% if question.name == "age" %}
+                <div class="form-group">
+                    <label for="age-input">What is bawa your age?</label>
+                    <input type="number" name="answer" id="age-input" placeholder="Enter bawa jee your age">
+                    <div id="age-error" class="error-message" style="color:red; display:none;"></div>
+                </div>
+                {% else %}
+                <input type="number" name="answer" class="number-input" id="{{ question.id }}"
+                    placeholder="{{ question.placeholder }}">
                 {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="form-navigation">
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="submit" class="next-btn" disabled>Next</button>
             </div>
         </form>
     </div>
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("demography-form");
+            const ageInput = document.getElementById("age");
+
+            function showError(message) {
+                let errorMsg = document.getElementById("age-error-msg");
+                if (!errorMsg) {
+                    errorMsg = document.createElement("div");
+                    errorMsg.id = "age-error-msg";
+                    errorMsg.style.color = "red";
+                    errorMsg.style.fontWeight = "bold";
+                    errorMsg.style.marginTop = "5px";
+                    ageInput.parentNode.insertBefore(errorMsg, ageInput.nextSibling);
+                }
+                errorMsg.textContent = message;
+            }
+
+            function clearError() {
+                const errorMsg = document.getElementById("age-error-msg");
+                if (errorMsg) {
+                    errorMsg.textContent = "";
+                }
+            }
+
+            // 🔴 Validate on form submit
+            form.addEventListener("submit", function (event) {
+                if (ageInput) {
+                    const age = parseInt(ageInput.value, 10);
+
+                    if (isNaN(age) || age < 16 || age > 120) {
+                        event.preventDefault(); // stop sending to Flask
+                        showError("⚠️ Invalid age. Please enter a value between 16 and 120.");
+                        ageInput.focus();
+                        return;
+                    } else {
+                        clearError();
+                    }
+                }
+            });
+
+            // 🟢 Live validation while typing
+            ageInput.addEventListener("input", function () {
+                const age = parseInt(ageInput.value, 10);
+
+                if (ageInput.value === "") {
+                    clearError(); // nothing typed → clear error
+                } else if (!isNaN(age) && age >= 16 && age <= 120) {
+                    clearError(); // valid → clear error
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("demography-form");
+            const nextBtn = document.querySelector(".next-btn");
+            const prevBtn = document.querySelector(".prev-btn");
+            // Disable Previous on the very first question
+            const currentIndex = parseInt(form.querySelector("input[name='current_index']").value, 10);
+            if (currentIndex === 0) {
+                prevBtn.disabled = true;
+            }
+
+            // Enable/disable Next based on input
+            function toggleNextButton() {
+                let valid = false;
+
+                // Check radio buttons
+                const radios = form.querySelectorAll("input[type=radio]");
+                if (radios.length > 0) {
+                    valid = Array.from(radios).some(r => r.checked);
+                }
+
+                // Check text input
+                const textInput = form.querySelector("input[type=text]");
+                if (textInput) {
+                    valid = textInput.value.trim().length > 0;
+                }
+
+                // Check number input
+                const numberInput = form.querySelector("input[type=number]");
+                if (numberInput) {
+                    const age = parseInt(numberInput.value, 10);
+                    if (numberInput.id === "age-input") {
+                        valid = !isNaN(age) && age >= 16 && age <= 120;
+                    } else {
+                        valid = numberInput.value.trim().length > 0;
+                    }
+                }
+
+                // Enable or disable Next button
+                nextBtn.disabled = !valid;
+            }
+
+            // Listen for input changes
+            form.addEventListener("input", toggleNextButton);
+
+            // 🔙 Previous button just goes back in browser history
+            prevBtn.addEventListener("click", function () {
+                window.history.back();
+            });
+
+            // 🟢 Run once at start
+            toggleNextButton();
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const progressBar = document.getElementById("progress-bar");
+
+            // Map pages to steps
+            const steps = {
+                "choice_experiment": 1,
+                "procedural_ratings": 2,
+                "demography": 3,
+                "group_preferences": 4
+            };
+
+            const currentPage = document.body.getAttribute("data-page");
+            const totalSteps = 4;
+
+            if (steps[currentPage]) {
+                const percent = (steps[currentPage] / totalSteps) * 100;
+                progressBar.style.width = percent + "%";
+            }
+        });
+    </script>
+
+
 </body>
+
 </html>

@@ -30,6 +30,8 @@
     "religion_question": "あなたの宗教は何ですか？",
     "no_religion": "いいえ、私は宗教を持っていません",
     "christian_label": "キリスト教",
+    "previous_button": "前へ",
+"next_button": "次へ",
     "islam_label": "イスラム教",
     "hinduism_label": "ヒンドゥー教",
     "buddhism_label": "仏教",
@@ -47,6 +49,8 @@
     "excellent": "優れている",
     "illness_question": "この1年間で重病を患いましたか？",
     "illness_yes": "はい",
+      "previous_button": "前へ",
+  "next_button": "次へ",
     "illness_no": "いいえ",
     "children_question": "子供がいますか、または子供を持つ予定ですか？",
     "children_yes": "はい",
@@ -92,6 +96,8 @@
     "rating_medication_effect": "薬が最も効果的な患者を選択する",
     "rating_random_selection": "患者のランダム選択",
     "select_answer": "評価を選択",
+      "previous_button": "前へ",
+  "next_button": "次へ",
     "questions": [
       {
         "id": "save_life_years",

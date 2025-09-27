@@ -33,6 +33,8 @@
     "islam_label": "Islam",
     "hinduism_label": "Hinduismo",
     "buddhism_label": "Budismo",
+    "previous_button": "Anterior",
+"next_button": "Siguiente",
     "other_label": "Otra"
   },
   "group_preferences": {
@@ -50,6 +52,8 @@
     "illness_no": "No",
     "children_question": "¿Tiene hijos o planea tener hijos?",
     "children_yes": "Sí",
+      "previous_button": "Anterior",
+  "next_button": "Siguiente",
     "children_no": "No",
     "submit_button": "Enviar"
   },
@@ -92,6 +96,8 @@
     "rating_medication_effect": "Seleccionar pacientes para quienes la medicación es más efectiva",
     "rating_random_selection": "Selección aleatoria de pacientes",
     "select_answer": "Seleccione una calificación",
+     "previous_button": "Anterior",
+  "next_button": "Siguiente",
     "questions": [
       {
         "id": "save_life_years",

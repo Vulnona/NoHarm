@@ -31,6 +31,8 @@
     "no_religion": "Нет, я не религиозен(на)",
     "christian_label": "Христианство",
     "islam_label": "Ислам",
+    "previous_button": "Назад",
+"next_button": "Далее",
     "hinduism_label": "Индуизм",
     "buddhism_label": "Буддизм",
     "other_label": "Другое"
@@ -44,6 +46,8 @@
     "fair": "Удовлетворительное",
     "good": "Хорошее",
     "very_good": "Очень хорошее",
+      "previous_button": "Назад",
+  "next_button": "Далее",
     "excellent": "Отличное",
     "illness_question": "Болели ли вы серьёзно в прошлом году?",
     "illness_yes": "Да",
@@ -92,6 +96,8 @@
     "rating_medication_effect": "Выбор пациентов, для которых лекарства наиболее эффективны",
     "rating_random_selection": "Случайный выбор пациентов",
     "select_answer": "Выберите оценку",
+      "previous_button": "Назад",
+  "next_button": "Далее",
     "questions": [
       {
         "id": "save_life_years",

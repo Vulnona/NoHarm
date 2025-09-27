@@ -33,7 +33,9 @@
     "islam_label": "Islam",
     "hinduism_label": "Hindouisme",
     "buddhism_label": "Bouddhisme",
-    "other_label": "Autre"
+    "other_label": "Autre",
+    "previous_button": "Précédent",
+    "next_button": "Suivant"
   },
   "group_preferences": {
     "group_preferences_title": "Préférences liées aux groupes",
@@ -44,13 +46,15 @@
     "fair": "Moyen",
     "good": "Bon",
     "very_good": "Très bon",
-    "excellent": "Excellent",
+    "excellent": "Exzellent",
     "illness_question": "Avez-vous été gravement malade au cours de l'année dernière ?",
     "illness_yes": "Oui",
     "illness_no": "Non",
     "children_question": "Avez-vous des enfants ou prévoyez-vous d'avoir des enfants ?",
     "children_yes": "Oui",
     "children_no": "Non",
+      "previous_button": "Précédent",
+  "next_button": "Suivant",
     "submit_button": "Soumettre"
   },
   "instructions": {
@@ -72,8 +76,6 @@
     "callout-3": "Vous pouvez arrêter à tout moment sans aucun désavantage.",
     "yes-desc": "Vous nous autorisez à utiliser vos réponses anonymes pour la recherche.",
     "no-desc": "Votre décision sera respectée et l'enquête prendra fin."
-
-
   },
   "no_consent": {
     "no_consent_title": "Merci pour votre temps !",
@@ -94,6 +96,8 @@
     "rating_medication_effect": "Sélectionner les patients pour lesquels les médicaments sont les plus efficaces",
     "rating_random_selection": "Sélection aléatoire des patients",
     "select_answer": "Sélectionner une évaluation",
+    "previous_button": "Précédent",
+    "next_button": "Suivant",
     "questions": [
       {
         "id": "save_life_years",
@@ -138,7 +142,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

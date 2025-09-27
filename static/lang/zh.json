@@ -31,6 +31,8 @@
     "no_religion": "不，我没有宗教信仰",
     "christian_label": "基督教",
     "islam_label": "伊斯兰教",
+    "previous_button": "上一页",
+"next_button": "下一页",
     "hinduism_label": "印度教",
     "buddhism_label": "佛教",
     "other_label": "其他"
@@ -44,6 +46,8 @@
     "fair": "一般",
     "good": "好",
     "very_good": "很好",
+      "previous_button": "上一页",
+  "next_button": "下一页",
     "excellent": "极好",
     "illness_question": "您在过去一年中是否患过严重疾病？",
     "illness_yes": "是",
@@ -92,6 +96,8 @@
     "rating_medication_effect": "选择那些药物最有效的患者",
     "rating_random_selection": "随机选择患者",
     "select_answer": "选择评分",
+      "previous_button": "上一页",
+  "next_button": "下一页",
     "questions": [
       {
         "id": "save_life_years",

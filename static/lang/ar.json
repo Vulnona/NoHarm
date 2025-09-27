@@ -33,6 +33,8 @@
     "islam_label": "إسلام",
     "hinduism_label": "هندوسية",
     "buddhism_label": "بوذية",
+    "previous_button": "السابق",
+"next_button": "التالي",
     "other_label": "أخرى"
   },
   "group_preferences": {
@@ -50,6 +52,8 @@
     "illness_no": "لا",
     "children_question": "هل لديك أطفال أو تخطط لإنجاب أطفال؟",
     "children_yes": "نعم",
+      "previous_button": "السابق",
+  "next_button": "التالي",
     "children_no": "لا",
     "submit_button": "إرسال"
   },
@@ -72,7 +76,6 @@
     "callout-3": "يمكنك التوقف في أي وقت دون أي عواقب.",
     "yes-desc": "أنت تسمح لنا باستخدام إجاباتك المجهولة لأغراض البحث.",
     "no-desc": "سيتم احترام قرارك وسيتم إنهاء الاستبيان."
-
   },
   "no_consent": {
     "no_consent_title": "شكرًا على وقتك!",
@@ -93,6 +96,8 @@
     "rating_medication_effect": "اختيار المرضى الذين تكون الأدوية أكثر فعالية لهم",
     "rating_random_selection": "الاختيار العشوائي للمرضى",
     "select_answer": "اختر تقييمًا",
+    "previous_button": "السابق",
+    "next_button": "التالي",
     "questions": [
       {
         "id": "save_life_years",
@@ -137,7 +142,7 @@
     ],
     "numbers": {
       "1": "١",
-      "2": "٢", 
+      "2": "٢",
       "3": "٣",
       "4": "٤",
       "5": "٥",

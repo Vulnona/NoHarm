@@ -32,6 +32,8 @@
     "christian_label": "খ্রিস্টান",
     "islam_label": "ইসলাম",
     "hinduism_label": "হিন্দু",
+    "previous_button": "পূর্ববর্তী",
+"next_button": "পরবর্তী",
     "buddhism_label": "বৌদ্ধ",
     "other_label": "অন্যান্য"
   },
@@ -50,6 +52,8 @@
     "illness_no": "না",
     "children_question": "আপনার কি সন্তান আছে বা সন্তান নেওয়ার পরিকল্পনা আছে?",
     "children_yes": "হ্যাঁ",
+      "previous_button": "পূর্ববর্তী",
+  "next_button": "পরবর্তী",
     "children_no": "না",
     "submit_button": "জমা দিন"
   },
@@ -92,6 +96,8 @@
     "rating_medication_effect": "এমন রোগীদের নির্বাচন করা যাদের জন্য ওষুধ সবচেয়ে কার্যকর",
     "rating_random_selection": "রোগীদের এলোমেলোভাবে বাছাই",
     "select_answer": "একটি রেটিং নির্বাচন করুন",
+      "previous_button": "পূর্ববর্তী",
+  "next_button": "পরবর্তী",
     "questions": [
       {
         "id": "save_life_years",

@@ -34,15 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (currentPage === "intro") {
                     // For intro.html
                     document.getElementById('intro-title').textContent = data.intro.intro_title;
-                    document.getElementById('intro-paragraph-1').textContent = data.intro.intro_paragraph_1;
-                    document.getElementById('intro-paragraph-2').textContent = data.intro.intro_paragraph_2;
-                    
+                    document.getElementById('intro-paragraph-1').innerHTML = data.intro.intro_paragraph_1;
+                    document.getElementById('intro-paragraph-2').innerHTML = data.intro.intro_paragraph_2;
                     // Update signature section if it exists
                     const signatureElement = document.querySelector('.signature');
                     if (signatureElement && data.intro.signature) {
                         signatureElement.innerHTML = data.intro.signature;
                     }
-                    
+
                     document.getElementById('consent-title').textContent = data.intro.consent_title;
                     document.getElementById('consent-message').textContent = data.intro.consent_message;
                     document.getElementById('yes-label-span').textContent = data.intro.yes_label;
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('no-desc').textContent = data.intro["no-desc"];
 
 
-                    
+
                     initConsentLogic(data.intro);
                 } else if (currentPage === "choice_experiment") {
                     // For choice_experiment.html
@@ -69,25 +68,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.querySelectorAll('.selection-label')[1].textContent = data.choice_experiment.recommendation;
                     document.querySelector('.btn-change').textContent = data.choice_experiment.yes_button;
                     document.querySelector('.btn-keep').textContent = data.choice_experiment.no_button;
-                    
+
                     // Update image descriptions if they exist
                     updateImageDescriptions(data);
                 } else if (currentPage === "demography") {
                     // For demography.html
                     document.querySelector('title').textContent = data.demography.title;
-                    
+
                     // Get the current question ID from the hidden input
                     const currentQuestionId = document.querySelector('input[name="question_id"]').value;
-                    
+
                     // Translate the question label regardless of content
                     document.querySelector('.question-block label').textContent = data.demography[`${currentQuestionId}_question`];
-                    
+
+                    // Buttons
+                    const prevBtn = document.querySelector('.prev-btn');
+                    const nextBtn = document.querySelector('.next-btn');
+                    if (prevBtn) prevBtn.textContent = data.demography.previous_button || "Previous";
+                    if (nextBtn) nextBtn.textContent = data.demography.next_button || "Next";
                     // Handle different question types
                     if (currentQuestionId === "gender") {
                         // Get all label elements and match by their for attribute
                         document.querySelectorAll('label[for]').forEach(label => {
                             const forAttr = label.getAttribute('for');
-                            
+
                             if (forAttr === 'female') label.textContent = data.demography.female_label;
                             if (forAttr === 'male') label.textContent = data.demography.male_label;
                             if (forAttr === 'diverse') label.textContent = data.demography.diverse_label;
@@ -99,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Get all label elements and match by their for attribute
                         document.querySelectorAll('label[for]').forEach(label => {
                             const forAttr = label.getAttribute('for');
-                            
+
                             if (forAttr === 'none') label.textContent = data.demography.no_religion;
                             if (forAttr === 'christian') label.textContent = data.demography.christian_label;
                             if (forAttr === 'islam') label.textContent = data.demography.islam_label;
@@ -109,13 +113,22 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                     }
                 }
-                 else if (currentPage === "instructions") {
+                else if (currentPage === "instructions") {
                     // For instructions.html
                     document.querySelector('h1').textContent = data.instructions.title;
                     document.querySelector('.submit-btn').textContent = data.instructions.continue_button;
                 } else if (currentPage === "group_preferences") {
                     // For group_preference.html
                     const questionId = document.querySelector('input[name="question_id"]').value;
+                    // ✅ Add translations for navigation buttons
+                    const prevBtn = document.querySelector('.prev-btn');
+                    const nextBtn = document.querySelector('.next-btn');
+                    if (prevBtn && data.group_preferences.previous_button) {
+                        prevBtn.textContent = data.group_preferences.previous_button;
+                    }
+                    if (nextBtn && data.group_preferences.next_button) {
+                        nextBtn.textContent = data.group_preferences.next_button;
+                    }
                     if (questionId === 'general_health') {
                         document.querySelector('.health-question-label').textContent = data.group_preferences.general_health_question;
                         document.querySelector('.health-scale-labels span:first-child').textContent = data.group_preferences.very_poor;
@@ -132,6 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (currentPage === "procedural_ratings") {
                     // For procedural_rating.html
                     document.querySelector('.rating-container p').textContent = data.procedural_ratings.rating_intro;
+                    document.querySelector('.prev-btn').textContent = data.procedural_ratings.previous_button;
+                    document.querySelector('.next-btn').textContent = data.procedural_ratings.next_button;
+
                     const questionId = document.querySelector('input[name="question_id"]').value;
                     if (data.procedural_ratings.questions) {
                         const question = data.procedural_ratings.questions.find(q => q.id === questionId);
@@ -140,8 +156,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             document.querySelector('.question-description').textContent = question.full_text.replace(question.label + ': ', '');
                         }
                     }
-                    document.querySelector('.scale-labels .scale-label:first-child').textContent = data.procedural_ratings.not_fair;
-                    document.querySelector('.scale-labels .scale-label:last-child').textContent = data.procedural_ratings.very_fair;
+
+
+                    // Update fairness labels dynamically
+                    const labels = document.querySelectorAll(".scale-buttons .circle-label");
+                    if (labels.length > 0) {
+                        labels[0].textContent = data.procedural_ratings.not_fair;   // first label
+                        labels[labels.length - 1].textContent = data.procedural_ratings.very_fair; // last label
+                    }
+
                 } else if (currentPage === "results") {
                     // For results.html
                     document.querySelector('h2').textContent = data.results.user_responses;
@@ -158,11 +181,11 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error loading language file:', error));
     }
-    
+
     // Function to update image descriptions based on filename
     function updateImageDescriptions(data) {
         if (!data.images) return;
-        
+
         // Find all images with data-filename attributes
         document.querySelectorAll('img[data-filename]').forEach(img => {
             const filename = img.dataset.filename;
@@ -170,17 +193,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Update alt text and aria-label
                 img.alt = data.images[filename];
                 img.setAttribute('aria-label', data.images[filename]);
-                
+
                 // If there's a caption or description element after the image, update that too
                 const nextEl = img.nextElementSibling;
-                if (nextEl && (nextEl.classList.contains('image-caption') || 
-                               nextEl.classList.contains('image-description') ||
-                               nextEl.classList.contains('hover-description'))) {
+                if (nextEl && (nextEl.classList.contains('image-caption') ||
+                    nextEl.classList.contains('image-description') ||
+                    nextEl.classList.contains('hover-description'))) {
                     nextEl.textContent = data.images[filename];
                 }
             }
         });
-        
+
         // Handle specific patient descriptions in choice experiment
         const patientDescriptions = {
             'patient_1_overweight': 'Overweight_simpler.jpg',
@@ -190,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
             'patient_1_young_adult': 'Patient_with_Arm_Sling.png',
             'patient_2_senior_ill': 'Patient_with_IV_Drip.png'
         };
-        
+
         // Update patient descriptions if they exist
         for (const [id, filename] of Object.entries(patientDescriptions)) {
             const element = document.getElementById(`${id}-label`);
@@ -201,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    
+
     // Function to update rating questions
     function updateRatingQuestions(questions) {
         // Find all question elements by their IDs and update them
@@ -211,13 +234,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (labelElement) {
                 labelElement.textContent = question.label;
             }
-            
+
             // Update full text description if visible
             const fullTextElement = document.getElementById(`${question.id}-full-text`);
             if (fullTextElement) {
                 fullTextElement.textContent = question.full_text;
             }
-            
+
             // Update tooltips or other elements that might contain the question text
             const tooltipElement = document.querySelector(`.tooltip[data-question="${question.id}"]`);
             if (tooltipElement) {
@@ -228,8 +251,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    } 
-    
+    }
+
     function initConsentLogic(texts) {
         const radios = document.querySelectorAll('input[name="consent"]');
         const btn = document.getElementById('start-btn');
@@ -257,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         radios.forEach(r => r.addEventListener('change', updateConsentButton));
         updateConsentButton();
-}
+    }
 
 
 
@@ -266,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Add this outside the DOMContentLoaded event handler
-window.updateModalTranslations = function() {
+window.updateModalTranslations = function () {
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
     fetch(`/static/lang/${currentLanguage}.json`)
         .then(response => response.json())
@@ -277,7 +300,7 @@ window.updateModalTranslations = function() {
                 const filename = img.dataset.filename;
                 if (data.images && data.images[filename]) {
                     img.alt = data.images[filename];
-                    
+
                     // Find description element
                     const descId = img.id + '-description';
                     const descEl = document.getElementById(descId);

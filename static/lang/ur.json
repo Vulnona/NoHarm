@@ -33,6 +33,8 @@
     "islam_label": "اسلام",
     "hinduism_label": "ہندو مت",
     "buddhism_label": "بدھ مت",
+    "previous_button": "پچھلا",
+"next_button": "اگلا",
     "other_label": "دیگر"
   },
   "group_preferences": {
@@ -51,6 +53,8 @@
     "children_question": "کیا آپ کے بچے ہیں یا آپ بچے پیدا کرنے کا ارادہ رکھتے ہیں؟",
     "children_yes": "ہاں",
     "children_no": "نہیں",
+      "previous_button": "پچھلا",
+  "next_button": "اگلا",
     "submit_button": "جمع کرائیں"
   },
   "instructions": {
@@ -92,6 +96,8 @@
     "rating_medication_effect": "ان مریضوں کا انتخاب کرنا جن کے لیے دوا سب سے زیادہ مؤثر ہے",
     "rating_random_selection": "مریضوں کا بے ترتیب انتخاب",
     "select_answer": "درجہ بندی منتخب کریں",
+      "previous_button": "پچھلا",
+  "next_button": "اگلا",
     "questions": [
       {
         "id": "save_life_years",
