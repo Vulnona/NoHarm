@@ -44,6 +44,12 @@
             <input type="hidden" name="question_id" value="{{ question.id }}">
             <input type="hidden" name="current_index" value="{{ index }}">
 
+            {% if show_intro %}
+            <div class="demography-intro" id="demography-intro">
+                Thank you very much! In the following we would like to ask you a few more general questions.
+            </div>
+            {% endif %}
+
             <div class="question-block">
                 <label>{{ question.label }}</label>
 
@@ -85,9 +91,20 @@
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("demography-form");
             const ageInput = document.getElementById("age-input");
+            const questionIdField = form ? form.querySelector("input[name='question_id']") : null;
+            const questionId = questionIdField ? questionIdField.value : null;
 
             if (!ageInput) {
                 return;
+            }
+
+            if (questionId) {
+                const savedAge = localStorage.getItem('demography_' + questionId);
+                if (savedAge !== null) {
+                    ageInput.value = savedAge;
+                } else if (ageInput.value) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
             }
 
             function showError(message) {
@@ -134,6 +151,9 @@
                 }
 
                 clearError();
+                if (questionId) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
             });
 
             // 🟢 Live validation while typing
@@ -152,6 +172,10 @@
 
                     showError(langErrorMsg);
                 }
+
+                if (questionId) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
             });
         });
     </script>
@@ -163,47 +187,99 @@
             const prevBtn = document.querySelector(".prev-btn");
             // Disable Previous on the very first question
             const currentIndex = parseInt(form.querySelector("input[name='current_index']").value, 10);
-            if (currentIndex === 0) {
-                prevBtn.disabled = true;
+            const questionId = form.querySelector("input[name='question_id']").value;
+            const radios = form.querySelectorAll("input[type=radio][name='answer']");
+            const textInput = form.querySelector("input[type=text][name='answer']");
+            const ageField = document.getElementById("age-input");
+            const otherNumberInput = !ageField ? form.querySelector("input[type=number][name='answer']") : null;
+            const savedAnswer = localStorage.getItem('demography_' + questionId);
+            prevBtn.disabled = false;
+
+            if (savedAnswer !== null) {
+                if (radios.length > 0) {
+                    radios.forEach(r => {
+                        if (r.value === savedAnswer) {
+                            r.checked = true;
+                        }
+                    });
+                } else if (textInput) {
+                    textInput.value = savedAnswer;
+                } else if (!ageField && otherNumberInput) {
+                    otherNumberInput.value = savedAnswer;
+                }
+            } else {
+                if (radios.length > 0) {
+                    const checked = Array.from(radios).find(r => r.checked);
+                    if (checked) {
+                        localStorage.setItem('demography_' + questionId, checked.value);
+                    }
+                } else if (textInput && textInput.value.trim().length > 0) {
+                    localStorage.setItem('demography_' + questionId, textInput.value);
+                } else if (!ageField && otherNumberInput && otherNumberInput.value.trim().length > 0) {
+                    localStorage.setItem('demography_' + questionId, otherNumberInput.value);
+                }
             }
 
             // Enable/disable Next based on input
             function toggleNextButton() {
-                let valid = false;
-
-                // Check radio buttons
-                const radios = form.querySelectorAll("input[type=radio]");
-                if (radios.length > 0) {
-                    valid = Array.from(radios).some(r => r.checked);
+                const radioValid = radios.length > 0 ? Array.from(radios).some(r => r.checked) : false;
+                const textValid = textInput ? textInput.value.trim().length > 0 : false;
+                let numberValid = false;
+                if (ageField) {
+                    const age = parseInt(ageField.value, 10);
+                    numberValid = !isNaN(age) && age >= 16 && age <= 120;
+                } else if (otherNumberInput) {
+                    numberValid = otherNumberInput.value.trim().length > 0;
                 }
 
-                // Check text input
-                const textInput = form.querySelector("input[type=text]");
-                if (textInput) {
-                    valid = textInput.value.trim().length > 0;
-                }
+                const valid = radioValid || textValid || numberValid;
 
-                // Check number input
-                const numberInput = form.querySelector("input[type=number]");
-                if (numberInput) {
-                    const age = parseInt(numberInput.value, 10);
-                    if (numberInput.id === "age-input") {
-                        valid = !isNaN(age) && age >= 16 && age <= 120;
-                    } else {
-                        valid = numberInput.value.trim().length > 0;
-                    }
+                if (nextBtn) {
+                    nextBtn.disabled = !valid;
                 }
-
-                // Enable or disable Next button
-                nextBtn.disabled = !valid;
             }
 
             // Listen for input changes
             form.addEventListener("input", toggleNextButton);
 
+            radios.forEach(r => {
+                r.addEventListener("change", () => {
+                    localStorage.setItem('demography_' + questionId, r.value);
+                    toggleNextButton();
+                });
+            });
+
+            if (textInput) {
+                textInput.addEventListener("input", () => {
+                    localStorage.setItem('demography_' + questionId, textInput.value);
+                });
+            }
+
+            if (otherNumberInput) {
+                otherNumberInput.addEventListener("input", () => {
+                    localStorage.setItem('demography_' + questionId, otherNumberInput.value);
+                });
+            }
+
             // 🔙 Previous button just goes back in browser history
             prevBtn.addEventListener("click", function () {
-                window.history.back();
+                const lastIndex = localStorage.getItem('procedural_last_index');
+                let indexToUse = lastIndex !== null ? parseInt(lastIndex, 10) : null;
+                if (indexToUse !== null && Number.isNaN(indexToUse)) {
+                    indexToUse = null;
+                }
+                const priorAnswer = indexToUse !== null ? localStorage.getItem('procedural_rating_' + indexToUse) : null;
+
+                if (currentIndex === 0 && indexToUse !== null) {
+                    const url = new URL('/procedural-ratings', window.location.origin);
+                    url.searchParams.set('index', indexToUse);
+                    if (priorAnswer) {
+                        url.searchParams.set('prefill', priorAnswer);
+                    }
+                    window.location.href = url.toString();
+                } else {
+                    window.history.back();
+                }
             });
 
             // 🟢 Run once at start

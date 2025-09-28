@@ -16,7 +16,8 @@
     "recommendation": "推奨",
     "yes_button": "はい",
     "no_button": "いいえ",
-    "final_selection_instruction": "治療する患者について最終選択を行ってください。"
+    "final_selection_instruction": "治療する患者について最終選択を行ってください。",
+    "question_counter_template": "質問 {current} / {total}"
   },
   "demography": {
     "title": "人口統計学的質問",
@@ -32,7 +33,7 @@
     "no_religion": "いいえ、私は宗教を持っていません",
     "christian_label": "キリスト教",
     "previous_button": "前へ",
-"next_button": "次へ",
+    "next_button": "次へ",
     "islam_label": "イスラム教",
     "hinduism_label": "ヒンドゥー教",
     "buddhism_label": "仏教",
@@ -50,13 +51,13 @@
     "excellent": "優れている",
     "illness_question": "この1年間で重病を患いましたか？",
     "illness_yes": "はい",
-      "previous_button": "前へ",
-  "next_button": "次へ",
+    "previous_button": "前へ",
+    "next_button": "次へ",
     "illness_no": "いいえ",
     "children_question": "子供がいますか、または子供を持つ予定ですか？",
     "children_yes": "はい",
     "children_no": "いいえ",
-    "submit_button": "送信"
+    "submit_button": "アンケートを送信"
   },
   "instructions": {
     "title": "どうもありがとうございます！ 次に、いくつかの一般的な質問をさせていただきます。",
@@ -71,12 +72,14 @@
     "consent_message": "ここで、あなたの回答を科学的目的に使用することに同意するかどうかを決めてください。同意しない場合は、調査の終わりにリダイレクトされます。",
     "yes_label": "このアンケートの一部として提出したデータを研究目的で使用することに同意します。",
     "no_label": "このアンケートの一部として提出したデータを研究目的で使用することに同意しません。",
-    "start_button": "同意を提出",
+    "start_button": "続行するにはオプションを選択してください",
     "callout-1": "参加は任意です。",
     "callout-2": "回答は匿名で収集され、データ保護規則に従って取り扱われます。",
     "callout-3": "不利益なく、いつでも中止できます。",
     "yes-desc": "匿名の回答を研究のために使用することを許可します。",
-    "no-desc": "あなたの決定は尊重され、調査は終了します。"
+    "no-desc": "あなたの決定は尊重され、調査は終了します。",
+    "agree_button": "同意して続行",
+    "disagree_button": "同意しない、アンケートを終了"
   },
   "no_consent": {
     "no_consent_title": "お時間をいただきありがとうございます！",
@@ -97,8 +100,8 @@
     "rating_medication_effect": "薬が最も効果的な患者を選択する",
     "rating_random_selection": "患者のランダム選択",
     "select_answer": "評価を選択",
-      "previous_button": "前へ",
-  "next_button": "次へ",
+    "previous_button": "前へ",
+    "next_button": "次へ",
     "questions": [
       {
         "id": "save_life_years",
@@ -143,7 +146,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

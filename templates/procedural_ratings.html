@@ -88,6 +88,28 @@
             const nextBtn = form.querySelector(".next-btn");
             const dir = document.getElementById("nav-direction");
             const radios = form.querySelectorAll('input[name="rating"]');
+            const currentIndexInput = form.querySelector("input[name='current_index']");
+            const currentIndex = currentIndexInput ? parseInt(currentIndexInput.value, 10) : 0;
+            const urlParams = new URLSearchParams(window.location.search);
+            const prefillParam = urlParams.get('prefill');
+            const storedValue = localStorage.getItem('procedural_rating_' + currentIndex);
+            const prefillValue = prefillParam || storedValue;
+
+            if (prefillValue) {
+                radios.forEach(r => {
+                    if (r.value === prefillValue) {
+                        r.checked = true;
+                    }
+                });
+                localStorage.setItem('procedural_rating_' + currentIndex, prefillValue);
+            } else {
+                const serverSelected = form.querySelector('input[name="rating"]:checked');
+                if (serverSelected) {
+                    localStorage.setItem('procedural_rating_' + currentIndex, serverSelected.value);
+                }
+            }
+
+            localStorage.setItem('procedural_last_index', currentIndex);
 
             // Enable Next if a selection already exists (persisted from server)
             function updateNext() {
@@ -98,6 +120,7 @@
             // Radio listeners
             radios.forEach(r => {
                 r.addEventListener("change", () => {
+                    localStorage.setItem('procedural_rating_' + currentIndex, r.value);
                     updateNext(); // Enable Next as soon as user chooses
                 });
             });
@@ -106,7 +129,18 @@
             if (prevBtn) {
                 prevBtn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    window.history.back();
+                    const previousIndex = currentIndex - 1;
+                    if (previousIndex >= 0) {
+                        const prevUrl = new URL('/procedural-ratings', window.location.origin);
+                        prevUrl.searchParams.set('index', previousIndex);
+                        const savedPrev = localStorage.getItem('procedural_rating_' + previousIndex);
+                        if (savedPrev) {
+                            prevUrl.searchParams.set('prefill', savedPrev);
+                        }
+                        window.location.href = prevUrl.toString();
+                    } else {
+                        window.history.back();
+                    }
                 });
             }
 

@@ -58,6 +58,19 @@ function submitChoice(selectedImage) {
     });
 }
 
+function updateArrowLabels() {
+    const isVertical = window.matchMedia('(max-width: 600px)').matches;
+    const leftBtn = document.querySelector('.arrow-btn.left');
+    const rightBtn = document.querySelector('.arrow-btn.right');
+
+    if (leftBtn) {
+        leftBtn.setAttribute('aria-label', isVertical ? 'Move up' : 'Move left');
+    }
+    if (rightBtn) {
+        rightBtn.setAttribute('aria-label', isVertical ? 'Move down' : 'Move right');
+    }
+}
+
 function moveDoctor(direction) {
     const doctor = document.getElementById('draggableDoctor');
     const patients = document.querySelectorAll('.patient-card');
@@ -89,8 +102,9 @@ function moveDoctor(direction) {
 
     setTimeout(() => {
         const patientImage = target.querySelector('.patient-image');
-        if (patientImage && patientImage.dataset.filename) {
-            submitChoice(patientImage.dataset.filename);
+        if (patientImage && (patientImage.dataset.fullpath || patientImage.dataset.filename)) {
+            const payload = patientImage.dataset.fullpath || patientImage.dataset.filename;
+            submitChoice(payload);
         }
     }, 500);
 }
@@ -201,8 +215,9 @@ function initDraggableDoctor() {
                 
                 // Get the image and submit the choice
                 const img = patient.querySelector('.patient-image');
-                if (img && img.dataset.filename) {
-                    submitChoice(img.dataset.filename);
+                if (img && (img.dataset.fullpath || img.dataset.filename)) {
+                    const payload = img.dataset.fullpath || img.dataset.filename;
+                    submitChoice(payload);
                     isDragging = false;
                 }
             } else {
@@ -247,7 +262,9 @@ function showReconsiderModal(data) {
     
     // Set data-filename attributes for translation
     originalChoice.setAttribute('data-filename', data.original.split('/').pop());
+    originalChoice.setAttribute('data-fullpath', data.original);
     suggestedChoice.setAttribute('data-filename', data.suggestion.split('/').pop());
+    suggestedChoice.setAttribute('data-fullpath', data.suggestion);
     
     originalDesc.textContent = data.original_desc;
     suggestedDesc.textContent = data.suggestion_desc;
@@ -348,5 +365,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1000);
 });
-
-

@@ -16,7 +16,8 @@
     "recommendation": "Empfehlung",
     "yes_button": "Ja",
     "no_button": "Nein",
-    "final_selection_instruction": "Bitte treffen Sie nun Ihre endgültige Entscheidung, welcher Patient behandelt werden soll."
+    "final_selection_instruction": "Bitte treffen Sie nun Ihre endgültige Entscheidung, welcher Patient behandelt werden soll.",
+    "question_counter_template": "Frage {current} von {total}"
   },
   "demography": {
     "title": "Demographische Fragen",
@@ -34,7 +35,7 @@
     "islam_label": "Islam",
     "hinduism_label": "Hinduismus",
     "previous_button": "Zurück",
-"next_button": "Weiter",
+    "next_button": "Weiter",
     "buddhism_label": "Buddhismus",
     "other_label": "Andere"
   },
@@ -54,9 +55,9 @@
     "children_question": "Haben Sie Kinder oder planen Sie, Kinder zu bekommen?",
     "children_yes": "Ja",
     "children_no": "Nein",
-      "previous_button": "Zurück",
-  "next_button": "Weiter",
-    "submit_button": "Absenden"
+    "previous_button": "Zurück",
+    "next_button": "Weiter",
+    "submit_button": "Umfrage absenden"
   },
   "instructions": {
     "title": "Vielen Dank! Im Folgenden möchten wir Ihnen noch einige allgemeine Fragen stellen.",
@@ -71,13 +72,14 @@
     "consent_message": "Bitte entscheiden Sie jetzt, ob Sie der Verwendung Ihrer Antworten für wissenschaftliche Zwecke zustimmen möchten. Wenn Sie nicht einverstanden sind, werden Sie zum Ende der Umfrage weitergeleitet.",
     "yes_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke zu.",
     "no_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke nicht zu.",
-    "start_button": "Einwilligung abschicken",
+    "start_button": "Bitte wählen Sie eine Option, um fortzufahren",
     "callout-1": "Die Teilnahme ist freiwillig.",
     "callout-2": "Ihre Antworten werden anonym gesammelt und gemäß den Datenschutzbestimmungen verarbeitet.",
     "callout-3": "Sie können jederzeit ohne Nachteil abbrechen.",
     "yes-desc": "Sie erlauben uns, Ihre anonymen Antworten für Forschungszwecke zu verwenden.",
-    "no-desc": "Ihre Entscheidung wird respektiert und die Umfrage wird beendet."
-    
+    "no-desc": "Ihre Entscheidung wird respektiert und die Umfrage wird beendet.",
+    "agree_button": "Zustimmen & Fortfahren",
+    "disagree_button": "Nicht zustimmen, Umfrage beenden"
   },
   "no_consent": {
     "no_consent_title": "Vielen Dank für Ihre Zeit!",
@@ -99,7 +101,7 @@
     "rating_random_selection": "Zufällige Auswahl von Patienten",
     "select_answer": "Bewertung auswählen",
     "previous_button": "Zurück",
-  "next_button": "Weiter",
+    "next_button": "Weiter",
     "questions": [
       {
         "id": "save_life_years",
@@ -144,7 +146,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

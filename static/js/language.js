@@ -70,6 +70,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.querySelector('.btn-change').textContent = data.choice_experiment.yes_button;
                     document.querySelector('.btn-keep').textContent = data.choice_experiment.no_button;
 
+                    const progressBadge = document.getElementById('question-progress');
+                    if (progressBadge && data.choice_experiment.question_counter_template) {
+                        progressBadge.dataset.template = data.choice_experiment.question_counter_template;
+                        const currentValue = parseInt(progressBadge.dataset.current, 10) || 1;
+                        const totalValue = parseInt(progressBadge.dataset.total, 10) || 3;
+                        progressBadge.textContent = data.choice_experiment.question_counter_template
+                            .replace('{current}', currentValue)
+                            .replace('{total}', totalValue);
+                    }
+
                     // Update image descriptions if they exist
                     updateImageDescriptions(data);
                 } else if (currentPage === "demography") {
@@ -88,6 +98,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     const nextBtn = document.querySelector('.next-btn');
                     if (prevBtn) prevBtn.textContent = data.demography.previous_button || "Previous";
                     if (nextBtn) nextBtn.textContent = data.demography.next_button || "Next";
+
+                    const introBanner = document.getElementById('demography-intro');
+                    if (introBanner && data.instructions?.title) {
+                        introBanner.textContent = data.instructions.title;
+                    }
 
                     const ageErrorElement = document.getElementById("age-error-msg");
                     if (ageErrorElement && data.demography.age_invalid) {
@@ -144,8 +159,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (prevBtn && data.group_preferences.previous_button) {
                         prevBtn.textContent = data.group_preferences.previous_button;
                     }
-                    if (nextBtn && data.group_preferences.next_button) {
-                        nextBtn.textContent = data.group_preferences.next_button;
+                    if (nextBtn) {
+                        const isLast = questionId === 'children';
+                        if (isLast && data.group_preferences.submit_button) {
+                            nextBtn.textContent = data.group_preferences.submit_button;
+                        } else if (data.group_preferences.next_button) {
+                            nextBtn.textContent = data.group_preferences.next_button;
+                        }
                     }
                     if (questionId === 'general_health') {
                         document.querySelector('.health-question-label').textContent = data.group_preferences.general_health_question;
@@ -330,4 +350,3 @@ window.updateModalTranslations = function () {
         })
         .catch(error => console.error('Error loading modal translations:', error));
 };
-

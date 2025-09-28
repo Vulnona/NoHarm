@@ -80,7 +80,9 @@
 
             <div class="form-navigation">
                 <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>Previous</button>
-                <button type="submit" class="next-btn" disabled>Next</button>
+                <button type="submit" class="next-btn" disabled>
+                    {% if question.id == 'children' %}Submit Survey{% else %}Next{% endif %}
+                </button>
             </div>
         </form>
     </div>
@@ -103,39 +105,6 @@
 
             const questionId = document.querySelector('input[name="question_id"]').value;
             const currentIndex = parseInt(document.querySelector('input[name="current_index"]').value, 10);
-
-            // ---- NEW: last-question handling ----
-            const isLast = (questionId === "children") || (currentIndex === 2);
-
-            const submitLabels = {
-                en: "Submit Survey",
-                fr: "Soumettre le questionnaire",
-                de: "Umfrage absenden",
-                es: "Enviar encuesta",
-                ru: "Отправить опрос",
-                zh: "提交问卷",
-                hi: "सर्वे सबमिट करें",
-                bn: "সার্ভে জমা দিন",
-                ja: "アンケートを送信",
-                ar: "إرسال الاستبيان",
-                ur: "سروے جمع کریں"
-            };
-            const lang = (localStorage.getItem("selectedLanguage") || "en").toLowerCase();
-            const submitText = submitLabels[lang] || submitLabels.en;
-
-            function enforceSubmitLabel() {
-                if (isLast && nextBtn && nextBtn.textContent.trim() !== submitText) {
-                    nextBtn.textContent = submitText;
-                }
-            }
-
-            enforceSubmitLabel();
-
-            if (isLast && nextBtn) {
-                const mo = new MutationObserver(enforceSubmitLabel);
-                mo.observe(nextBtn, { childList: true, characterData: true, subtree: true });
-            }
-            // ---- END last-question block ----
 
             // ---- NEW: save & restore answers ----
             const saved = localStorage.getItem("answer_" + questionId);

@@ -16,7 +16,8 @@
     "recommendation": "Recommandation",
     "yes_button": "Oui",
     "no_button": "Non",
-    "final_selection_instruction": "Veuillez maintenant faire votre sélection finale pour quel patient traiter."
+    "final_selection_instruction": "Veuillez maintenant faire votre sélection finale pour quel patient traiter.",
+    "question_counter_template": "Question {current} sur {total}"
   },
   "demography": {
     "title": "Questions démographiques",
@@ -56,7 +57,7 @@
     "children_no": "Non",
     "previous_button": "Précédent",
     "next_button": "Suivant",
-    "submit_button": "Soumettre"
+    "submit_button": "Soumettre le questionnaire"
   },
   "instructions": {
     "title": "Merci beaucoup ! Dans ce qui suit, nous aimerions vous poser quelques questions générales supplémentaires.",
@@ -71,12 +72,14 @@
     "consent_message": "Veuillez décider maintenant si vous souhaitez donner votre consentement à l'utilisation de vos réponses à des fins scientifiques. Si vous n'êtes pas d'accord, vous serez redirigé vers la fin de l'enquête.",
     "yes_label": "Je consens à l'utilisation de mes données soumises dans le cadre de ce questionnaire à des fins de recherche.",
     "no_label": "Je ne consens pas à l'utilisation de mes données soumises dans le cadre de ce questionnaire à des fins de recherche.",
-    "start_button": "Soumettre le consentement",
+    "start_button": "Choisissez une option pour continuer",
     "callout-1": "La participation est volontaire.",
     "callout-2": "Les réponses sont collectées de manière anonyme et traitées conformément aux règles de protection des données.",
     "callout-3": "Vous pouvez arrêter à tout moment sans aucun désavantage.",
     "yes-desc": "Vous nous autorisez à utiliser vos réponses anonymes pour la recherche.",
-    "no-desc": "Votre décision sera respectée et l'enquête prendra fin."
+    "no-desc": "Votre décision sera respectée et l'enquête prendra fin.",
+    "agree_button": "Accepter et continuer",
+    "disagree_button": "Ne pas consentir, terminer l'enquête"
   },
   "no_consent": {
     "no_consent_title": "Merci pour votre temps !",

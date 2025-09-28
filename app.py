@@ -440,8 +440,8 @@ def procedural_ratings():
 
         # Redirect to the next section if all questions are answered
         if next_index >= len(questions):
-            app.logger.info('all ratings Q&A done, now moving on to user instructions')
-            return redirect('/instructions')
+            app.logger.info('all ratings Q&A done, now moving on to demographics')
+            return redirect('/demography')
         else:
             app.logger.info('ratings Q&A continued')
 
@@ -455,7 +455,7 @@ def procedural_ratings():
     # Get the current question based on the index in the query parameter
     current_index = int(request.args.get('index', 0))
     if current_index >= len(questions):
-        return redirect('/instructions')  # Redirect to next section if all are answered
+        return redirect('/demography')  # Redirect to next section if all are answered
     else:
         app.logger.info('ratings Q&A cntd..')
     question = questions[current_index]
@@ -465,19 +465,10 @@ def procedural_ratings():
 
 
 
-@app.route('/instructions', methods=['GET', 'POST'])
+@app.route('/instructions')
 def instructions():
-    if request.method == 'POST':
-        # Once the user is ready, redirect them to the demography page.
-        app.logger.info('redirected to demography page')
-        return redirect('/demography')
-    elif request.method == 'GET':
-        app.logger.info('instruction page successfully rendered')
-        return render_template('instructions.html')
-    else:
-        app.logger.error('POST/GET request not found')
-        app.logger.error(str(request.method) + ' request initiated')
-        return jsonify({'error': 'Invalid request ' + str(request.method)}), 400
+    app.logger.info('instructions shortcut: redirecting straight to demographics')
+    return redirect('/demography')
 
 
 
@@ -570,7 +561,8 @@ def demography():
         current_index = int(request.args.get('index', 0))
         question = questions[current_index]
         app.logger.info('demography page successfully rendered')
-        return render_template('demography.html', question=question, index=current_index)
+        show_intro = (current_index == 0)
+        return render_template('demography.html', question=question, index=current_index, show_intro=show_intro)
     else:
         app.logger.error('POST/GET request not found')
         app.logger.error(str(request.method) + ' request initiated')

@@ -16,7 +16,8 @@
     "recommendation": "Recommendation",
     "yes_button": "Yes",
     "no_button": "No",
-    "final_selection_instruction": "Now please make your final selection for which patient to treat."
+    "final_selection_instruction": "Now please make your final selection for which patient to treat.",
+    "question_counter_template": "Question {current} of {total}"
   },
   "demography": {
     "title": "Demographic Questions",
@@ -34,7 +35,7 @@
     "islam_label": "Islam",
     "hinduism_label": "Hinduism",
     "previous_button": "Previous",
-"next_button": "Next",
+    "next_button": "Next",
     "buddhism_label": "Buddhism",
     "other_label": "Other"
   },
@@ -54,9 +55,9 @@
     "children_question": "Do you have children or are you planning to have children?",
     "children_yes": "Yes",
     "children_no": "No",
-      "previous_button": "Previous",
-  "next_button": "Next",
-    "submit_button": "Submit"
+    "previous_button": "Previous",
+    "next_button": "Next",
+    "submit_button": "Submit Survey"
   },
   "instructions": {
     "title": "Thank you very much! In the following we would like to ask you a few more general questions.",
@@ -71,14 +72,14 @@
     "consent_message": "Please decide now if you want to give your consent to the use of your answers for scientific purposes. If you do not agree, you will be redirected to the end of the survey.",
     "yes_label": "I consent to the use of my data submitted as part of this questionnaire for research purposes.",
     "no_label": "I do not consent to the use of my data submitted as part of this questionnaire for research purposes.",
-    "start_button": "Submit Consent",
+    "start_button": "Choose an option to continue",
     "callout-1": "Participation is voluntary.",
     "callout-2": "Answers are collected anonymously and handled under data protection rules.",
     "callout-3": "You can stop at any time without any disadvantage.",
     "yes-desc": "You allow us to use your anonymous answers for research.",
-    "no-desc": "Your decision will be respected and the survey will end."
-
-    
+    "no-desc": "Your decision will be respected and the survey will end.",
+    "agree_button": "Agree & Continue",
+    "disagree_button": "Do Not Consent, Finish Survey"
   },
   "no_consent": {
     "no_consent_title": "Thank you for your time!",
@@ -145,7 +146,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

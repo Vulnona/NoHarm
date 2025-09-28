@@ -16,7 +16,8 @@
     "recommendation": "Recomendación",
     "yes_button": "Sí",
     "no_button": "No",
-    "final_selection_instruction": "Ahora, por favor, haga su selección final sobre qué paciente tratar."
+    "final_selection_instruction": "Ahora, por favor, haga su selección final sobre qué paciente tratar.",
+    "question_counter_template": "Pregunta {current} de {total}"
   },
   "demography": {
     "title": "Preguntas Demográficas",
@@ -35,7 +36,7 @@
     "hinduism_label": "Hinduismo",
     "buddhism_label": "Budismo",
     "previous_button": "Anterior",
-"next_button": "Siguiente",
+    "next_button": "Siguiente",
     "other_label": "Otra"
   },
   "group_preferences": {
@@ -53,10 +54,10 @@
     "illness_no": "No",
     "children_question": "¿Tiene hijos o planea tener hijos?",
     "children_yes": "Sí",
-      "previous_button": "Anterior",
-  "next_button": "Siguiente",
+    "previous_button": "Anterior",
+    "next_button": "Siguiente",
     "children_no": "No",
-    "submit_button": "Enviar"
+    "submit_button": "Enviar encuesta"
   },
   "instructions": {
     "title": "¡Muchas gracias! A continuación, nos gustaría hacerle algunas preguntas generales más.",
@@ -71,12 +72,14 @@
     "consent_message": "Por favor, decida ahora si desea dar su consentimiento para el uso de sus respuestas con fines científicos. Si no está de acuerdo, será redirigido al final de la encuesta.",
     "yes_label": "Doy mi consentimiento para el uso de mis datos enviados como parte de este cuestionario con fines de investigación.",
     "no_label": "No doy mi consentimiento para el uso de mis datos enviados como parte de este cuestionario con fines de investigación.",
-    "start_button": "Enviar Consentimiento",
+    "start_button": "Elige una opción para continuar",
     "callout-1": "La participación es voluntaria.",
     "callout-2": "Las respuestas se recopilan de forma anónima y se tratan según las normas de protección de datos.",
     "callout-3": "Puede dejar de participar en cualquier momento sin ninguna desventaja.",
     "yes-desc": "Usted nos permite usar sus respuestas anónimas para la investigación.",
-    "no-desc": "Su decisión será respetada y la encuesta finalizará."
+    "no-desc": "Su decisión será respetada y la encuesta finalizará.",
+    "agree_button": "Aceptar y continuar",
+    "disagree_button": "No doy mi consentimiento, finalizar encuesta"
   },
   "no_consent": {
     "no_consent_title": "¡Gracias por su tiempo!",
@@ -97,8 +100,8 @@
     "rating_medication_effect": "Seleccionar pacientes para quienes la medicación es más efectiva",
     "rating_random_selection": "Selección aleatoria de pacientes",
     "select_answer": "Seleccione una calificación",
-     "previous_button": "Anterior",
-  "next_button": "Siguiente",
+    "previous_button": "Anterior",
+    "next_button": "Siguiente",
     "questions": [
       {
         "id": "save_life_years",
@@ -143,7 +146,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

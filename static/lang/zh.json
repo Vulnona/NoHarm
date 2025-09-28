@@ -16,7 +16,8 @@
     "recommendation": "推荐",
     "yes_button": "是",
     "no_button": "否",
-    "final_selection_instruction": "现在请做出最终选择，决定治疗哪位患者。"
+    "final_selection_instruction": "现在请做出最终选择，决定治疗哪位患者。",
+    "question_counter_template": "第 {current} 题（共 {total} 题）"
   },
   "demography": {
     "title": "人口统计问题",
@@ -33,7 +34,7 @@
     "christian_label": "基督教",
     "islam_label": "伊斯兰教",
     "previous_button": "上一页",
-"next_button": "下一页",
+    "next_button": "下一页",
     "hinduism_label": "印度教",
     "buddhism_label": "佛教",
     "other_label": "其他"
@@ -47,8 +48,8 @@
     "fair": "一般",
     "good": "好",
     "very_good": "很好",
-      "previous_button": "上一页",
-  "next_button": "下一页",
+    "previous_button": "上一页",
+    "next_button": "下一页",
     "excellent": "极好",
     "illness_question": "您在过去一年中是否患过严重疾病？",
     "illness_yes": "是",
@@ -56,7 +57,7 @@
     "children_question": "您是否有孩子或计划生育？",
     "children_yes": "是",
     "children_no": "否",
-    "submit_button": "提交"
+    "submit_button": "提交问卷"
   },
   "instructions": {
     "title": "非常感谢！接下来，我们想问您一些更一般性的问题。",
@@ -71,12 +72,14 @@
     "consent_message": "请现在决定您是否同意将您的回答用于科学目的。如果您不同意，您将被重定向至调查结束页面。",
     "yes_label": "我同意将我作为本问卷一部分提交的数据用于研究目的。",
     "no_label": "我不同意将我作为本问卷一部分提交的数据用于研究目的。",
-    "start_button": "提交同意",
+    "start_button": "请选择一个选项以继续",
     "callout-1": "参与是自愿的。",
     "callout-2": "回答将以匿名方式收集，并根据数据保护规则处理。",
     "callout-3": "您可以在任何时候停止参与，不会有任何不利后果。",
     "yes-desc": "您允许我们使用您的匿名回答进行研究。",
-    "no-desc": "我们会尊重您的决定，并结束问卷。"
+    "no-desc": "我们会尊重您的决定，并结束问卷。",
+    "agree_button": "同意并继续",
+    "disagree_button": "不同意，结束调查"
   },
   "no_consent": {
     "no_consent_title": "感谢您的时间！",
@@ -97,8 +100,8 @@
     "rating_medication_effect": "选择那些药物最有效的患者",
     "rating_random_selection": "随机选择患者",
     "select_answer": "选择评分",
-      "previous_button": "上一页",
-  "next_button": "下一页",
+    "previous_button": "上一页",
+    "next_button": "下一页",
     "questions": [
       {
         "id": "save_life_years",
@@ -143,7 +146,7 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",

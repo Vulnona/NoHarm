@@ -129,5 +129,15 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const prefixes = ['answer_', 'demography_', 'procedural_rating_'];
+        Object.keys(localStorage).forEach(function (key) {
+            if (prefixes.some(function (prefix) { return key.startsWith(prefix); }) || key === 'procedural_last_index') {
+                localStorage.removeItem(key);
+            }
+        });
+    });
+</script>
 </body>
 </html>

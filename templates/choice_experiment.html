@@ -29,9 +29,14 @@
             </select>
         </div>
 
-        <div class="instruction-text">
-            <p>Not every patient can be treated in a medical emergency. A decision has to be made about which patient to
-                treat. Which of the patients shown below should be treated?</p>
+        <div class="instruction-header">
+            <div class="question-progress" id="question-progress" aria-live="polite"
+                data-template="Question {current} of {total}" data-current="{{ current_set if current_set else 1 }}"
+                data-total="3"></div>
+            <div class="instruction-text">
+                <p>Not every patient can be treated in a medical emergency. A decision has to be made about which patient to
+                    treat. Which of the patients shown below should be treated?</p>
+            </div>
         </div>
 
 
@@ -42,7 +47,8 @@
                 <div class="image-container">
                     <img src="{{ url_for('static', filename=images[0]['filename']) }}"
                         alt="{{ images[0]['description'] }}" class="patient-image fade-element"
-                        data-filename="{{ images[0]['filename'].split('/')[-1] }}">
+                        data-filename="{{ images[0]['filename'].split('/')[-1] }}"
+                        data-fullpath="{{ images[0]['filename'] }}">
                     <div class="hover-description">{{ images[0]['description'] }}</div>
                 </div>
             </div>
@@ -54,16 +60,20 @@
 
                 <div class="arrow-controls">
                     <button class="arrow-btn left" onclick="moveDoctor('left')" aria-label="Move left">
-                        <svg class="arrow-svg" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M14 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" />
+                        <svg class="arrow-svg arrow-horizontal" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M15 6l-6 6 6 6z" fill="currentColor" />
+                        </svg>
+                        <svg class="arrow-svg arrow-vertical" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 6l-6 6h12z" fill="currentColor" />
                         </svg>
                     </button>
 
                     <button class="arrow-btn right" onclick="moveDoctor('right')" aria-label="Move right">
-                        <svg class="arrow-svg" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M10 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" />
+                        <svg class="arrow-svg arrow-horizontal" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 6l6 6-6 6z" fill="currentColor" />
+                        </svg>
+                        <svg class="arrow-svg arrow-vertical" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 18l6-6H6z" fill="currentColor" />
                         </svg>
                     </button>
                 </div>
@@ -77,7 +87,8 @@
                 <div class="image-container">
                     <img src="{{ url_for('static', filename=images[1]['filename']) }}"
                         alt="{{ images[1]['description'] }}" class="patient-image fade-element"
-                        data-filename="{{ images[1]['filename'].split('/')[-1] }}">
+                        data-filename="{{ images[1]['filename'].split('/')[-1] }}"
+                        data-fullpath="{{ images[1]['filename'] }}">
                     <div class="hover-description">{{ images[1]['description'] }}</div>
                 </div>
             </div>
@@ -136,6 +147,7 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const progressBar = document.getElementById("progress-bar");
+                const questionProgress = document.getElementById('question-progress');
 
                 // Map pages to steps
                 const steps = {
@@ -151,6 +163,17 @@
                 if (steps[currentPage]) {
                     const percent = (steps[currentPage] / totalSteps) * 100;
                     progressBar.style.width = percent + "%";
+                }
+
+                const currentSet = {{ current_set if current_set else 1 }};
+                const totalSets = 3;
+                if (questionProgress) {
+                    questionProgress.dataset.current = currentSet;
+                    questionProgress.dataset.total = totalSets;
+                    const template = questionProgress.dataset.template || `Question {current} of {total}`;
+                    questionProgress.textContent = template
+                        .replace('{current}', currentSet)
+                        .replace('{total}', totalSets);
                 }
             });
         </script>
