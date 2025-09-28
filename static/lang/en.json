@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "Prefer not to disclose",
     "age_question": "What is your age?",
     "age_placeholder": "Enter your age",
+    "age_invalid": "⚠️ Invalid age. Please enter a value between 16 and 120.",
     "religion_question": "What is your religion?",
     "no_religion": "No, I do not",
     "christian_label": "Christian",

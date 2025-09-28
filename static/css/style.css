@@ -967,23 +967,28 @@ input[type="submit"]:hover,
     flex-direction: column;
 }
 
-.login-container input[type="password"],
-.login-container input[type="submit"] {
+.login-container input[type="password"] {
     padding: 10px;
     margin-bottom: 20px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border-radius: 8px;
     border: 1px solid #ddd;
     width: 100%;
 }
 
-.login-container input[type="submit"] {
+.login-container .admin-login-btn {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1.1em;
+    align-self: center;
+    margin-top: 10px;
 }
 
-.login-container input[type="submit"]:hover {
+.login-container .admin-login-btn:hover {
     background-color: #0056b3;
 }
 
@@ -1292,13 +1297,30 @@ p {
     transform: scale(1.05);
 }
 
+
 .result-container {
-    overflow-x: auto;
+    position: relative;
+}
+
+.result-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.result-top-bar .language-switcher {
+    margin-left: auto;
+    width: 80px;
+    height: 45px;
 }
 
 .result-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 720px;
 }
 
 .result-table th,
@@ -1314,30 +1336,54 @@ p {
 
 .download-container {
     text-align: left;
-    margin: 20px 0;
 }
 
 .download-button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background-color: #007bff;
     color: #fff;
     text-decoration: none;
-    font-size: 13px;
-    padding: 6px 6px;
-    border-radius: 8px;
+    font-size: 0.95rem;
+    padding: 10px 18px;
+    border-radius: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .download-button:hover {
     background-color: #0056b3;
-    transform: scale(1.05);
+    transform: translateY(-1px);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
 }
 
 .download-button i {
-    margin-right: 8px;
+    margin-right: 0;
     font-size: 18px;
     vertical-align: middle;
+}
+
+.result-table thead th {
+    position: sticky;
+    top: 0;
+    background: #f2f2f2;
+    z-index: 2;
+}
+
+.result-table tbody td {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Popup Styling */
@@ -1524,6 +1570,27 @@ p {
         /* Utilize full width of mobile */
         margin: 0 auto;
         /* Center the container */
+    }
+
+    .result-top-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .result-top-bar .download-container,
+    .result-top-bar .language-switcher {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .result-top-bar .language-switcher {
+        height: 40px;
+    }
+
+    .result-top-bar .download-button {
+        justify-content: center;
+        width: 100%;
     }
 
     label,
@@ -1764,14 +1831,14 @@ body[data-page="demography"] .demography-container .language-switcher {
 
 
 /* Admin page: keep language switcher inside the white card, top-right */
-body[data-page="admin"] .login-container {
+body[data-page="admin_login"] .login-container {
     position: relative;
     /* make card a positioning context */
     padding-top: 64px;
     /* space so pill doesn't overlap title */
 }
 
-body[data-page="admin"] .login-container .language-switcher {
+body[data-page="admin_login"] .login-container .language-switcher {
     position: absolute !important;
     top: 12px;
     inset-inline-end: 12px;
@@ -1793,7 +1860,7 @@ body[data-page="admin"] .login-container .language-switcher {
 
 /* Optional: smaller on mobile */
 @media (max-width: 768px) {
-    body[data-page="admin"] .login-container .language-switcher {
+    body[data-page="admin_login"] .login-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
         width: 55px;
@@ -2573,6 +2640,17 @@ body[data-page="thank_you"] .thank-you-box .language-switcher {
     display: flex;
     flex-direction: column;
     gap: 15px; /* space between label and input */
+}
+
+html[dir="rtl"] .demography-container .question-block {
+    text-align: right;
+}
+
+html[dir="rtl"] .demography-container .question-block > label {
+    width: 100%;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    text-align: right;
 }
 
 /* Input field inside */

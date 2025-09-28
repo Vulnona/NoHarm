@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "Предпочитаю не указывать",
     "age_question": "Ваш возраст?",
     "age_placeholder": "Введите ваш возраст",
+    "age_invalid": "⚠️ Недопустимый возраст. Пожалуйста, введите значение от 16 до 120.",
     "religion_question": "Какова ваша религия?",
     "no_religion": "Нет, я не религиозен(на)",
     "christian_label": "Христианство",

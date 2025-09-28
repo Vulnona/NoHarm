@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "回答したくない",
     "age_question": "あなたの年齢は？",
     "age_placeholder": "年齢を入力してください",
+    "age_invalid": "⚠️ 無効な年齢です。16から120の値を入力してください。",
     "religion_question": "あなたの宗教は何ですか？",
     "no_religion": "いいえ、私は宗教を持っていません",
     "christian_label": "キリスト教",

@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "बताना नहीं चाहते",
     "age_question": "आपकी उम्र क्या है?",
     "age_placeholder": "अपनी उम्र दर्ज करें",
+    "age_invalid": "⚠️ अमान्य आयु। कृपया 16 से 120 के बीच कोई मान दर्ज करें।",
     "religion_question": "आपका धर्म क्या है?",
     "no_religion": "नहीं, मेरा कोई धर्म नहीं है",
     "previous_button": "पिछला",

@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "不愿透露",
     "age_question": "您的年龄是多少？",
     "age_placeholder": "输入您的年龄",
+    "age_invalid": "⚠️ 无效的年龄。请输入16到120之间的数值。",
     "religion_question": "您认同以下哪种宗教？",
     "no_religion": "不，我没有宗教信仰",
     "christian_label": "基督教",

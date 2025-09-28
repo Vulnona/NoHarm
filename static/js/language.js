@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 console.log("Current page is:", currentPage);
+                let ageErrorMessage = null;
                 if (currentPage === "admin_login") {
                     // For admin_login.html
                     document.querySelector('h1').textContent = data.admin_login.title;
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Update image descriptions if they exist
                     updateImageDescriptions(data);
                 } else if (currentPage === "demography") {
+
                     // For demography.html
                     document.querySelector('title').textContent = data.demography.title;
 
@@ -86,6 +88,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     const nextBtn = document.querySelector('.next-btn');
                     if (prevBtn) prevBtn.textContent = data.demography.previous_button || "Previous";
                     if (nextBtn) nextBtn.textContent = data.demography.next_button || "Next";
+
+                    const ageErrorElement = document.getElementById("age-error-msg");
+                    if (ageErrorElement && data.demography.age_invalid) {
+                        // ✅ Attach translation to data-error-text attribute
+                        ageErrorElement.dataset.errorText = data.demography.age_invalid;
+                        if (ageErrorElement.textContent.trim().length > 0) {
+                            ageErrorElement.textContent = data.demography.age_invalid;
+                            ageErrorElement.style.display = "block";
+                        }
+                    }
+
+                    window.__i18n = window.__i18n || {};
+                    window.__i18n.ageInvalid = data.demography.age_invalid;
+
                     // Handle different question types
                     if (currentQuestionId === "gender") {
                         // Get all label elements and match by their for attribute
@@ -98,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (forAttr === 'prefer_not_to_disclose') label.textContent = data.demography.prefer_not_to_disclose_label;
                         });
                     } else if (currentQuestionId === "age") {
+
                         document.querySelector('input[placeholder]').placeholder = data.demography.age_placeholder;
                     } else if (currentQuestionId === "religion") {
                         // Get all label elements and match by their for attribute
@@ -112,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (forAttr === 'other') label.textContent = data.demography.other_label;
                         });
                     }
+
                 }
                 else if (currentPage === "instructions") {
                     // For instructions.html
@@ -312,5 +330,4 @@ window.updateModalTranslations = function () {
         })
         .catch(error => console.error('Error loading modal translations:', error));
 };
-
 

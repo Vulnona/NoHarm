@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "بتانا نہیں چاہتے",
     "age_question": "آپ کی عمر کیا ہے؟",
     "age_placeholder": "اپنی عمر درج کریں",
+    "age_invalid": "⚠️ عمر درست نہیں۔ براہِ مہربانی 16 اور 120 کے درمیان قدر درج کریں۔",
     "religion_question": "آپ کا مذہب کیا ہے؟",
     "no_religion": "نہیں، میں کسی مذہب کا پیروکار نہیں ہوں",
     "christian_label": "عیسائی",

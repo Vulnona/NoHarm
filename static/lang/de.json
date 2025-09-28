@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "Keine Angabe",
     "age_question": "Wie alt sind Sie?",
     "age_placeholder": "Alter eingeben",
+    "age_invalid": "⚠️ Ungültiges Alter. Bitte einen Wert zwischen 16 und 120 eingeben.",
     "religion_question": "Welcher Religion gehören Sie an?",
     "no_religion": "Keiner",
     "christian_label": "Christentum",

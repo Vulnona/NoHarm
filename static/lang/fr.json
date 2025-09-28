@@ -34,6 +34,7 @@
     "hinduism_label": "Hindouisme",
     "buddhism_label": "Bouddhisme",
     "other_label": "Autre",
+    "age_invalid": "⚠️ Âge invalide. Veuillez entrer une valeur entre 16 et 120.",
     "previous_button": "Précédent",
     "next_button": "Suivant"
   },
@@ -53,8 +54,8 @@
     "children_question": "Avez-vous des enfants ou prévoyez-vous d'avoir des enfants ?",
     "children_yes": "Oui",
     "children_no": "Non",
-      "previous_button": "Précédent",
-  "next_button": "Suivant",
+    "previous_button": "Précédent",
+    "next_button": "Suivant",
     "submit_button": "Soumettre"
   },
   "instructions": {

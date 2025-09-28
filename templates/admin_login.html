@@ -6,12 +6,12 @@
     <title>Admin Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body data-page="admin_login">
 
 
     <div class="login-container">
         <div class="language-switcher">
-            <select id="language-switcher">
+            <select id="language-switcher" class="language-dropdown">
                 <option value="ar">العربية</option>
                 <option value="bn">বাংলা</option>
                 <option value="zh">中文</option>
@@ -30,7 +30,7 @@
         <form method="POST" action="/admin">
             <label for="password">Enter Admin Password:</label>
             <input type="password" name="password" required>
-            <input type="submit" value="Login">
+            <input type="submit" value="Login" class="admin-login-btn">
         </form>
     </div>
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>

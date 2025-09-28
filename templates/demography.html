@@ -59,11 +59,10 @@
                 <input type="text" name="answer" placeholder="{{ question.placeholder }}">
 
                 {% elif question.type == "number" %}
-                {% if question.name == "age" %}
+                {% if question.id == "age" %}
                 <div class="form-group">
-                    <label for="age-input">What is bawa your age?</label>
-                    <input type="number" name="answer" id="age-input" placeholder="Enter bawa jee your age">
-                    <div id="age-error" class="error-message" style="color:red; display:none;"></div>
+                    <input type="number" name="answer" id="age-input" placeholder="Enter your age">
+                    <div id="age-error-msg" class="error-message" style="color:red; display:none;"></div>
                 </div>
                 {% else %}
                 <input type="number" name="answer" class="number-input" id="{{ question.id }}"
@@ -85,7 +84,11 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("demography-form");
-            const ageInput = document.getElementById("age");
+            const ageInput = document.getElementById("age-input");
+
+            if (!ageInput) {
+                return;
+            }
 
             function showError(message) {
                 let errorMsg = document.getElementById("age-error-msg");
@@ -97,30 +100,40 @@
                     errorMsg.style.marginTop = "5px";
                     ageInput.parentNode.insertBefore(errorMsg, ageInput.nextSibling);
                 }
+
+                if (window.__i18n?.ageInvalid) {
+                    errorMsg.dataset.errorText = window.__i18n.ageInvalid;
+                }
+
                 errorMsg.textContent = message;
+                errorMsg.style.display = "block";
             }
 
             function clearError() {
                 const errorMsg = document.getElementById("age-error-msg");
                 if (errorMsg) {
                     errorMsg.textContent = "";
+                    errorMsg.style.display = "none";
                 }
             }
 
             // 🔴 Validate on form submit
             form.addEventListener("submit", function (event) {
-                if (ageInput) {
-                    const age = parseInt(ageInput.value, 10);
+                const age = parseInt(ageInput.value, 10);
 
-                    if (isNaN(age) || age < 16 || age > 120) {
-                        event.preventDefault(); // stop sending to Flask
-                        showError("⚠️ Invalid age. Please enter a value between 16 and 120.");
-                        ageInput.focus();
-                        return;
-                    } else {
-                        clearError();
-                    }
+                if (isNaN(age) || age < 16 || age > 120) {
+                    event.preventDefault(); // stop sending to Flask
+                    const ageErrorElement = document.getElementById("age-error-msg");
+                    const langErrorMsg = ageErrorElement?.dataset.errorText
+                        || window.__i18n?.ageInvalid
+                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+
+                    showError(langErrorMsg);
+                    ageInput.focus();
+                    return;
                 }
+
+                clearError();
             });
 
             // 🟢 Live validation while typing
@@ -131,6 +144,13 @@
                     clearError(); // nothing typed → clear error
                 } else if (!isNaN(age) && age >= 16 && age <= 120) {
                     clearError(); // valid → clear error
+                } else {
+                    const ageErrorElement = document.getElementById("age-error-msg");
+                    const langErrorMsg = ageErrorElement?.dataset.errorText
+                        || window.__i18n?.ageInvalid
+                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+
+                    showError(langErrorMsg);
                 }
             });
         });

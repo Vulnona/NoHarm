@@ -27,6 +27,7 @@
     "prefer_not_to_disclose_label": "أفضل عدم الإفصاح",
     "age_question": "كم عمرك؟",
     "age_placeholder": "أدخل عمرك",
+    "age_invalid": "⚠️ عمر غير صالح. يرجى إدخال قيمة بين 16 و120.",
     "religion_question": "ما هي ديانتك؟",
     "no_religion": "لا، ليس لدي",
     "christian_label": "مسيحية",
