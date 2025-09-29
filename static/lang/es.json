@@ -164,22 +164,22 @@
     "thank_you_message": "Sus respuestas han sido registradas. Agradecemos su tiempo y esfuerzo en ayudarnos con esta investigación."
   },
   "images": {
-    "child_simple.jpg": "Niño",
-    "Disability.jpg": "Persona con Discapacidad",
-    "old_male_female_simpler.jpg": "Pareja de Ancianos",
-    "Overweight_simpler.jpg": "Persona con Sobrepeso",
-    "test_0_0_1_1_0.jpg": "Imagen de Prueba 1",
-    "test_0_0_2_3_1.jpg": "Imagen de Prueba 2",
-    "test_0_2_3_3_2.jpg": "Imagen de Prueba 3",
-    "test_1_0_3_2_0.jpg": "Imagen de Prueba 4",
-    "test_1_3_2_2_1.jpg": "Imagen de Prueba 5",
+    "child_simple.png": "Niño",
+    "Disability.png": "Persona con Discapacidad",
+    "old_male_female_simpler.png": "Pareja de Ancianos",
+    "Overweight_simpler.png": "Persona con Sobrepeso",
+    "test_0_0_1_1_0.png": "Imagen de Prueba 1",
+    "test_0_0_2_3_1.png": "Imagen de Prueba 2",
+    "test_0_2_3_3_2.png": "Imagen de Prueba 3",
+    "test_1_0_3_2_0.png": "Imagen de Prueba 4",
+    "test_1_3_2_2_1.png": "Imagen de Prueba 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Paciente en Laptop con Vendaje en la Cabeza",
     "Patient_on_a_Stretcher.png": "Paciente en una Camilla",
     "Patient_with_Arm_Sling.png": "Paciente con Cabestrillo",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Paciente con Suero y Cabestrillo",
+    "Patient_with_IV_and_Arm_Sling.png": "Paciente con Suero y Cabestrillo",
     "Patient_with_IV_Drip.png": "Paciente con Suero Intravenoso",
     "pregnant_woman_care.webp": "Cuidado de Mujer Embarazada",
     "Pregnant_woman_lying_on_hospital_bed.png": "Mujer Embarazada Acostada en Cama de Hospital",
-    "Walking_Patient_with_Crutches.jpg": "Paciente Caminando con Muletas"
+    "Walking_Patient_with_Crutches.png": "Paciente Caminando con Muletas"
   }
 }

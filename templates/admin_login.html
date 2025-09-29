@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
+    <title>{{ translations.admin_login.title | default('Admin Login') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="admin_login">
@@ -26,11 +26,11 @@
             </select>
         </div>
 
-        <h1>Admin Login</h1>
+        <h1>{{ translations.admin_login.title | default('Admin Login') }}</h1>
         <form method="POST" action="/admin">
-            <label for="password">Enter Admin Password:</label>
+            <label for="password">{{ translations.admin_login.password_label | default('Enter Admin Password:') }}</label>
             <input type="password" name="password" required>
-            <input type="submit" value="Login" class="admin-login-btn">
+            <input type="submit" value="{{ translations.admin_login.login_button | default('Login') }}" class="admin-login-btn">
         </form>
     </div>
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>

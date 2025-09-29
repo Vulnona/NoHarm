@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Declined</title>
+    <title>{{ translations.no_consent.no_consent_title | default('Survey Declined') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="no_consent">
@@ -30,8 +30,8 @@
             </select>
         </div>
 
-        <h1 id="no-consent-title">Thank you for your time!</h1>
-        <p id="no-consent-message">Since you did not consent to participate in the survey, your responses were not recorded. We appreciate your time.</p>
+        <h1 id="no-consent-title">{{ translations.no_consent.no_consent_title | default('Thank you for your time!') }}</h1>
+        <p id="no-consent-message">{{ translations.no_consent.no_consent_message | default('Since you did not consent to participate in the survey, your responses were not recorded. We appreciate your time.') }}</p>
     </div>
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>

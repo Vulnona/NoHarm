@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Procedural Ratings</title>
+    <title>{{ translations.procedural_ratings.rating_title | default('Procedural Ratings') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -33,11 +33,9 @@
             </select>
         </div>
 
-        <h2 class="rating-title">Procedural Fairness Ratings</h2>
+        <h2 class="rating-title">{{ translations.procedural_ratings.rating_title | default('Procedural Fairness Ratings') }}</h2>
         <p class="rating-intro">
-            Not every patient can be treated in a medical emergency.
-            There are procedures that can be used to determine which patients should be treated
-            in such situations. In the following, please indicate how morally fair you find these procedures.
+            {{ translations.procedural_ratings.rating_intro | default('Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.') }}
         </p>
 
         <!-- Question Block -->
@@ -49,7 +47,7 @@
             <div class="procedure-block">
                 <div class="question-text">
                     <label class="bold-text question-label">{{ question.label }}</label>
-                    <p class="question-description">{{ question.full_text.replace(question.label + ': ', '') }}</p>
+                    <p class="question-description">{{ question.full_text }}</p>
                 </div>
 
                 <div class="rating-components">
@@ -61,9 +59,9 @@
                                 %}>
                             <div class="circle"></div>
                             {% if i == 1 %}
-                            <span class="circle-label">Not Fair at All</span>
+                            <span class="circle-label">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
                             {% elif i == 6 %}
-                            <span class="circle-label">Very Fair</span>
+                            <span class="circle-label">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
                             {% endif %}
                         </label>
                         {% endfor %}
@@ -73,8 +71,8 @@
 
             <!-- Navigation -->
             <div class="form-navigation">
-                <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>Previous</button>
-                <button type="submit" class="next-btn" disabled>Next</button>
+                <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>{{ translations.procedural_ratings.previous_button | default('Previous') }}</button>
+                <button type="submit" class="next-btn" disabled>{{ translations.procedural_ratings.next_button | default('Next') }}</button>
             </div>
         </form>
     </div>

@@ -164,22 +164,22 @@
     "thank_you_message": "آپ کے جوابات ریکارڈ کر لیے گئے ہیں۔ ہم اس تحقیق میں مدد کرنے کے لیے آپ کے وقت اور کوشش کی قدر کرتے ہیں۔"
   },
   "images": {
-    "child_simple.jpg": "بچہ",
-    "Disability.jpg": "معذور شخص",
-    "old_male_female_simpler.jpg": "بوڑھا جوڑا",
-    "Overweight_simpler.jpg": "موٹے شخص",
-    "test_0_0_1_1_0.jpg": "ٹیسٹ تصویر 1",
-    "test_0_0_2_3_1.jpg": "ٹیسٹ تصویر 2",
-    "test_0_2_3_3_2.jpg": "ٹیسٹ تصویر 3",
-    "test_1_0_3_2_0.jpg": "ٹیسٹ تصویر 4",
-    "test_1_3_2_2_1.jpg": "ٹیسٹ تصویر 5",
+    "child_simple.png": "بچہ",
+    "Disability.png": "معذور شخص",
+    "old_male_female_simpler.png": "بوڑھا جوڑا",
+    "Overweight_simpler.png": "موٹے شخص",
+    "test_0_0_1_1_0.png": "ٹیسٹ تصویر 1",
+    "test_0_0_2_3_1.png": "ٹیسٹ تصویر 2",
+    "test_0_2_3_3_2.png": "ٹیسٹ تصویر 3",
+    "test_1_0_3_2_0.png": "ٹیسٹ تصویر 4",
+    "test_1_3_2_2_1.png": "ٹیسٹ تصویر 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "سر پر پٹی کے ساتھ لیپ ٹاپ پر مریض",
     "Patient_on_a_Stretcher.png": "سٹریچر پر مریض",
     "Patient_with_Arm_Sling.png": "بازو کی سلنگ کے ساتھ مریض",
-    "Patient_with_IV_and_Arm_Sling.jpg": "آئی وی اور بازو کی سلنگ کے ساتھ مریض",
+    "Patient_with_IV_and_Arm_Sling.png": "آئی وی اور بازو کی سلنگ کے ساتھ مریض",
     "Patient_with_IV_Drip.png": "آئی وی ڈرپ کے ساتھ مریض",
     "pregnant_woman_care.webp": "حاملہ خاتون کی دیکھ بھال",
     "Pregnant_woman_lying_on_hospital_bed.png": "ہسپتال کے بستر پر لیٹی حاملہ عورت",
-    "Walking_Patient_with_Crutches.jpg": "بیساکھیوں کے ساتھ چلتا ہوا مریض"
+    "Walking_Patient_with_Crutches.png": "بیساکھیوں کے ساتھ چلتا ہوا مریض"
   }
 }

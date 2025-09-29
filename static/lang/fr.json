@@ -164,22 +164,22 @@
     "thank_you_message": "Vos réponses ont été enregistrées. Nous apprécions votre temps et vos efforts pour nous aider dans cette recherche."
   },
   "images": {
-    "child_simple.jpg": "Enfant",
-    "Disability.jpg": "Personne en situation de handicap",
-    "old_male_female_simpler.jpg": "Couple âgé",
-    "Overweight_simpler.jpg": "Personne en surpoids",
-    "test_0_0_1_1_0.jpg": "Image test 1",
-    "test_0_0_2_3_1.jpg": "Image test 2",
-    "test_0_2_3_3_2.jpg": "Image test 3",
-    "test_1_0_3_2_0.jpg": "Image test 4",
-    "test_1_3_2_2_1.jpg": "Image test 5",
+    "child_simple.png": "Enfant",
+    "Disability.png": "Personne en situation de handicap",
+    "old_male_female_simpler.png": "Couple âgé",
+    "Overweight_simpler.png": "Personne en surpoids",
+    "test_0_0_1_1_0.png": "Image test 1",
+    "test_0_0_2_3_1.png": "Image test 2",
+    "test_0_2_3_3_2.png": "Image test 3",
+    "test_1_0_3_2_0.png": "Image test 4",
+    "test_1_3_2_2_1.png": "Image test 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient à l'ordinateur portable avec bandage à la tête",
     "Patient_on_a_Stretcher.png": "Patient sur un brancard",
     "Patient_with_Arm_Sling.png": "Patient avec une écharpe pour le bras",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient avec perfusion et écharpe pour le bras",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient avec perfusion et écharpe pour le bras",
     "Patient_with_IV_Drip.png": "Patient avec perfusion",
     "pregnant_woman_care.webp": "Soins de femme enceinte",
     "Pregnant_woman_lying_on_hospital_bed.png": "Femme enceinte allongée sur un lit d'hôpital",
-    "Walking_Patient_with_Crutches.jpg": "Patient marchant avec des béquilles"
+    "Walking_Patient_with_Crutches.png": "Patient marchant avec des béquilles"
   }
 }

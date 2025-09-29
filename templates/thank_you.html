@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Submission</title>
+    <title>{{ translations.thank_you.thank_you_title | default('Survey Submission') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="thank_you">
@@ -27,10 +27,8 @@
                 </select>
             </div>
             <div class="tick-icon">✔</div>
-            <h1 id="thank-you-title">Thank you for submitting your survey!</h1>
-            <p id="thank-you-message">
-                Your responses have been recorded. We appreciate your time and effort in helping us with this research.
-            </p>
+            <h1 id="thank-you-title">{{ translations.thank_you.thank_you_title | default('Thank you for submitting your survey!') }}</h1>
+            <p id="thank-you-message">{{ translations.thank_you.thank_you_message | default('Your responses have been recorded. We appreciate your time and effort in helping us with this research.') }}</p>
         </div>
     </div>
 

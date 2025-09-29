@@ -164,22 +164,22 @@
     "thank_you_message": "Your responses have been recorded. We appreciate your time and effort in helping us with this research."
   },
   "images": {
-    "child_simple.jpg": "Child",
-    "Disability.jpg": "Person with Disability",
-    "old_male_female_simpler.jpg": "Elderly Couple",
-    "Overweight_simpler.jpg": "Overweight Person",
-    "test_0_0_1_1_0.jpg": "Test Image 1",
-    "test_0_0_2_3_1.jpg": "Test Image 2",
-    "test_0_2_3_3_2.jpg": "Test Image 3",
-    "test_1_0_3_2_0.jpg": "Test Image 4",
-    "test_1_3_2_2_1.jpg": "Test Image 5",
+    "child_simple.png": "Child",
+    "Disability.png": "Person with Disability",
+    "old_male_female_simpler.png": "Elderly Couple",
+    "Overweight_simpler.png": "Overweight Person",
+    "test_0_0_1_1_0.png": "Test Image 1",
+    "test_0_0_2_3_1.png": "Test Image 2",
+    "test_0_2_3_3_2.png": "Test Image 3",
+    "test_1_0_3_2_0.png": "Test Image 4",
+    "test_1_3_2_2_1.png": "Test Image 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient at Laptop with Head Bandage",
     "Patient_on_a_Stretcher.png": "Patient on a Stretcher",
     "Patient_with_Arm_Sling.png": "Patient with Arm Sling",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient with IV and Arm Sling",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient with IV and Arm Sling",
     "Patient_with_IV_Drip.png": "Patient with IV Drip",
     "pregnant_woman_care.webp": "Pregnant Woman Care",
     "Pregnant_woman_lying_on_hospital_bed.png": "Pregnant Woman Lying on Hospital Bed",
-    "Walking_Patient_with_Crutches.jpg": "Walking Patient with Crutches"
+    "Walking_Patient_with_Crutches.png": "Walking Patient with Crutches"
   }
 }

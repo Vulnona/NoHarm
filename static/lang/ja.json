@@ -164,22 +164,22 @@
     "thank_you_message": "あなたの回答が記録されました。この研究にご協力いただき、お時間と努力に感謝いたします。"
   },
   "images": {
-    "child_simple.jpg": "子供",
-    "Disability.jpg": "障害を持つ人",
-    "old_male_female_simpler.jpg": "高齢夫婦",
-    "Overweight_simpler.jpg": "太り気味の人",
-    "test_0_0_1_1_0.jpg": "テスト画像1",
-    "test_0_0_2_3_1.jpg": "テスト画像2",
-    "test_0_2_3_3_2.jpg": "テスト画像3",
-    "test_1_0_3_2_0.jpg": "テスト画像4",
-    "test_1_3_2_2_1.jpg": "テスト画像5",
+    "child_simple.png": "子供",
+    "Disability.png": "障害を持つ人",
+    "old_male_female_simpler.png": "高齢夫婦",
+    "Overweight_simpler.png": "太り気味の人",
+    "test_0_0_1_1_0.png": "テスト画像1",
+    "test_0_0_2_3_1.png": "テスト画像2",
+    "test_0_2_3_3_2.png": "テスト画像3",
+    "test_1_0_3_2_0.png": "テスト画像4",
+    "test_1_3_2_2_1.png": "テスト画像5",
     "Patient_at_Laptop_with_Head_Bandage.png": "頭に包帯を巻いたラップトップ前の患者",
     "Patient_on_a_Stretcher.png": "ストレッチャーに乗った患者",
     "Patient_with_Arm_Sling.png": "腕つりバンドをつけた患者",
-    "Patient_with_IV_and_Arm_Sling.jpg": "点滴と腕つりバンドをつけた患者",
+    "Patient_with_IV_and_Arm_Sling.png": "点滴と腕つりバンドをつけた患者",
     "Patient_with_IV_Drip.png": "点滴をしている患者",
     "pregnant_woman_care.webp": "妊婦ケア",
     "Pregnant_woman_lying_on_hospital_bed.png": "病院のベッドに横たわる妊婦",
-    "Walking_Patient_with_Crutches.jpg": "松葉杖で歩く患者"
+    "Walking_Patient_with_Crutches.png": "松葉杖で歩く患者"
   }
 }

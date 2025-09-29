@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demographic Questions</title>
+    <title>{{ translations.demography.title | default('Demographic Questions') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .error-message {
@@ -46,7 +46,7 @@
 
             {% if show_intro %}
             <div class="demography-intro" id="demography-intro">
-                Thank you very much! In the following we would like to ask you a few more general questions.
+                {{ translations.instructions.title | default('Thank you very much! In the following we would like to ask you a few more general questions.') }}
             </div>
             {% endif %}
 
@@ -67,7 +67,7 @@
                 {% elif question.type == "number" %}
                 {% if question.id == "age" %}
                 <div class="form-group">
-                    <input type="number" name="answer" id="age-input" placeholder="Enter your age">
+                    <input type="number" name="answer" id="age-input" placeholder="Enter your age" min="16" max="120" step="1" inputmode="numeric" pattern="\\d*" autocomplete="off">
                     <div id="age-error-msg" class="error-message" style="color:red; display:none;"></div>
                 </div>
                 {% else %}
@@ -78,8 +78,8 @@
             </div>
 
             <div class="form-navigation">
-                <button type="button" class="prev-btn">Previous</button>
-                <button type="submit" class="next-btn" disabled>Next</button>
+                <button type="button" class="prev-btn">{{ translations.demography.previous_button | default('Previous') }}</button>
+                <button type="submit" class="next-btn" disabled>{{ translations.demography.next_button | default('Next') }}</button>
             </div>
         </form>
     </div>
@@ -155,6 +155,16 @@
                     localStorage.setItem('demography_' + questionId, ageInput.value);
                 }
             });
+
+            ageInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+
+            ageInput.addEventListener('wheel', function (event) {
+                event.preventDefault();
+            }, { passive: false });
 
             // 🟢 Live validation while typing
             ageInput.addEventListener("input", function () {

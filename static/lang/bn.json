@@ -164,22 +164,22 @@
     "thank_you_message": "আপনার প্রতিক্রিয়াগুলি রেকর্ড করা হয়েছে। এই গবেষণায় সাহায্য করার জন্য আপনার সময় এবং প্রচেষ্টাকে আমরা মূল্য দিই।"
   },
   "images": {
-    "child_simple.jpg": "শিশু",
-    "Disability.jpg": "প্রতিবন্ধী ব্যক্তি",
-    "old_male_female_simpler.jpg": "বয়স্ক দম্পতি",
-    "Overweight_simpler.jpg": "অতিরিক্ত ওজনযুক্ত ব্যক্তি",
-    "test_0_0_1_1_0.jpg": "পরীক্ষা চিত্র ১",
-    "test_0_0_2_3_1.jpg": "পরীক্ষা চিত্র ২",
-    "test_0_2_3_3_2.jpg": "পরীক্ষা চিত্র ৩",
-    "test_1_0_3_2_0.jpg": "পরীক্ষা চিত্র ৪",
-    "test_1_3_2_2_1.jpg": "পরীক্ষা চিত্র ৫",
+    "child_simple.png": "শিশু",
+    "Disability.png": "প্রতিবন্ধী ব্যক্তি",
+    "old_male_female_simpler.png": "বয়স্ক দম্পতি",
+    "Overweight_simpler.png": "অতিরিক্ত ওজনযুক্ত ব্যক্তি",
+    "test_0_0_1_1_0.png": "পরীক্ষা চিত্র ১",
+    "test_0_0_2_3_1.png": "পরীক্ষা চিত্র ২",
+    "test_0_2_3_3_2.png": "পরীক্ষা চিত্র ৩",
+    "test_1_0_3_2_0.png": "পরীক্ষা চিত্র ৪",
+    "test_1_3_2_2_1.png": "পরীক্ষা চিত্র ৫",
     "Patient_at_Laptop_with_Head_Bandage.png": "মাথায় ব্যান্ডেজ সহ ল্যাপটপে রোগী",
     "Patient_on_a_Stretcher.png": "স্ট্রেচারে রোগী",
     "Patient_with_Arm_Sling.png": "হাতে স্লিং সহ রোগী",
-    "Patient_with_IV_and_Arm_Sling.jpg": "আইভি এবং হাতে স্লিং সহ রোগী",
+    "Patient_with_IV_and_Arm_Sling.png": "আইভি এবং হাতে স্লিং সহ রোগী",
     "Patient_with_IV_Drip.png": "আইভি ড্রিপ সহ রোগী",
     "pregnant_woman_care.webp": "গর্ভবতী মহিলার যত্ন",
     "Pregnant_woman_lying_on_hospital_bed.png": "হাসপাতালের বিছানায় শুয়ে থাকা গর্ভবতী মহিলা",
-    "Walking_Patient_with_Crutches.jpg": "ক্রাচ সহ হাঁটা রোগী"
+    "Walking_Patient_with_Crutches.png": "ক্রাচ সহ হাঁটা রোগী"
   }
 }

@@ -164,22 +164,22 @@
     "thank_you_message": "Ваши ответы были записаны. Мы ценим ваше время и усилия, помогающие нам в этом исследовании."
   },
   "images": {
-    "child_simple.jpg": "Ребёнок",
-    "Disability.jpg": "Человек с инвалидностью",
-    "old_male_female_simpler.jpg": "Пожилая пара",
-    "Overweight_simpler.jpg": "Человек с избыточным весом",
-    "test_0_0_1_1_0.jpg": "Тестовое изображение 1",
-    "test_0_0_2_3_1.jpg": "Тестовое изображение 2",
-    "test_0_2_3_3_2.jpg": "Тестовое изображение 3",
-    "test_1_0_3_2_0.jpg": "Тестовое изображение 4",
-    "test_1_3_2_2_1.jpg": "Тестовое изображение 5",
+    "child_simple.png": "Ребёнок",
+    "Disability.png": "Человек с инвалидностью",
+    "old_male_female_simpler.png": "Пожилая пара",
+    "Overweight_simpler.png": "Человек с избыточным весом",
+    "test_0_0_1_1_0.png": "Тестовое изображение 1",
+    "test_0_0_2_3_1.png": "Тестовое изображение 2",
+    "test_0_2_3_3_2.png": "Тестовое изображение 3",
+    "test_1_0_3_2_0.png": "Тестовое изображение 4",
+    "test_1_3_2_2_1.png": "Тестовое изображение 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Пациент за ноутбуком с повязкой на голове",
     "Patient_on_a_Stretcher.png": "Пациент на носилках",
     "Patient_with_Arm_Sling.png": "Пациент с подвязкой для руки",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Пациент с капельницей и подвязкой для руки",
+    "Patient_with_IV_and_Arm_Sling.png": "Пациент с капельницей и подвязкой для руки",
     "Patient_with_IV_Drip.png": "Пациент с капельницей",
     "pregnant_woman_care.webp": "Уход за беременной женщиной",
     "Pregnant_woman_lying_on_hospital_bed.png": "Беременная женщина, лежащая на больничной кровати",
-    "Walking_Patient_with_Crutches.jpg": "Идущий пациент с костылями"
+    "Walking_Patient_with_Crutches.png": "Идущий пациент с костылями"
   }
 }

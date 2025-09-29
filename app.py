@@ -1,12 +1,17 @@
 
 import datetime
+import json
+import os
 import random
 import socket
 import sqlite3
+from functools import lru_cache
+from pathlib import Path
 
 from flask import Flask, render_template, request, redirect, session, Response, jsonify
 
 from api_call import send_post_request
+from init_db import create_database, add_columns_if_not_exist
 import logging
 
 
@@ -26,6 +31,16 @@ def create_app():
 # create flask app object
 app = create_app()
 
+BASE_DIR = Path(__file__).resolve().parent
+TRANSLATIONS_DIR = BASE_DIR / 'static' / 'lang'
+
+# Ensure the database schema contains required columns (idempotent)
+try:
+    create_database()
+    add_columns_if_not_exist()
+except Exception as exc:
+    app.logger.warning('database schema sync failed: %s', exc)
+
 # Connect to the database
 def get_db_connection():
     try:
@@ -43,8 +58,10 @@ def get_db_connection():
 def set_language():
     try:
         if 'language' not in session:
-            session['language'] = 'en'  # Default language is English
-            app.logger.info('default language set to english')
+            preferred = request.cookies.get('preferred_language', 'en')
+            session_language = preferred or 'en'
+            session['language'] = session_language
+            app.logger.info('session language initialised to %s', session_language)
         else:
             app.logger.info('session language set to {}'.format(session['language']))
     except:
@@ -58,11 +75,51 @@ def get_random_images(total_images, selected_images):
     available_images = [i for i in range(1, total_images + 1) if i not in selected_images]
     return random.sample(available_images, 2)
 
+
+@lru_cache(maxsize=None)
+def load_translations(language_code: str):
+    language = language_code or 'en'
+    candidate_paths = [TRANSLATIONS_DIR / f'{language}.json']
+    if language != 'en':
+        candidate_paths.append(TRANSLATIONS_DIR / 'en.json')
+
+    for path in candidate_paths:
+        if path.exists():
+            try:
+                with path.open('r', encoding='utf-8') as handle:
+                    return json.load(handle)
+            except json.JSONDecodeError:
+                app.logger.error('failed to parse translation file %s', path)
+                continue
+
+    app.logger.warning('no translation file found for language %s; defaulting to empty dict', language)
+    return {}
+
+
+# Function to get client IP, accounting for reverse proxies
+def get_client_ip():
+    try:
+        forwarded_for = request.headers.get('X-Forwarded-For', '')
+        if forwarded_for:
+            client_ip = forwarded_for.split(',')[0].strip()
+            if client_ip:
+                return client_ip
+
+        real_ip = request.headers.get('X-Real-IP')
+        if real_ip:
+            return real_ip
+
+        return request.remote_addr or 'Unknown'
+    except Exception:
+        app.logger.warning('unable to determine client ip from request headers')
+        return 'Unknown'
+
+
 # Add a function to get user location info (optional)
 def get_user_location():
     try:
         # This is a simplified example - you might want to use a geolocation API
-        ip = request.remote_addr
+        ip = get_client_ip()
         hostname = socket.gethostbyaddr(ip)[0] if ip != '127.0.0.1' else 'localhost'
         app.logger.info('session ip recorded')
         return {
@@ -83,6 +140,17 @@ def get_user_location():
 
 
 
+# Provide translations to every template render
+@app.context_processor
+def inject_translations():
+    language = session.get('language', 'en') if session else 'en'
+    translations = load_translations(language)
+    return {
+        'translations': translations,
+        'current_language': language
+    }
+
+
 # Home route to display the intro page
 @app.route('/')
 def intro():
@@ -93,10 +161,37 @@ def intro():
 # Route to change language
 @app.route('/change-language', methods=['POST'])
 def change_language():
-    language = request.form.get('language')
+    payload = request.get_json(silent=True)
+    language = (payload or {}).get('language') if payload else request.form.get('language')
+
+    if not language:
+        app.logger.warning('language change requested without value')
+        if payload:
+            return jsonify({'status': 'error', 'message': 'language missing'}), 400
+        return redirect(request.referrer or '/')
+
     session['language'] = language
     app.logger.info('language changed to {}'.format(session['language']))
-    return redirect(request.referrer)  # Redirect back to the page the user was on
+
+    if 'user_id' in session:
+        conn = get_db_connection()
+        try:
+            conn.execute('''
+                UPDATE user_responses
+                SET language = ?
+                WHERE id = ?
+            ''', (language, session['user_id']))
+            conn.commit()
+        finally:
+            conn.close()
+
+    if payload:
+        response = jsonify({'status': 'success'})
+    else:
+        response = redirect(request.referrer or '/')
+
+    response.set_cookie('preferred_language', language, max_age=60 * 60 * 24 * 365, samesite='Lax')
+    return response  # Redirect back to the page the user was on
 
 
 # Modify the submit route to store initial session data
@@ -109,14 +204,10 @@ def submit():
         cursor = conn.cursor()
         
         # Get user location info
-        try:
-            ip = request.remote_addr
-            ip_address = ip if ip else 'Unknown'
-        except:
-            ip_address = 'Unknown'
+        ip_address = get_client_ip()
         
         # Record session start time
-        session_start = datetime.datetime.now().isoformat() if 'datetime' in globals() else None
+        session_start = datetime.datetime.now().isoformat()
         
         # Check if language column exists
         cursor.execute("PRAGMA table_info(user_responses);")
@@ -162,23 +253,23 @@ def submit():
 
 
 IMAGES = [
-    {"id": 1, "filename": "child_simple.jpg", "description": "Child"},
-    {"id": 2, "filename": "Disability.jpg", "description": "Person with Disability"},
-    {"id": 3, "filename": "old_male_female_simpler.jpg", "description": "Elderly Couple"},
-    {"id": 4, "filename": "Overweight_simpler.jpg", "description": "Overweight Person"},
-    {"id": 5, "filename": "test_0_0_1_1_0.jpg", "description": "Test Image 1"},
-    {"id": 6, "filename": "test_0_0_2_3_1.jpg", "description": "Test Image 2"},
-    {"id": 7, "filename": "test_0_2_3_3_2.jpg", "description": "Test Image 3"},
-    {"id": 8, "filename": "test_1_0_3_2_0.jpg", "description": "Test Image 4"},
-    {"id": 9, "filename": "test_1_3_2_2_1.jpg", "description": "Test Image 5"},
+    {"id": 1, "filename": "child_simple.png", "description": "Child"},
+    {"id": 2, "filename": "Disability.png", "description": "Person with Disability"},
+    {"id": 3, "filename": "old_male_female_simpler.png", "description": "Elderly Couple"},
+    {"id": 4, "filename": "Overweight_simpler.png", "description": "Overweight Person"},
+    {"id": 5, "filename": "test_0_0_1_1_0.png", "description": "Test Image 1"},
+    {"id": 6, "filename": "test_0_0_2_3_1.png", "description": "Test Image 2"},
+    {"id": 7, "filename": "test_0_2_3_3_2.png", "description": "Test Image 3"},
+    {"id": 8, "filename": "test_1_0_3_2_0.png", "description": "Test Image 4"},
+    {"id": 9, "filename": "test_1_3_2_2_1.png", "description": "Test Image 5"},
     {"id": 10, "filename": "Patient_at_Laptop_with_Head_Bandage.png", "description": "Patient at Laptop with Head Bandage"},
     {"id": 11, "filename": "Patient_on_a_Stretcher.png", "description": "Patient on a Stretcher"},
     {"id": 12, "filename": "Patient_with_Arm_Sling.png", "description": "Patient with Arm Sling"},
-    {"id": 13, "filename": "Patient_with_IV_and_Arm_Sling.jpg", "description": "Patient with IV and Arm Sling"},
+    {"id": 13, "filename": "Patient_with_IV_and_Arm_Sling.png", "description": "Patient with IV and Arm Sling"},
     {"id": 14, "filename": "Patient_with_IV_Drip.png", "description": "Patient with IV Drip"},
     {"id": 15, "filename": "pregnant_woman_care.webp", "description": "Pregnant Woman Care"},
     {"id": 16, "filename": "Pregnant_woman_lying_on_hospital_bed.png", "description": "Pregnant Woman Lying on Hospital Bed"},
-    {"id": 17, "filename": "Walking_Patient_with_Crutches.jpg", "description": "Walking Patient with Crutches"}
+    {"id": 17, "filename": "Walking_Patient_with_Crutches.png", "description": "Walking Patient with Crutches"}
 ]
 
 
@@ -196,6 +287,9 @@ def choice_experiment():
     else:
         app.logger.info('session: user id set to '+ str(session['user_id']))
 
+    language = session.get('language', 'en')
+    image_translations = load_translations(language).get('images', {})
+
     # Initialize session variables only once
     if 'reconsider_set' not in session:
         session['reconsider_set'] = random.randint(1, 3)
@@ -206,6 +300,15 @@ def choice_experiment():
         session['current_images'] = None
         session['popup_shown'] = False
         session['awaiting_final_selection'] = False
+        if 'user_id' in session:
+            conn = get_db_connection()
+            conn.execute('''
+                UPDATE user_responses
+                SET reconsider_set = ?
+                WHERE id = ?
+            ''', (session['reconsider_set'], session['user_id']))
+            conn.commit()
+            conn.close()
     else:
         app.logger.info('session: reconsider_set set to ' + str(session['reconsider_set']))
 
@@ -238,13 +341,15 @@ def choice_experiment():
             
             # Update database with both initial and final choices
             conn = get_db_connection()
+            timestamp_now = datetime.datetime.now().isoformat()
             conn.execute(f'''
                 UPDATE user_responses
                 SET choice{current_set} = ?,
                     choice{current_set}_initial = ?,
-                    choice{current_set}_final = ?
+                    choice{current_set}_final = ?,
+                    session_start = COALESCE(session_start, ?)
                 WHERE id = ?
-            ''', (selected_image, initial_choice, selected_image, session['user_id']))
+            ''', (selected_image, initial_choice, selected_image, timestamp_now, session['user_id']))
             conn.commit()
             conn.close()
             app.logger.info('db updated with both initial and final choices')
@@ -264,8 +369,10 @@ def choice_experiment():
             session['data_driven_tool_suggestion'] = other_image
             
             # Get descriptions for both images
-            original_desc = next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == selected_image.split('/')[-1]), "Unknown")
-            suggestion_desc = next((img['description'] for img in IMAGES if img['filename'] == other_image), "Unknown")
+            original_key = selected_image.split('/')[-1]
+            suggestion_key = other_image.split('/')[-1]
+            original_desc = image_translations.get(original_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == original_key), "Unknown"))
+            suggestion_desc = image_translations.get(suggestion_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == suggestion_key), "Unknown"))
             app.logger.info('initial image selection recorded')
             return jsonify({
                 'show_reconsider': True,
@@ -282,13 +389,15 @@ def choice_experiment():
 
         # Update database
         conn = get_db_connection()
+        timestamp_now = datetime.datetime.now().isoformat()
         conn.execute('''
             UPDATE user_responses
             SET choice{0} = ?,
                 choice{0}_initial = ?,
-                choice{0}_final = ?
+                choice{0}_final = ?,
+                session_start = COALESCE(session_start, ?)
             WHERE id = ?
-        '''.format(current_set), (selected_image, selected_image, selected_image, session['user_id']))
+        '''.format(current_set), (selected_image, selected_image, selected_image, timestamp_now, session['user_id']))
         conn.commit()
         conn.close()
         app.logger.info('db initialised with both initial and final choices')
@@ -296,7 +405,15 @@ def choice_experiment():
     elif request.method == 'GET':
         # Handle GET request
         available_images = [img for img in IMAGES if img["filename"] not in session.get('selected_images', [])]
-        images = random.sample(available_images, 2)
+        chosen_images = random.sample(available_images, 2)
+        
+        images = []
+        for img in chosen_images:
+            localized = dict(img)
+            filename_key = img['filename'].split('/')[-1]
+            localized['description'] = image_translations.get(filename_key, img['description'])
+            images.append(localized)
+
         session['current_images'] = [img["filename"] for img in images]
         app.logger.info('GET request initiated')
         app.logger.info('rendered choice experiment successfully with selected images')
@@ -364,6 +481,10 @@ def reconsider():
 
 @app.route('/procedural-ratings', methods=['GET', 'POST'])
 def procedural_ratings():
+    translations = load_translations(session.get('language', 'en'))
+    translated_questions = translations.get('procedural_ratings', {}).get('questions', []) if translations else []
+    translation_lookup = {item['id']: item for item in translated_questions if isinstance(item, dict) and 'id' in item}
+
     # List of questions with short IDs, labels, and full descriptions
     questions = [
         {
@@ -408,6 +529,18 @@ def procedural_ratings():
         },
     ]
 
+    for question in questions:
+        translated = translation_lookup.get(question['id'])
+        if translated:
+            question['label'] = translated.get('label', question['label'])
+            full_text = translated.get('full_text')
+            if full_text:
+                prefix = f"{question['label']}: "
+                if full_text.startswith(prefix):
+                    question['full_text'] = full_text[len(prefix):]
+                else:
+                    question['full_text'] = full_text
+
     if request.method == 'POST':
         question_id = request.form.get('question_id')
         rating = request.form.get('rating')
@@ -425,11 +558,13 @@ def procedural_ratings():
             app.logger.info('session user_id set to {}'.format(session['user_id']))
 
         # Store the response for the current question
+        timestamp_now = datetime.datetime.now().isoformat()
         conn.execute(f'''
             UPDATE user_responses
-            SET {question_id} = ?
+            SET {question_id} = ?,
+                session_start = COALESCE(session_start, ?)
             WHERE id = ?
-        ''', (rating, session['user_id']))
+        ''', (rating, timestamp_now, session['user_id']))
         conn.commit()
         conn.close()
         app.logger.info('current ratings Q&A stored')
@@ -474,6 +609,9 @@ def instructions():
 
 @app.route('/demography', methods=['GET', 'POST'])
 def demography():
+    translations = load_translations(session.get('language', 'en'))
+    demography_trans = translations.get('demography', {}) if translations else {}
+
     # List of demographic questions with short IDs and full labels
     questions = [
         {
@@ -508,6 +646,37 @@ def demography():
         },
     ]
 
+    for question in questions:
+        if question['id'] == 'gender':
+            question['label'] = demography_trans.get('gender_question', question['label'])
+            option_lookup = {
+                'female': 'female_label',
+                'male': 'male_label',
+                'diverse': 'diverse_label',
+                'prefer_not_to_disclose': 'prefer_not_to_disclose_label'
+            }
+            for option in question['options']:
+                key = option_lookup.get(option['value'])
+                if key:
+                    option['label'] = demography_trans.get(key, option['label'])
+        elif question['id'] == 'age':
+            question['label'] = demography_trans.get('age_question', question['label'])
+            question['placeholder'] = demography_trans.get('age_placeholder', question.get('placeholder', ''))
+        elif question['id'] == 'religion':
+            question['label'] = demography_trans.get('religion_question', question['label'])
+            option_lookup = {
+                'none': 'no_religion',
+                'christian': 'christian_label',
+                'islam': 'islam_label',
+                'hinduism': 'hinduism_label',
+                'buddhism': 'buddhism_label',
+                'other': 'other_label'
+            }
+            for option in question['options']:
+                key = option_lookup.get(option['value'])
+                if key:
+                    option['label'] = demography_trans.get(key, option['label'])
+
     if request.method == 'POST':
         # Get the current question's ID and user's response
         question_id = request.form.get('question_id')
@@ -536,11 +705,13 @@ def demography():
 
         # Update the specific demographic response
         if question_id in ['gender', 'age', 'religion']:
+            timestamp_now = datetime.datetime.now().isoformat()
             conn.execute(f'''
                 UPDATE user_responses
-                SET {question_id} = ?
+                SET {question_id} = ?,
+                    session_start = COALESCE(session_start, ?)
                 WHERE id = ?
-            ''', (answer, session['user_id']))
+            ''', (answer, timestamp_now, session['user_id']))
             conn.commit()
         conn.close()
 
@@ -571,13 +742,23 @@ def demography():
 
 @app.route('/group-preferences', methods=['GET', 'POST'])
 def group_preferences():
+    translations = load_translations(session.get('language', 'en'))
+    group_trans = translations.get('group_preferences', {}) if translations else {}
+
     # List of group preference questions with short IDs and full labels
     questions = [
         {
             "id": "general_health",
             "label": "How is your health in general?",
             "type": "gradient",
-            "options": ["Very Poor", "Poor", "Fair", "Good", "Very Good", "Excellent"]
+            "options": [
+                {"value": "Very Poor", "label": "Very Poor"},
+                {"value": "Poor", "label": "Poor"},
+                {"value": "Fair", "label": "Fair"},
+                {"value": "Good", "label": "Good"},
+                {"value": "Very Good", "label": "Very Good"},
+                {"value": "Excellent", "label": "Excellent"}
+            ]
         },
         {
             "id": "illness",
@@ -592,6 +773,36 @@ def group_preferences():
             "options": [{"value": "yes", "label": "Yes"}, {"value": "no", "label": "No"}]
         }
     ]
+
+    for question in questions:
+        if question['id'] == 'general_health':
+            question['label'] = group_trans.get('general_health_question', question['label'])
+            scale_labels = [
+                ('Very Poor', 'very_poor'),
+                ('Poor', 'poor'),
+                ('Fair', 'fair'),
+                ('Good', 'good'),
+                ('Very Good', 'very_good'),
+                ('Excellent', 'excellent')
+            ]
+            for idx, (default_label, key) in enumerate(scale_labels):
+                if idx < len(question['options']):
+                    translated_label = group_trans.get(key, default_label)
+                    question['options'][idx]['label'] = translated_label
+        elif question['id'] == 'illness':
+            question['label'] = group_trans.get('illness_question', question['label'])
+            label_lookup = {'yes': 'illness_yes', 'no': 'illness_no'}
+            for opt in question['options']:
+                key = label_lookup.get(opt['value'])
+                if key:
+                    opt['label'] = group_trans.get(key, opt['label'])
+        elif question['id'] == 'children':
+            question['label'] = group_trans.get('children_question', question['label'])
+            label_lookup = {'yes': 'children_yes', 'no': 'children_no'}
+            for opt in question['options']:
+                key = label_lookup.get(opt['value'])
+                if key:
+                    opt['label'] = group_trans.get(key, opt['label'])
 
     if request.method == 'POST':
         # Get the current question's ID and user's response
@@ -612,13 +823,14 @@ def group_preferences():
             session['user_id'] = cursor.lastrowid
             conn.commit()
 
+        timestamp_now = datetime.datetime.now().isoformat()
         conn.execute(f'''
             UPDATE user_responses
-            SET {question_id} = ?
+            SET {question_id} = ?,
+                session_start = COALESCE(session_start, ?)
             WHERE id = ?
-        ''', (answer, session['user_id']))
+        ''', (answer, timestamp_now, session['user_id']))
         conn.commit()
-        conn.close()
 
         # Move to the next question
         current_index = next((i for i, q in enumerate(questions) if q['id'] == question_id), -1)
@@ -627,7 +839,18 @@ def group_preferences():
         # Redirect to the thank-you page if all questions are answered
         if next_index >= len(questions):
             app.logger.info('survey successfully completed')
+            session_end = datetime.datetime.now().isoformat()
+            language = session.get('language', 'en')
+            conn.execute('''
+                UPDATE user_responses
+                SET session_end = COALESCE(session_end, ?),
+                    language = ?
+                WHERE id = ?
+            ''', (session_end, language, session['user_id']))
+            conn.commit()
+            conn.close()
             return redirect('/thank-you')
+        conn.close()
         app.logger.info('move onto next question within group preferences')
         return redirect(f'/group-preferences?index={next_index}')
     elif request.method == 'GET':
@@ -656,11 +879,13 @@ def thank_you():
     if 'user_id' in session:
         conn = get_db_connection()
         session_end = datetime.datetime.now().isoformat()
+        language = session.get('language', 'en')
         conn.execute('''
             UPDATE user_responses
-            SET session_end = ?
+            SET session_end = COALESCE(session_end, ?),
+                language = ?
             WHERE id = ?
-        ''', (session_end, session['user_id']))
+        ''', (session_end, language, session['user_id']))
         conn.commit()
         conn.close()
 
@@ -676,8 +901,20 @@ def thank_you():
         print(data_string)
         send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
         conn_read.close()
+
+        # Clear survey-specific session data so a new run starts cleanly
+        session.pop('user_id', None)
+        session.pop('selected_images', None)
+        session.pop('initial_choices', None)
+        session.pop('final_choices', None)
+        session.pop('reconsider_set', None)
+        session.pop('stored_images', None)
+        session.pop('current_images', None)
+        session.pop('popup_shown', None)
+        session.pop('awaiting_final_selection', None)
     else:
         app.logger.warning('session: user_id not set in session')
+
     app.logger.info('survey recorded and final thank you page rendered successfully')
     return render_template('thank_you.html', language=session.get('language'))
 
@@ -721,11 +958,55 @@ def results():
 
             # Fetch all user responses
             user_responses = conn.execute('SELECT * FROM user_responses').fetchall()
+            processed_responses = []
+
+            def simplify_filename(value):
+                if not value or str(value).lower() == 'none':
+                    return '—'
+                return os.path.basename(value)
+
+            for row in user_responses:
+                data = dict(row)
+
+                def final_choice(index):
+                    final_value = data.get(f'choice{index}_final') or data.get(f'choice{index}') or data.get(f'choice{index}_initial')
+                    return simplify_filename(final_value)
+
+                choice1 = final_choice(1)
+                choice2 = final_choice(2)
+                choice3 = final_choice(3)
+
+                reconsider_raw = data.get('reconsider_set')
+                try:
+                    reconsider_set = int(reconsider_raw) if reconsider_raw is not None else None
+                except (ValueError, TypeError):
+                    reconsider_set = None
+                changed = data.get('changed_decision')
+                suggestion_image = simplify_filename(data.get('data_driven_tool_suggestion'))
+
+                if reconsider_set in (1, 2, 3):
+                    suggestion_slot = f'Choice {reconsider_set}'
+                    decision_after_suggestion = [choice1, choice2, choice3][reconsider_set - 1]
+                else:
+                    suggestion_slot = '—'
+                    suggestion_image = '—'
+                    decision_after_suggestion = '—'
+
+                processed_responses.append({
+                    'id': data.get('id'),
+                    'choice1': choice1,
+                    'choice2': choice2,
+                    'choice3': choice3,
+                    'suggestion_slot': suggestion_slot,
+                    'suggested_image': suggestion_image,
+                    'decision_after_suggestion': decision_after_suggestion,
+                    'changed_decision': 'Yes' if str(changed) in ('1', 'true', 'True') else 'No'
+                })
             conn.close()
 
             # Render the results page with user responses
 
-            return render_template('results.html', user_responses=user_responses)
+            return render_template('results.html', user_responses=user_responses, processed_responses=processed_responses)
 
         except sqlite3.OperationalError as e:
             # Handle the case where the table does not exist

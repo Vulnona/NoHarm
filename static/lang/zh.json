@@ -164,22 +164,22 @@
     "thank_you_message": "您的回复已被记录。我们感谢您在帮助我们进行这项研究时所付出的时间和努力。"
   },
   "images": {
-    "child_simple.jpg": "儿童",
-    "Disability.jpg": "残疾人士",
-    "old_male_female_simpler.jpg": "老年夫妇",
-    "Overweight_simpler.jpg": "超重人士",
-    "test_0_0_1_1_0.jpg": "测试图片1",
-    "test_0_0_2_3_1.jpg": "测试图片2",
-    "test_0_2_3_3_2.jpg": "测试图片3",
-    "test_1_0_3_2_0.jpg": "测试图片4",
-    "test_1_3_2_2_1.jpg": "测试图片5",
+    "child_simple.png": "儿童",
+    "Disability.png": "残疾人士",
+    "old_male_female_simpler.png": "老年夫妇",
+    "Overweight_simpler.png": "超重人士",
+    "test_0_0_1_1_0.png": "测试图片1",
+    "test_0_0_2_3_1.png": "测试图片2",
+    "test_0_2_3_3_2.png": "测试图片3",
+    "test_1_0_3_2_0.png": "测试图片4",
+    "test_1_3_2_2_1.png": "测试图片5",
     "Patient_at_Laptop_with_Head_Bandage.png": "头部绑带的笔记本电脑前患者",
     "Patient_on_a_Stretcher.png": "担架上的患者",
     "Patient_with_Arm_Sling.png": "手臂吊带的患者",
-    "Patient_with_IV_and_Arm_Sling.jpg": "静脉注射和手臂吊带的患者",
+    "Patient_with_IV_and_Arm_Sling.png": "静脉注射和手臂吊带的患者",
     "Patient_with_IV_Drip.png": "静脉滴注的患者",
     "pregnant_woman_care.webp": "孕妇护理",
     "Pregnant_woman_lying_on_hospital_bed.png": "躺在医院床上的孕妇",
-    "Walking_Patient_with_Crutches.jpg": "拄拐行走的患者"
+    "Walking_Patient_with_Crutches.png": "拄拐行走的患者"
   }
 }

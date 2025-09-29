@@ -164,22 +164,22 @@
     "thank_you_message": "Ihre Antworten wurden erfasst. Wir bedanken uns für Ihre Zeit und Mühe bei der Unterstützung dieser Forschung."
   },
   "images": {
-    "child_simple.jpg": "Kind",
-    "Disability.jpg": "Person mit Behinderung",
-    "old_male_female_simpler.jpg": "Älteres Paar",
-    "Overweight_simpler.jpg": "Übergewichtige Person",
-    "test_0_0_1_1_0.jpg": "Testbild 1",
-    "test_0_0_2_3_1.jpg": "Testbild 2",
-    "test_0_2_3_3_2.jpg": "Testbild 3",
-    "test_1_0_3_2_0.jpg": "Testbild 4",
-    "test_1_3_2_2_1.jpg": "Testbild 5",
+    "child_simple.png": "Kind",
+    "Disability.png": "Person mit Behinderung",
+    "old_male_female_simpler.png": "Älteres Paar",
+    "Overweight_simpler.png": "Übergewichtige Person",
+    "test_0_0_1_1_0.png": "Testbild 1",
+    "test_0_0_2_3_1.png": "Testbild 2",
+    "test_0_2_3_3_2.png": "Testbild 3",
+    "test_1_0_3_2_0.png": "Testbild 4",
+    "test_1_3_2_2_1.png": "Testbild 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient am Laptop mit Kopfverband",
     "Patient_on_a_Stretcher.png": "Patient auf einer Trage",
     "Patient_with_Arm_Sling.png": "Patient mit Armschlinge",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient mit Infusion und Armschlinge",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient mit Infusion und Armschlinge",
     "Patient_with_IV_Drip.png": "Patient mit Infusion",
     "pregnant_woman_care.webp": "Schwangere Frau in Betreuung",
     "Pregnant_woman_lying_on_hospital_bed.png": "Schwangere Frau im Krankenhausbett",
-    "Walking_Patient_with_Crutches.jpg": "Gehender Patient mit Krücken"
+    "Walking_Patient_with_Crutches.png": "Gehender Patient mit Krücken"
   }
 }

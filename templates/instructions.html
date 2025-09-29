@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
-    <title>Instructions</title>
+    <title>{{ translations.instructions.title | default('Instructions') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="instructions">
@@ -23,9 +23,9 @@
         </select>
     </div>
 
-    <p id="instructions-line"> Thank you very much but the survey is not yet completed, we would like to ask you a few more general questions. </p>
+    <p id="instructions-line">{{ translations.instructions.title | default('Thank you very much but the survey is not yet completed, we would like to ask you a few more general questions.') }}</p>
     <form method="post">
-        <button type="submit" class="submit-btn">Continue</button>
+        <button type="submit" class="submit-btn">{{ translations.instructions.continue_button | default('Continue') }}</button>
     </form>
 </div>
 

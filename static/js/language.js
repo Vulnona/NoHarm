@@ -1,10 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
     const languageSwitcher = document.getElementById('language-switcher');
     const currentPage = document.body.getAttribute('data-page'); // Detect the current page
+    if (!languageSwitcher) {
+        return;
+    }
+
+    const supportedLanguages = Array.from(languageSwitcher.options, option => option.value);
 
     // Detect user language or load saved language from localStorage
-    const defaultLanguage = navigator.language.slice(0, 2); // E.g., 'en', 'fr'
-    const savedLanguage = localStorage.getItem('selectedLanguage') || defaultLanguage || 'en';
+    const defaultLanguage = navigator.language ? navigator.language.slice(0, 2) : 'en'; // E.g., 'en', 'fr'
+    let savedLanguage = localStorage.getItem('selectedLanguage') || defaultLanguage || 'en';
+    if (!supportedLanguages.includes(savedLanguage)) {
+        savedLanguage = 'en';
+    }
 
     // Set and apply selected language on page load
     changeLanguage(savedLanguage);
@@ -17,14 +25,30 @@ document.addEventListener('DOMContentLoaded', function () {
         changeLanguage(selectedLanguage);
     });
 
+    function persistLanguage(language) {
+        fetch('/change-language', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ language })
+        }).catch(error => {
+            console.error('Failed to persist language preference', error);
+        });
+    }
+
     // Function to dynamically change language
     function changeLanguage(language) {
         // Set RTL for Arabic and Urdu
         document.documentElement.dir = ['ar', 'ur'].includes(language) ? 'rtl' : 'ltr';
+        document.documentElement.lang = language;
+
+        persistLanguage(language);
 
         fetch(`/static/lang/${language}.json`)
             .then(response => response.json())
             .then(data => {
+                window.__i18n = data;
                 console.log("Current page is:", currentPage);
                 let ageErrorMessage = null;
                 if (currentPage === "admin_login") {
@@ -182,7 +206,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else if (currentPage === "procedural_ratings") {
                     // For procedural_rating.html
-                    document.querySelector('.rating-container p').textContent = data.procedural_ratings.rating_intro;
+                    const titleEl = document.querySelector('.rating-title');
+                    if (titleEl && data.procedural_ratings.rating_title) {
+                        titleEl.textContent = data.procedural_ratings.rating_title;
+                    }
+
+                    const introEl = document.querySelector('.rating-intro');
+                    if (introEl && data.procedural_ratings.rating_intro) {
+                        introEl.textContent = data.procedural_ratings.rating_intro;
+                    }
+
                     document.querySelector('.prev-btn').textContent = data.procedural_ratings.previous_button;
                     document.querySelector('.next-btn').textContent = data.procedural_ratings.next_button;
 
@@ -191,7 +224,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         const question = data.procedural_ratings.questions.find(q => q.id === questionId);
                         if (question) {
                             document.querySelector('.question-label').textContent = question.label;
-                            document.querySelector('.question-description').textContent = question.full_text.replace(question.label + ': ', '');
+                            const descriptionEl = document.querySelector('.question-description');
+                            if (descriptionEl) {
+                                const prefix = `${question.label}: `;
+                                if (question.full_text && question.full_text.startsWith(prefix)) {
+                                    descriptionEl.textContent = question.full_text.slice(prefix.length);
+                                } else {
+                                    descriptionEl.textContent = question.full_text || '';
+                                }
+                            }
                         }
                     }
 
@@ -203,10 +244,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         labels[labels.length - 1].textContent = data.procedural_ratings.very_fair; // last label
                     }
 
-                } else if (currentPage === "results") {
-                    // For results.html
-                    document.querySelector('h2').textContent = data.results.user_responses;
-                    document.querySelector('.download-button').textContent = data.results.download_button;
                 } else if (currentPage === "thank_you") {
                     // For thank_you.html
                     document.getElementById('thank-you-title').textContent = data.thank_you.thank_you_title;
@@ -244,10 +281,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Handle specific patient descriptions in choice experiment
         const patientDescriptions = {
-            'patient_1_overweight': 'Overweight_simpler.jpg',
-            'patient_2_disability': 'Disability.jpg',
-            'patient_1_child': 'child_simple.jpg',
-            'patient_2_elderly_couple': 'old_male_female_simpler.jpg',
+            'patient_1_overweight': 'Overweight_simpler.png',
+            'patient_2_disability': 'Disability.png',
+            'patient_1_child': 'child_simple.png',
+            'patient_2_elderly_couple': 'old_male_female_simpler.png',
             'patient_1_young_adult': 'Patient_with_Arm_Sling.png',
             'patient_2_senior_ill': 'Patient_with_IV_Drip.png'
         };
