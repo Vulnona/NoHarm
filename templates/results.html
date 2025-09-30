@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-dymfL5Qq7Yh6YFQki71R+xVQ1BM8DT6vKrrf5gYv7FpC18m0tHbdD+14Q6gttxyPjdvVSdGInxjea2aEIBKnwQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="results">
@@ -12,8 +13,8 @@
 
     <div class="result-top-bar">
         <div class="results-tab-controls" role="tablist">
-            <button type="button" class="results-tab-button active" data-target="summary" role="tab" aria-selected="true">Summary</button>
-            <button type="button" class="results-tab-button" data-target="details" role="tab" aria-selected="false">Full Details</button>
+            <button type="button" id="summary-tab" class="results-tab-button active" data-target="summary" role="tab" aria-selected="true" aria-controls="summary" tabindex="0">Summary</button>
+            <button type="button" id="details-tab" class="results-tab-button" data-target="details" role="tab" aria-selected="false" aria-controls="details" tabindex="-1">Full Details</button>
         </div>
         <div class="download-container">
             <a href="{{ url_for('download_csv') }}" class="download-button">
@@ -25,7 +26,7 @@
     <!-- User Responses Data -->
     <h2>User Responses</h2>
 
-    <div class="results-tab-panel active" id="summary" role="tabpanel">
+    <div class="results-tab-panel active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
         <div class="table-responsive">
             <table border="1" class="result-table">
                 <thead>
@@ -63,7 +64,7 @@
         </div>
     </div>
 
-    <div class="results-tab-panel" id="details" role="tabpanel" hidden>
+    <div class="results-tab-panel" id="details" role="tabpanel" aria-labelledby="details-tab">
         <div class="table-responsive">
             {% if user_responses %}
             <table border="1" class="result-table">
@@ -94,6 +95,7 @@
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('js-enabled');
         const buttons = Array.from(document.querySelectorAll('.results-tab-button'));
         const panels = Array.from(document.querySelectorAll('.results-tab-panel'));
 
@@ -102,21 +104,20 @@
                 const isActive = btn.dataset.target === targetId;
                 btn.classList.toggle('active', isActive);
                 btn.setAttribute('aria-selected', isActive.toString());
+                btn.setAttribute('tabindex', isActive ? '0' : '-1');
             });
             panels.forEach(panel => {
                 const isActive = panel.id === targetId;
                 panel.classList.toggle('active', isActive);
-                if (isActive) {
-                    panel.removeAttribute('hidden');
-                } else {
-                    panel.setAttribute('hidden', 'hidden');
-                }
+                panel.hidden = !isActive;
             });
         }
 
         buttons.forEach(btn => {
             btn.addEventListener('click', () => activate(btn.dataset.target));
         });
+
+        activate('summary');
     });
 </script>
 </body>
