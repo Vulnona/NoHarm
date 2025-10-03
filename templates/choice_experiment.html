@@ -56,29 +56,9 @@
 
             <!-- Doctor Section -->
             <div class="doctor-section">
+                <div class="doctor-resting-area" aria-hidden="true"></div>
                 <img src="{{ url_for('static', filename='images/doctor_image.png') }}" alt="Physician"
                     class="doctor-image" id="draggableDoctor" style="cursor: grab;">
-
-                <div class="arrow-controls">
-                    <button class="arrow-btn left" onclick="moveDoctor('left')" aria-label="Move left">
-                        <svg class="arrow-svg arrow-horizontal" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M15 6l-6 6 6 6z" fill="currentColor" />
-                        </svg>
-                        <svg class="arrow-svg arrow-vertical" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 6l-6 6h12z" fill="currentColor" />
-                        </svg>
-                    </button>
-
-                    <button class="arrow-btn right" onclick="moveDoctor('right')" aria-label="Move right">
-                        <svg class="arrow-svg arrow-horizontal" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M9 6l6 6-6 6z" fill="currentColor" />
-                        </svg>
-                        <svg class="arrow-svg arrow-vertical" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 18l6-6H6z" fill="currentColor" />
-                        </svg>
-                    </button>
-                </div>
-
                 <div class="doctor-instruction">{{ translations.choice_experiment.doctor_instruction | default('Move the physician to the patient to be treated!') }}</div>
             </div>
 

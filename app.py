@@ -1,5 +1,7 @@
 
+import csv
 import datetime
+import io
 import json
 import os
 import random
@@ -893,13 +895,14 @@ def thank_you():
         # check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
         conn_read = get_db_connection()
         cursor = conn_read.cursor()
-        data_string = cursor.execute('''
+        last_row = cursor.execute('''
                                      SELECT *
                                      FROM user_responses
                                      ORDER BY id DESC LIMIT 1;
                                      ''').fetchone()
-        print(data_string)
-        send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
+        payload = json.dumps(dict(last_row)) if last_row else json.dumps({})
+        print(last_row)
+        send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', payload)
         conn_read.close()
 
         # Clear survey-specific session data so a new run starts cleanly
@@ -1028,31 +1031,29 @@ def download_csv():
         # Connect to the database
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Get column names
         cursor.execute("PRAGMA table_info(user_responses);")
         columns = [col[1] for col in cursor.fetchall()]
-        
+
         # Get all data
-        cursor.execute(f"SELECT {', '.join(columns)} FROM user_responses")
+        data_query = f"SELECT {', '.join(columns)} FROM user_responses" if columns else "SELECT 1 WHERE 0"
+        cursor.execute(data_query)
         user_responses = cursor.fetchall()
         conn.close()
 
-        # Prepare the CSV content
-        def generate_csv():
-            # Create a CSV output
-            output = []
-            # Write header row (column names)
-            output.append(",".join([key for key in user_responses[0].keys()]))
+        # Prepare the CSV content with proper quoting
+        buffer = io.StringIO()
+        writer = csv.writer(buffer, quoting=csv.QUOTE_MINIMAL)
 
-            # Write each row
+        if columns:
+            writer.writerow(columns)
             for row in user_responses:
-                output.append(",".join([str(row[key]) for key in row.keys()]))
-            app.logger.info('user response recorded for csv')
-            return "\n".join(output)
+                writer.writerow([row[column] for column in columns])
 
-        # Generate the CSV content
-        csv_content = generate_csv()
+        csv_content = buffer.getvalue()
+        buffer.close()
+        app.logger.info('user response recorded for csv')
 
         # Create a Response object for the CSV file
         response = Response(csv_content, mimetype='text/csv')
@@ -1078,13 +1079,14 @@ def logout():
 def webhook_output():
     conn = get_db_connection()
     cursor = conn.cursor()
-    data_string = cursor.execute('''
+    last_row = cursor.execute('''
                                SELECT *
                                FROM user_responses
                                ORDER BY id DESC LIMIT 1;
                                ''').fetchone()
-    print(data_string)
-    send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', data_string)
+    payload = json.dumps(dict(last_row)) if last_row else json.dumps({})
+    print(last_row)
+    send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', payload)
     conn.close()
     app.logger.warning('(mock) api call successfully recorded at: https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58')
     return jsonify({'success': True})

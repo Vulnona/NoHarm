@@ -202,7 +202,20 @@
             const textInput = form.querySelector("input[type=text][name='answer']");
             const ageField = document.getElementById("age-input");
             const otherNumberInput = !ageField ? form.querySelector("input[type=number][name='answer']") : null;
-            const savedAnswer = localStorage.getItem('demography_' + questionId);
+            const urlParams = new URLSearchParams(window.location.search);
+            const prefillParam = urlParams.get('prefill');
+
+            if (!Number.isNaN(currentIndex)) {
+                localStorage.setItem('demography_index_' + currentIndex, questionId);
+            }
+
+            if (prefillParam !== null) {
+                localStorage.setItem('demography_' + questionId, prefillParam);
+            }
+
+            const savedAnswer = prefillParam !== null
+                ? prefillParam
+                : localStorage.getItem('demography_' + questionId);
             prevBtn.disabled = false;
 
             if (savedAnswer !== null) {
@@ -272,7 +285,8 @@
             }
 
             // 🔙 Previous button just goes back in browser history
-            prevBtn.addEventListener("click", function () {
+            prevBtn.addEventListener("click", function (event) {
+                event.preventDefault();
                 const lastIndex = localStorage.getItem('procedural_last_index');
                 let indexToUse = lastIndex !== null ? parseInt(lastIndex, 10) : null;
                 if (indexToUse !== null && Number.isNaN(indexToUse)) {
@@ -288,7 +302,19 @@
                     }
                     window.location.href = url.toString();
                 } else {
-                    window.history.back();
+                    const prevIndex = Math.max(0, currentIndex - 1);
+                    const demographyUrl = new URL('/demography', window.location.origin);
+                    demographyUrl.searchParams.set('index', prevIndex);
+
+                    const prevQuestionId = localStorage.getItem('demography_index_' + prevIndex);
+                    if (prevQuestionId) {
+                        const storedPrevAnswer = localStorage.getItem('demography_' + prevQuestionId);
+                        if (storedPrevAnswer !== null) {
+                            demographyUrl.searchParams.set('prefill', storedPrevAnswer);
+                        }
+                    }
+
+                    window.location.href = demographyUrl.toString();
                 }
             });
 

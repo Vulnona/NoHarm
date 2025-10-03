@@ -58,188 +58,218 @@ function submitChoice(selectedImage) {
     });
 }
 
-function updateArrowLabels() {
-    const isVertical = window.matchMedia('(max-width: 600px)').matches;
-    const leftBtn = document.querySelector('.arrow-btn.left');
-    const rightBtn = document.querySelector('.arrow-btn.right');
-
-    if (leftBtn) {
-        leftBtn.setAttribute('aria-label', isVertical ? 'Move up' : 'Move left');
-    }
-    if (rightBtn) {
-        rightBtn.setAttribute('aria-label', isVertical ? 'Move down' : 'Move right');
-    }
-}
-
-function moveDoctor(direction) {
-    const doctor = document.getElementById('draggableDoctor');
-    const patients = document.querySelectorAll('.patient-card');
-    if (!doctor || patients.length < 2) return;
-
-    // NEW: detect RTL and map indices accordingly
-    const isRTL =
-      document.documentElement.getAttribute('dir') === 'rtl' ||
-      getComputedStyle(document.body).direction === 'rtl' ||
-      ['ar', 'ur'].includes(localStorage.getItem('selectedLanguage'));
-
-    const leftIndex  = isRTL ? 1 : 0;   // in RTL, DOM[1] is visually left
-    const rightIndex = 1 - leftIndex;
-
-    const target = (direction === 'left') ? patients[leftIndex] : patients[rightIndex];
-
-    // (unchanged) animation + movement
-    doctor.classList.remove('move-right', 'move-left');
-    doctor.classList.add(direction === 'left' ? 'move-left' : 'move-right');
-    doctor.style.transition = 'transform 0.5s ease';
-
-    const targetRect = target.getBoundingClientRect();
-    const doctorRect = doctor.getBoundingClientRect();
-
-    const moveX = (targetRect.left + targetRect.width / 2)  - (doctorRect.left + doctorRect.width / 2);
-    const moveY = (targetRect.top  + targetRect.height / 2) - (doctorRect.top  + doctorRect.height / 2);
-
-    doctor.style.transform = `translate(${moveX}px, ${moveY}px)`;
-
-    setTimeout(() => {
-        const patientImage = target.querySelector('.patient-image');
-        if (patientImage && (patientImage.dataset.fullpath || patientImage.dataset.filename)) {
-            const payload = patientImage.dataset.fullpath || patientImage.dataset.filename;
-            submitChoice(payload);
-        }
-    }, 500);
-}
-
-
 function initDraggableDoctor() {
     const doctor = document.getElementById('draggableDoctor');
-    if (!doctor) return;
-    
+    const doctorSection = doctor ? doctor.closest('.doctor-section') : null;
+    const patients = Array.from(document.querySelectorAll('.patient-card'));
+
+    if (!doctor || patients.length === 0) {
+        return;
+    }
+
     // Clear any existing transforms/transitions that might interfere
     doctor.style.animation = 'none';
     doctor.style.transition = 'none';
     doctor.style.opacity = '1';
-    
+
     let isDragging = false;
-    let startX, startY;
+    let startX = 0;
+    let startY = 0;
     let initialTransform = { x: 0, y: 0 };
-    
-    function startDrag(e) {
-        // Prevent default to avoid browser's native drag
-        e.preventDefault();
-        
-        // Get initial position - handle both mouse and touch
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        
-        if (!clientX || !clientY) return;
-        
-        isDragging = true;
-        startX = clientX;
-        startY = clientY;
-        
-        // Get current transform
-        const style = window.getComputedStyle(doctor);
+    let activeDropTarget = null;
+    let dropTimeout = null;
+
+    function parseTransform(element) {
+        const style = window.getComputedStyle(element);
         const transform = style.getPropertyValue('transform');
-        
-        // Parse current transform
+
         if (transform && transform !== 'none') {
             try {
                 const matrix = new DOMMatrix(transform);
-                initialTransform.x = matrix.m41;
-                initialTransform.y = matrix.m42;
-            } catch (e) {
-                console.error("Transform parsing error:", e);
-                initialTransform = { x: 0, y: 0 };
+                return { x: matrix.m41, y: matrix.m42 };
+            } catch (error) {
+                console.error('Transform parsing error:', error);
             }
         }
-        
-        // Apply visual feedback
+
+        return { x: 0, y: 0 };
+    }
+
+    function setActiveDropTarget(target) {
+        if (activeDropTarget === target) {
+            return;
+        }
+
+        if (activeDropTarget) {
+            activeDropTarget.classList.remove('highlight');
+        }
+
+        activeDropTarget = target;
+
+        if (activeDropTarget) {
+            activeDropTarget.classList.add('highlight');
+        }
+    }
+
+    function findOverlappingPatient() {
+        const doctorRect = doctor.getBoundingClientRect();
+        const padding = 24; // Allow a little forgiveness for touch input
+
+        return patients.find(patient => {
+            const rect = patient.getBoundingClientRect();
+            const extended = {
+                top: rect.top - padding,
+                right: rect.right + padding,
+                bottom: rect.bottom + padding,
+                left: rect.left - padding
+            };
+
+            const overlapping = !(
+                doctorRect.right < extended.left ||
+                doctorRect.left > extended.right ||
+                doctorRect.bottom < extended.top ||
+                doctorRect.top > extended.bottom
+            );
+
+            return overlapping;
+        }) || null;
+    }
+
+    function animateToHome() {
+        doctor.style.transition = 'transform 0.35s ease';
+        doctor.style.transform = 'translate(0px, 0px)';
+        setActiveDropTarget(null);
+    }
+
+    function snapToPatient(patient) {
+        const patientImage = patient.querySelector('.patient-image');
+        if (!patientImage) {
+            animateToHome();
+            return;
+        }
+
+        const payload = patientImage.dataset.fullpath || patientImage.dataset.filename;
+        if (!payload) {
+            animateToHome();
+            return;
+        }
+
+        const currentTransform = parseTransform(doctor);
+        const doctorRect = doctor.getBoundingClientRect();
+        const targetRect = patient.getBoundingClientRect();
+
+        const deltaX = (targetRect.left + targetRect.width / 2) - (doctorRect.left + doctorRect.width / 2);
+        const deltaY = (targetRect.top + targetRect.height / 2) - (doctorRect.top + doctorRect.height / 2);
+
+        doctor.style.transition = 'transform 0.35s ease';
+        doctor.style.transform = `translate(${currentTransform.x + deltaX}px, ${currentTransform.y + deltaY}px)`;
+
+        if (dropTimeout) {
+            clearTimeout(dropTimeout);
+        }
+
+        dropTimeout = setTimeout(() => {
+            setActiveDropTarget(null);
+            submitChoice(payload);
+            dropTimeout = null;
+        }, 320);
+    }
+
+    function startDrag(event) {
+        if (dropTimeout) {
+            clearTimeout(dropTimeout);
+            dropTimeout = null;
+        }
+
+        event.preventDefault();
+
+        const pointer = event.touches ? event.touches[0] : event;
+        const clientX = pointer?.clientX;
+        const clientY = pointer?.clientY;
+
+        if (clientX == null || clientY == null) {
+            return;
+        }
+
+        isDragging = true;
+        startX = clientX;
+        startY = clientY;
+
+        initialTransform = parseTransform(doctor);
+
         doctor.style.cursor = 'grabbing';
         doctor.style.transition = 'none';
         doctor.classList.add('dragging');
-        
-        console.log("Drag started", { startX, startY, initialTransform });
+        setActiveDropTarget(null);
+
+        if (doctorSection) {
+            doctorSection.classList.add('drag-active');
+        }
     }
-    
-    function moveDrag(e) {
-        if (!isDragging) return;
-        
-        // Get current position - handle both mouse and touch
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        
-        if (!clientX || !clientY) return;
-        
-        // Calculate movement
+
+    function moveDrag(event) {
+        if (!isDragging) {
+            return;
+        }
+
+        const pointer = event.touches ? event.touches[0] : event;
+        const clientX = pointer?.clientX;
+        const clientY = pointer?.clientY;
+
+        if (clientX == null || clientY == null) {
+            return;
+        }
+
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+
         const dx = clientX - startX;
         const dy = clientY - startY;
-        
-        // Apply new position
+
         const newX = initialTransform.x + dx;
         const newY = initialTransform.y + dy;
         doctor.style.transform = `translate(${newX}px, ${newY}px)`;
-        
-        // Check for overlap with patients
-        checkPatientOverlap(doctor);
-        
-        console.log("Dragging", { dx, dy, newX, newY });
+
+        const overlapping = findOverlappingPatient();
+        setActiveDropTarget(overlapping);
     }
-    
+
     function stopDrag() {
-        if (!isDragging) return;
-        
+        if (!isDragging) {
+            return;
+        }
+
         isDragging = false;
         doctor.style.cursor = 'grab';
-        doctor.style.transition = 'transform 0.3s ease';
         doctor.classList.remove('dragging');
-        
-        console.log("Drag stopped");
+
+        if (doctorSection) {
+            doctorSection.classList.remove('drag-active');
+        }
+
+        if (activeDropTarget) {
+            snapToPatient(activeDropTarget);
+        } else {
+            animateToHome();
+        }
     }
-    
-    function checkPatientOverlap(doctor) {
-        const doctorRect = doctor.getBoundingClientRect();
-        const patients = document.querySelectorAll('.patient-card');
-        
-        patients.forEach(patient => {
-            const patientRect = patient.getBoundingClientRect();
-            
-            // Check if rectangles overlap
-            if (!(doctorRect.right < patientRect.left || 
-                  doctorRect.left > patientRect.right || 
-                  doctorRect.bottom < patientRect.top || 
-                  doctorRect.top > patientRect.bottom)) {
-                
-                // Found overlap
-                console.log("Overlap detected with patient");
-                patient.classList.add('highlight');
-                
-                // Get the image and submit the choice
-                const img = patient.querySelector('.patient-image');
-                if (img && (img.dataset.fullpath || img.dataset.filename)) {
-                    const payload = img.dataset.fullpath || img.dataset.filename;
-                    submitChoice(payload);
-                    isDragging = false;
-                }
-            } else {
-                patient.classList.remove('highlight');
-            }
-        });
-    }
-    
+
     // Mouse events
     doctor.addEventListener('mousedown', startDrag);
     document.addEventListener('mousemove', moveDrag);
     document.addEventListener('mouseup', stopDrag);
-    
+
     // Touch events
     doctor.addEventListener('touchstart', startDrag, { passive: false });
     document.addEventListener('touchmove', moveDrag, { passive: false });
     document.addEventListener('touchend', stopDrag);
-    
+    document.addEventListener('touchcancel', stopDrag);
+
     // Prevent browser's native drag
     doctor.addEventListener('dragstart', e => e.preventDefault());
-    
-    console.log("Doctor draggable initialized");
+
+    console.log('Doctor draggable initialized');
 }
 
 
@@ -297,8 +327,15 @@ function handleReconsider(change) {
            
             // Reset the doctor position to center
             const doctor = document.getElementById('draggableDoctor');
-            doctor.classList.remove('move-left', 'move-right');
-            doctor.style.transform = 'translateX(0)';
+            if (doctor) {
+                const doctorSection = doctor.closest('.doctor-section');
+                doctor.classList.remove('dragging');
+                doctor.style.transition = 'transform 0.35s ease';
+                doctor.style.transform = 'translate(0px, 0px)';
+                if (doctorSection) {
+                    doctorSection.classList.remove('drag-active');
+                }
+            }
            
             setTimeout(() => {
                 modal.style.display = 'none';
@@ -310,6 +347,7 @@ function handleReconsider(change) {
                 const cardImage = card.querySelector('img');
                 cardImage.style.opacity = '1';
                 card.classList.remove('selected');
+                card.classList.remove('highlight');
             });
            
             // Show message to user to make final selection using translations

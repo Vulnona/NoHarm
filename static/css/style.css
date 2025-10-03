@@ -63,44 +63,6 @@ body {
 
 
 
-.arrow-controls {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-}
-
-/* Swap the *positions* in RTL so left button stays visually left */
-html[dir="rtl"] .arrow-controls {
-    flex-direction: row-reverse;
-}
-
-/* Icon size (SVGs never mirror) */
-
-.arrow-svg {
-    width: 18px;
-    height: 18px;
-    display: none;
-}
-
-.arrow-horizontal {
-    display: block;
-}
-
-.arrow-vertical {
-    display: none;
-}
-
-
-/* If any global RTL rule flips icons, neutralize it */
-html[dir="rtl"] .arrow-controls svg {
-    transform: none !important;
-}
-
-
-
-
-
-
 
 .top-space {
     width: 100%;
@@ -134,7 +96,7 @@ html[dir="rtl"] .arrow-controls svg {
     /* Take full height of parent */
     color: white;
     /* Text color */
-    font-size: 0.8em;
+    font-size: 1em;
     /* Adjust font size */
     padding: 0;
     /* Add some padding for better spacing */
@@ -174,6 +136,30 @@ html[dir="rtl"] .arrow-controls svg {
     /* Highlight hovered item with blue */
     color: white;
     /* Change text color for contrast */
+}
+
+@media (min-width: 769px) {
+    .language-switcher {
+        position: relative;
+    }
+
+    .language-switcher::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 12px;
+        transform: translateY(-50%);
+        border-style: solid;
+        border-width: 6px 5px 0 5px;
+        border-color: #ffffff transparent transparent transparent;
+        pointer-events: none;
+    }
+
+    .language-switcher select {
+        padding-inline-end: 2.25rem;
+        padding-inline-start: 1.25rem;
+        padding-top: 4px;
+    }
 }
 
 
@@ -473,22 +459,10 @@ input[type="submit"]:hover,
     color: #333;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    font-weight: 600;
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards;
     animation-delay: 3.0s;
-}
-
-/* Arrow controls - appears last (ninth) */
-.arrow-controls {
-    position: relative;
-    display: flex;
-    gap: 3rem;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeIn 0.5s ease-in-out forwards;
-    animation-delay: 3.5s;
 }
 
 /* Make descriptions visible by default */
@@ -505,44 +479,65 @@ input[type="submit"]:hover,
     position: relative;
     width: 200px;
     padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: #ffffff;
+    border: 2px solid transparent;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-/* Enhanced Doctor Animation */
+/* Doctor area styling */
 .doctor-section {
     position: relative;
-    width: 200px;
-    height: auto;
+    width: min(220px, 100%);
+    min-height: 240px;
     margin: 0 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     align-self: flex-start;
-    /* Align with top of patient cards */
+    gap: 1rem;
     padding-top: 1.5rem;
-    /* Match patient card top padding */
+}
+
+.doctor-resting-area {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(0, 123, 255, 0.18) 0%, rgba(0, 123, 255, 0.05) 55%, rgba(0, 123, 255, 0) 75%);
+    border: 2px dashed rgba(0, 123, 255, 0.35);
+    transition: transform 0.35s ease, opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.doctor-section.drag-active .doctor-resting-area {
+    transform: translateX(-50%) scale(1.08);
+    border-color: rgba(0, 123, 255, 0.6);
+    box-shadow: 0 0 24px rgba(0, 123, 255, 0.25);
 }
 
 /* Smoother doctor image movement */
 .doctor-image {
     width: 90px;
-    /* Added explicit width for consistency */
     height: auto;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
     cursor: grab;
     user-select: none;
-    z-index: 1000;
-    margin-bottom: 20px;
+    z-index: 1;
+    margin-bottom: 0;
     will-change: transform;
     opacity: 0;
-    animation: doctorFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    animation-delay: 0.5s;
-    /* First to appear */
+    animation: doctorFadeIn 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 0.45s;
     -webkit-user-drag: none;
-    /* Prevent default drag behavior */
+    touch-action: none;
 }
 
 .doctor-image:active {
@@ -550,17 +545,19 @@ input[type="submit"]:hover,
 }
 
 
-/* Highlight effect when hovering over patient cards */
+/* Highlight effect when the doctor hovers over a patient */
 .patient-card.highlight {
-    background-color: rgba(0, 123, 255, 0.1);
-    transition: background-color 0.2s ease;
+    border-color: rgba(13, 110, 253, 0.75);
+    box-shadow: 0 18px 40px rgba(13, 110, 253, 0.2);
+    transform: translateY(-8px);
 }
 
 /* Dragging state for doctor image */
 .doctor-image.dragging {
     cursor: grabbing;
-    opacity: 0.9;
+    opacity: 0.95;
     z-index: 1001;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
 }
 
 .patient-card:hover .patient-image {
@@ -579,48 +576,8 @@ input[type="submit"]:hover,
 }
 
 .highlight {
-    border: 2px solid #007bff;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-}
-
-.move-left {
-    transition: transform 0.5s ease;
-}
-
-.move-right {
-    transition: transform 0.5s ease;
-}
-
-
-
-.arrow-controls {
-    position: relative;
-    display: flex;
-    gap: 3rem;
-    margin-top: 15px;
-    justify-content: center;
-}
-
-.arrow-btn {
-    width: 50px;
-    height: 40px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    background: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0;
-}
-
-.arrow-btn:hover {
-    background: #0056b3;
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(13, 110, 253, 0.75);
+    box-shadow: 0 18px 40px rgba(13, 110, 253, 0.2);
 }
 
 /* Modal Styling */
@@ -849,6 +806,16 @@ input[type="submit"]:hover,
         margin-bottom: 0.6rem;
     }
 
+    .doctor-section {
+        min-height: 210px;
+    }
+
+    .doctor-resting-area {
+        width: 140px;
+        height: 140px;
+        top: 1.25rem;
+    }
+
     .doctor-image {
         width: 80px;
     }
@@ -858,16 +825,6 @@ input[type="submit"]:hover,
         max-width: 260px;
         line-height: 1.4;
         text-align: center;
-    }
-
-    .arrow-controls {
-        flex-direction: row;
-        gap: 1rem;
-    }
-
-    .arrow-btn {
-        width: 44px;
-        height: 32px;
     }
 
     .decision-buttons {
@@ -916,17 +873,14 @@ input[type="submit"]:hover,
             gap: 0.85rem;
         }
 
-        .arrow-controls {
-            gap: 0.6rem;
-            flex-direction: column;
+        .doctor-section {
+            min-height: 200px;
         }
 
-        .arrow-horizontal {
-            display: none;
-        }
-
-        .arrow-vertical {
-            display: block;
+        .doctor-resting-area {
+            width: 130px;
+            height: 130px;
+            top: 2.1rem;
         }
 
         .decision-buttons {
@@ -1001,22 +955,14 @@ input[type="submit"]:hover,
         max-width: 280px;
     }
 
-    .arrow-controls {
-        flex-direction: column;
-        gap: 0.75rem;
+    .doctor-section {
+        min-height: 210px;
     }
 
-    .arrow-btn {
-        width: 44px;
-        height: 32px;
-    }
-
-    .arrow-horizontal {
-        display: none;
-    }
-
-    .arrow-vertical {
-        display: block;
+    .doctor-resting-area {
+        width: 135px;
+        height: 135px;
+        top: 1.2rem;
     }
 
     .doctor-instruction {
@@ -1670,57 +1616,58 @@ p {
     }
 
     select option {
-        font-size: 0.8em;
-        /* Smaller font size for options */
-        padding: 8px;
-        /* Compact padding for options */
+        font-size: 1.1rem;
+        /* Match trigger size for readability */
+        padding: 10px;
+        /* Comfortable tap target */
     }
 
 
     .language-switcher {
-        position: fixed;
-        /* Keep the button fixed */
-        bottom: -50px;
-        /* Position it near the bottom */
-        left: 50%;
-        /* Align to the center horizontally */
-        transform: translateX(-50%);
-        /* Center it horizontally */
-        width: 55px;
-        /* Slightly smaller width for mobile */
-        height: 35px;
-        /* Smaller height for mobile */
+        position: absolute;
+        /* Anchor inside each card so the native menu stays attached */
+        top: 16px;
+        inset-inline-end: 16px;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        min-width: 132px;
+        height: 46px;
         background-color: #007bff;
-        border-radius: 8px;
-        /* Rounded corners */
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        /* Subtle shadow */
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        /* Smooth transition */
+        z-index: 5;
+    }
+
+    .language-switcher::after {
+        content: none;
     }
 
     .language-switcher select {
-        font-size: 0.7em;
-        /* Slightly smaller font size for mobile */
-        padding: 0;
-        /* Remove unnecessary padding */
+        font-size: 1.10rem;
+        font-weight: 600;
+        line-height: 1.35;
+        padding: 0 0.85rem;
+        margin: 0;
         width: 100%;
         height: 100%;
         background: transparent;
         border: none;
-        color: white;
-        text-align: center;
+        color: #fff;
+        text-align: start;
+        -webkit-appearance: menulist;
+        appearance: menulist;
     }
 
     .language-switcher:hover {
         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         /* Enhance hover shadow */
-        transform: translateX(-50%) scale(1.05);
-        /* Keep it centered while scaling */
+        transform: scale(1.05);
     }
 
     h1,
@@ -1857,6 +1804,16 @@ body[data-page="choice_experiment"] .language-switcher:hover {
     transform: scale(1.05) !important;
 }
 
+@media (max-width: 768px) {
+    body[data-page="choice_experiment"] .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
 /* Make the intro card a positioning context and leave space for the pill */
 body[data-page="intro"] .intro-container {
     position: relative;
@@ -1888,6 +1845,16 @@ body[data-page="intro"] .language-switcher {
 /* Keep hover scale without shifting */
 body[data-page="intro"] .language-switcher:hover {
     transform: scale(1.05) !important;
+}
+
+@media (max-width: 768px) {
+    body[data-page="intro"] .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
 }
 
 
@@ -1927,8 +1894,9 @@ body[data-page="no_consent"] .language-switcher:hover {
     body[data-page="no_consent"] .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        width: 55px;
-        height: 35px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
     }
 }
 
@@ -1966,8 +1934,9 @@ body[data-page="procedural_ratings"] .rating-container .language-switcher {
     body[data-page="procedural_ratings"] .rating-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        width: 55px;
-        height: 35px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
     }
 }
 
@@ -2007,8 +1976,9 @@ body[data-page="demography"] .demography-container .language-switcher {
     body[data-page="demography"] .demography-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        width: 55px;
-        height: 35px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
     }
 }
 
@@ -2046,8 +2016,9 @@ body[data-page="admin_login"] .login-container .language-switcher {
     body[data-page="admin_login"] .login-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        width: 55px;
-        height: 35px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
     }
 }
 
@@ -2635,6 +2606,7 @@ p b {
 .language-switcher {
     background-color: #007bff;
     border-radius: 8px;
+    min-width: 120px;
     height: 45px;
     display: flex;
     align-items: center;
@@ -2643,7 +2615,7 @@ p b {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 12px;
 }
 
 .language-switcher:hover {
@@ -2768,6 +2740,16 @@ body[data-page="group_preferences"] .group-preferences-container .language-switc
     transform: scale(1.05) !important;
 }
 
+@media (max-width: 768px) {
+    body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
 .form-navigation button:disabled { opacity: 0.5; cursor: not-allowed; }
 .error-message { color: red; margin-top: 5px; font-size: 0.9em; }
 
@@ -2816,6 +2798,16 @@ body[data-page="thank_you"] .thank-you-box .language-switcher {
     border-radius: 8px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
+}
+
+@media (max-width: 768px) {
+    body[data-page="thank_you"] .thank-you-box .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
 }
 
 
