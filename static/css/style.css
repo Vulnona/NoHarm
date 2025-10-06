@@ -1053,6 +1053,12 @@ input[type="submit"]:hover,
     text-align: center;
 }
 
+.rating-intro {
+    max-width: 760px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.55;
+}
+
 h1 {
     font-size: 2.5em;
     font-weight: 700;
@@ -1066,174 +1072,301 @@ p {
     margin-bottom: 20px;
 }
 
-/* Modified Rating Container Styles */
-.procedure-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 40px;
-    gap: 30px;
-}
-
-/* Ensure text stays on the left side */
-.question-text {
-    flex: 1;
-    text-align: left;
-    max-width: 45%;
-    /* Adjusted width to prevent text overflow */
-    word-wrap: break-word;
-}
-
-/* Label text alignment */
-.question-label {
-    flex: 1;
-    font-size: 1.1em;
-    margin: 0;
-    text-align: left;
-    white-space: pre-line;
-    margin-right: 20px;
-    /* Adjusted margin to ensure proper spacing */
-    line-height: 1.6;
-}
-
-.question-description {
-    font-size: 1.1em;
-    line-height: 1.4;
-    color: #444;
-}
-
-/* Ensure rating components align properly */
-.rating-components {
-    flex: 1;
+/* Procedural ratings matrix */
+.matrix-scroll {
+    overflow-x: auto;
+    margin-top: 2rem;
     position: relative;
-    max-width: 50%;
-    /* Prevents shifting */
+}
+
+.procedural-matrix {
+    min-width: 640px;
+    display: grid;
+    gap: 0.9rem;
+}
+
+.matrix-row {
+    display: grid;
+    grid-template-columns: minmax(360px, 2.5fr) repeat(6, minmax(52px, 1fr));
+    align-items: stretch;
+    gap: 0.25rem;
+}
+
+.matrix-row.matrix-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #f3f6ff;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.matrix-cell {
+    background: #f7f9fc;
+    border-radius: 12px;
+    padding: 0.65rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.matrix-row.matrix-header .matrix-cell {
+    background: transparent;
+    box-shadow: none;
+    border: 1px solid #d0d9ec;
+    border-radius: 12px;
+    padding: 0.6rem 0;
+    min-height: 70px;
+}
+
+.matrix-row.matrix-body:nth-child(even) .matrix-question {
+    background: #f9fbff;
+}
+
+.matrix-row.matrix-body:hover .matrix-question,
+.matrix-row.matrix-body:hover .matrix-option {
+    background: #e8f3ff;
+}
+
+.matrix-row.matrix-body:focus-within .matrix-question,
+.matrix-row.matrix-body:focus-within .matrix-option {
+    background: #dbe9ff;
+}
+
+.matrix-row.matrix-body:hover .matrix-question {
+    border-left: 3px solid #3b82f6;
+    padding-left: calc(0.65rem - 3px);
+}
+
+.matrix-row.matrix-body:focus-within .matrix-question {
+    border-left: 3px solid #2563eb;
+    padding-left: calc(0.65rem - 3px);
+}
+
+.matrix-question {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    min-height: 100%;
+    position: relative;
+    padding-right: 2.25rem;
+}
+
+.matrix-question-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #1f2937;
+    margin-bottom: 0.35rem;
+}
+
+.matrix-question-desc {
+    font-size: 0.94rem;
+    color: #4b5563;
+    line-height: 1.35;
+}
+
+.matrix-option {
+    position: relative;
+    background: #ffffff;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+    padding: 0.2rem 0;
+}
+
+.matrix-option:hover {
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.matrix-option input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.matrix-dot {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid #98a2b3;
+    transition: all 0.2s ease;
+    display: inline-flex;
+}
+
+.matrix-option input:checked + .matrix-dot {
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.matrix-option input:focus-visible + .matrix-dot {
+    outline: 3px solid rgba(0, 123, 255, 0.3);
+    outline-offset: 2px;
+}
+
+.matrix-option:hover .matrix-dot {
+    border-color: #007bff;
+}
+
+.matrix-cell.matrix-scale-heading {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-/* Gradient Bar Positioning */
-.gradient-bar {
+    justify-content: center;
+    gap: 0.25rem;
     width: 100%;
-    height: 12px;
-    background: linear-gradient(to right, #d3d3d3, #000);
-    border-radius: 10px;
-    margin-bottom: 25px;
 }
 
-/* Rating Scale Adjustments */
-.rating-scale {
-    display: flex;
-    flex-direction: column;
+.scale-number {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+    display: block;
+    line-height: 1;
+}
+
+.scale-caption {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.matrix-question-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: #22c55e;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: none;
     align-items: center;
-    width: 100%;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.28);
 }
 
-/* Ensure radio button labels are evenly spaced */
-.scale-buttons {
+.matrix-row.answered .matrix-question-status {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
 }
 
-/* Keep scale labels properly aligned */
-.scale-labels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 8px;
+.matrix-row.answered .matrix-question {
+    border-left: 3px solid #22c55e;
+    padding-left: calc(0.65rem - 3px);
 }
 
-.scale-label {
-    font-size: 0.9em;
-    color: #666;
+.matrix-progress {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #4b5563;
+    font-weight: 500;
 }
 
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
+.form-error {
+    margin-top: 1.25rem;
+    color: #d14343;
+    font-weight: 600;
+    text-align: left;
+}
+
+.form-error[hidden] {
+    display: none;
+}
+
+@media (max-width: 900px) {
     .rating-container {
-        padding: 20px;
-        max-width: 95%;
-        /* Utilize more screen width */
+        padding: 28px;
     }
 
-    .procedure-block {
+    .procedural-matrix {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .matrix-row {
+        grid-template-columns: minmax(260px, 2.3fr) repeat(6, minmax(36px, 1fr));
+        gap: 0.2rem;
+    }
+
+    .matrix-cell {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .rating-container {
+        padding: 20px 16px 28px;
+    }
+
+    .matrix-row.matrix-header {
+        display: none;
+    }
+
+    .procedural-matrix {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .matrix-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        padding: 1.6rem 0;
+        border-bottom: 1px solid #e5eaf2;
+    }
+
+    .matrix-question-title {
+        font-size: 1rem;
+    }
+
+    .matrix-question-desc {
+        font-size: 0.9rem;
+        line-height: 1.3;
+    }
+
+    .matrix-question {
+        padding-right: 1.4rem;
+        flex: 1 1 100%;
+    }
+
+    .matrix-option {
+        flex: 1 1 calc((100% - 1.25rem) / 6);
+        max-width: calc((100% - 4.25rem) / 6);
+        min-width: 42px;
+        padding: 0.25rem 0.2rem;
+        display: flex;
         flex-direction: column;
-        /* Stack elements vertically */
-        gap: 15px;
-        /* Reduce gap for better spacing */
         align-items: center;
-        /* Center content */
+        gap: 0.25rem;
     }
 
-    .question-text {
-        max-width: 90%;
-        /* Allow text to fit better */
-        font-size: 1em;
-        /* Reduce text size for readability */
-        text-align: left;
+    .matrix-dot {
+        width: 0.78rem;
+        height: 0.78rem;
     }
 
-    .question-label {
-        font-size: 1.1em;
-        line-height: 1.4;
-        text-align: left;
+    .matrix-option .sr-only {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        clip: auto;
+        clip-path: none;
+        overflow: visible;
+        white-space: nowrap;
+        font-size: 0.68rem;
+        color: #4b5563;
     }
 
-    .question-description {
-        font-size: 0.95em;
-        /* Reduce text size */
-        line-height: 1.4;
-    }
-
-    .rating-components {
-        max-width: 100%;
-        /* Changed to full width */
-        width: 100%;
-        padding: 0 2.5%;
-        /* Matching padding with gradient bar */
-    }
-
-    /* Gradient Bar Adjustments */
-    .gradient-bar {
-        width: 95%;
-        /* Match scale-buttons width */
-        margin: 10px 0;
-        /* Remove auto margin for precise alignment */
-    }
-
-    /* Rating Scale Alignment Fix */
-    .rating-scale {
-        width: 100%;
-        padding: 0 2.5%;
-        /* Match gradient bar padding */
-    }
-
-    .scale-buttons {
-        width: 95%;
-        /* Exact same width as gradient bar */
-        gap: 0;
-        /* Remove gap for perfect distribution */
-        justify-content: space-between;
-        /* Evenly distribute circles */
-        margin: 0 auto;
-        /* Center the buttons container */
-        padding: 0;
-    }
-
-    .scale-labels {
-        width: 95%;
-        /* Match gradient bar width */
-        margin: 5px auto 0;
-        /* Center align labels */
-        padding: 0;
-    }
-
-    /* Circle Button Fine-tuning */
-    .circle-btn {
-        transform: translateX(0);
-        /* Remove any potential positioning offsets */
+    .matrix-question-status {
+        top: 0.45rem;
+        right: 0.45rem;
     }
 }
 
@@ -2692,13 +2825,14 @@ p b {
 .form-navigation {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-top: auto; /* pushes it to the bottom */
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
 }
 
-.form-navigation button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.form-navigation button {
+    margin-top: 0;
+    min-width: 140px;
 }
 
 .error-message {
@@ -2890,4 +3024,11 @@ html[dir="rtl"] .demography-container .question-block > label {
   border-radius: 6px;
   transition: width 0.6s ease-in-out; /* smooth animation */
   box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+.matrix-row.matrix-body:nth-child(even) .matrix-option {
+    background: #f9fbff;
+}
+
+.matrix-row.answered .matrix-option {
+    box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.18);
 }

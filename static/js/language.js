@@ -205,43 +205,68 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.querySelectorAll('.radio-label')[1].textContent = data.group_preferences.children_no;
                     }
                 } else if (currentPage === "procedural_ratings") {
-                    // For procedural_rating.html
-                    const titleEl = document.querySelector('.rating-title');
-                    if (titleEl && data.procedural_ratings.rating_title) {
-                        titleEl.textContent = data.procedural_ratings.rating_title;
-                    }
+                    const proceduralData = data.procedural_ratings || {};
 
                     const introEl = document.querySelector('.rating-intro');
-                    if (introEl && data.procedural_ratings.rating_intro) {
-                        introEl.textContent = data.procedural_ratings.rating_intro;
+                    if (introEl && proceduralData.rating_intro) {
+                        introEl.textContent = proceduralData.rating_intro;
                     }
 
-                    document.querySelector('.prev-btn').textContent = data.procedural_ratings.previous_button;
-                    document.querySelector('.next-btn').textContent = data.procedural_ratings.next_button;
+                    const prevBtn = document.querySelector('.prev-btn');
+                    if (prevBtn && proceduralData.previous_button) {
+                        prevBtn.textContent = proceduralData.previous_button;
+                    }
 
-                    const questionId = document.querySelector('input[name="question_id"]').value;
-                    if (data.procedural_ratings.questions) {
-                        const question = data.procedural_ratings.questions.find(q => q.id === questionId);
-                        if (question) {
-                            document.querySelector('.question-label').textContent = question.label;
-                            const descriptionEl = document.querySelector('.question-description');
-                            if (descriptionEl) {
-                                const prefix = `${question.label}: `;
-                                if (question.full_text && question.full_text.startsWith(prefix)) {
-                                    descriptionEl.textContent = question.full_text.slice(prefix.length);
-                                } else {
-                                    descriptionEl.textContent = question.full_text || '';
-                                }
-                            }
+                    const submitBtn = document.querySelector('.next-btn');
+                    if (submitBtn) {
+                        const label = proceduralData.next_button || proceduralData.submit_button;
+                        if (label) {
+                            submitBtn.textContent = label;
                         }
                     }
 
+                    const startCaption = document.querySelector('.scale-caption-start');
+                    if (startCaption && proceduralData.not_fair) {
+                        startCaption.textContent = proceduralData.not_fair;
+                    }
 
-                    // Update fairness labels dynamically
-                    const labels = document.querySelectorAll(".scale-buttons .circle-label");
-                    if (labels.length > 0) {
-                        labels[0].textContent = data.procedural_ratings.not_fair;   // first label
-                        labels[labels.length - 1].textContent = data.procedural_ratings.very_fair; // last label
+                    const endCaption = document.querySelector('.scale-caption-end');
+                    if (endCaption && proceduralData.very_fair) {
+                        endCaption.textContent = proceduralData.very_fair;
+                    }
+
+                    if (proceduralData.numbers) {
+                        document.querySelectorAll('[data-scale-value]').forEach(element => {
+                            const key = element.getAttribute('data-scale-value');
+                            if (key && proceduralData.numbers[key]) {
+                                element.textContent = proceduralData.numbers[key];
+                            }
+                        });
+                    }
+
+                    if (Array.isArray(proceduralData.questions)) {
+                        const lookup = new Map(proceduralData.questions.map(q => [q.id, q]));
+                        document.querySelectorAll('.matrix-row.matrix-body').forEach(row => {
+                            const questionId = row.getAttribute('data-question-id');
+                            if (!questionId || !lookup.has(questionId)) {
+                                return;
+                            }
+                            const question = lookup.get(questionId);
+                            const labelEl = row.querySelector('[data-question-label]');
+                            if (labelEl && question.label) {
+                                labelEl.textContent = question.label;
+                            }
+                            const descEl = row.querySelector('[data-question-description]');
+                            if (descEl) {
+                                const fullText = question.full_text || '';
+                                const prefix = question.label ? `${question.label}: ` : '';
+                                if (fullText && prefix && fullText.startsWith(prefix)) {
+                                    descEl.textContent = fullText.slice(prefix.length);
+                                } else {
+                                    descEl.textContent = fullText;
+                                }
+                            }
+                        });
                     }
 
                 } else if (currentPage === "thank_you") {

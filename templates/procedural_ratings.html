@@ -11,12 +11,10 @@
 <body data-page="procedural_ratings">
 
     <div class="rating-container">
-
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
 
-        <!-- Language switcher -->
         <div class="language-switcher">
             <select id="language-switcher">
                 <option value="ar">العربية</option>
@@ -37,144 +35,181 @@
             {{ translations.procedural_ratings.rating_intro | default('Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.') }}
         </p>
 
-        <!-- Question Block -->
+        
+
         <form method="POST" action="/procedural-ratings" id="procedural-form" novalidate>
-            <input type="hidden" name="question_id" value="{{ question.id }}">
-            <input type="hidden" name="current_index" value="{{ index }}">
-            <input type="hidden" name="direction" id="nav-direction" value="next">
-
-            <div class="procedure-block">
-                <div class="question-text">
-                    <label class="bold-text question-label">{{ question.label }}</label>
-                    <p class="question-description">{{ question.full_text }}</p>
-                </div>
-
-                <div class="rating-components">
-                    <div class="gradient-bar"></div>
-                    <div class="scale-buttons">
-                        {% for i in range(1, 7) %}
-                        <label class="circle-btn">
-                            <input type="radio" name="rating" value="{{ i }}" {% if question.answer==i %}checked{% endif
-                                %}>
-                            <div class="circle"></div>
-                            {% if i == 1 %}
-                            <span class="circle-label">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
-                            {% elif i == 6 %}
-                            <span class="circle-label">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
+            <div class="matrix-scroll">
+                <div class="procedural-matrix" role="table"
+                    aria-label="{{ translations.procedural_ratings.rating_title | default('Procedural Ratings') }}">
+                    <div class="matrix-row matrix-header" role="row">
+                        <div class="matrix-cell matrix-question-heading" role="columnheader"></div>
+                        {% for value in scale_values %}
+                        {% set value_str = value|string %}
+                        <div class="matrix-cell matrix-scale-heading" role="columnheader">
+                            <span class="scale-number" data-scale-value="{{ value }}">
+                                {{ translations.procedural_ratings.numbers[value_str] | default(value) }}
+                            </span>
+                            {% if loop.first %}
+                            <span class="scale-caption scale-caption-start">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
+                            {% elif loop.last %}
+                            <span class="scale-caption scale-caption-end">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
+                            {% else %}
+                            <span class="scale-caption" aria-hidden="true">&nbsp;</span>
                             {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% for q in questions %}
+                    <div class="matrix-row matrix-body" role="row" data-question-id="{{ q.id }}">
+                        <div class="matrix-cell matrix-question" role="rowheader">
+                            <span class="matrix-question-title" data-question-label>{{ q.label }}</span>
+                            <span class="matrix-question-desc" data-question-description>{{ q.full_text }}</span>
+                            <span class="matrix-question-status" aria-hidden="true">✓</span>
+                        </div>
+                        {% for value in scale_values %}
+                        {% set value_str = value|string %}
+                        <label class="matrix-cell matrix-option" role="cell">
+                            <input type="radio" name="{{ q.id }}" value="{{ value }}"
+                                {% if q.answer and q.answer|string == value_str %}checked{% endif %}>
+                            <span class="matrix-dot" aria-hidden="true"></span>
+                            <span class="sr-only">{{ translations.procedural_ratings.numbers[value_str] | default(value) }}</span>
                         </label>
                         {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <!-- Navigation -->
+            {% set default_error = translations.procedural_ratings.select_answer | default('Please select a rating for each procedure.') %}
+            <div class="form-error" role="alert" data-default-message="{{ default_error }}"
+                {% if not error_message %}hidden{% endif %}>{{ error_message or '' }}</div>
+
+            <div class="matrix-progress" data-template="{{ translations.procedural_ratings.progress_template | default('Rated {completed} of {total} procedures') }}" aria-live="polite"></div>
+
             <div class="form-navigation">
-                <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>{{ translations.procedural_ratings.previous_button | default('Previous') }}</button>
-                <button type="submit" class="next-btn" disabled>{{ translations.procedural_ratings.next_button | default('Next') }}</button>
+                <button type="button" class="prev-btn" disabled>{{ translations.procedural_ratings.previous_button | default('Previous') }}</button>
+                <button type="button" class="next-btn" disabled>{{ translations.procedural_ratings.next_button | default('Next') }}</button>
             </div>
         </form>
     </div>
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("procedural-form");
-            const prevBtn = form.querySelector(".prev-btn");
-            const nextBtn = form.querySelector(".next-btn");
-            const dir = document.getElementById("nav-direction");
-            const radios = form.querySelectorAll('input[name="rating"]');
-            const currentIndexInput = form.querySelector("input[name='current_index']");
-            const currentIndex = currentIndexInput ? parseInt(currentIndexInput.value, 10) : 0;
-            const urlParams = new URLSearchParams(window.location.search);
-            const prefillParam = urlParams.get('prefill');
-            const storedValue = localStorage.getItem('procedural_rating_' + currentIndex);
-            const prefillValue = prefillParam || storedValue;
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('procedural-form');
+            const prevBtn = form.querySelector('.prev-btn');
+            const nextBtn = form.querySelector('.next-btn');
+            const errorBanner = form.querySelector('.form-error');
+            const progressIndicator = document.querySelector('.matrix-progress');
+            const questionIds = Array.from(new Set(Array.from(form.querySelectorAll('input[type="radio"]')).map(r => r.name)));
 
-            if (prefillValue) {
-                radios.forEach(r => {
-                    if (r.value === prefillValue) {
-                        r.checked = true;
+            function restoreSelections() {
+                questionIds.forEach((id) => {
+                    const saved = localStorage.getItem('procedural_rating_' + id);
+                    if (!saved) {
+                        return;
+                    }
+                    const input = form.querySelector(`input[name="${id}"][value="${saved}"]`);
+                    if (input) {
+                        input.checked = true;
                     }
                 });
-                localStorage.setItem('procedural_rating_' + currentIndex, prefillValue);
-            } else {
-                const serverSelected = form.querySelector('input[name="rating"]:checked');
-                if (serverSelected) {
-                    localStorage.setItem('procedural_rating_' + currentIndex, serverSelected.value);
+            }
+
+            function allAnswered() {
+                return questionIds.every(id => form.querySelector(`input[name="${id}"]:checked`));
+            }
+
+            function refreshRowStates() {
+                questionIds.forEach(id => {
+                    const row = form.querySelector(`.matrix-row[data-question-id="${id}"]`);
+                    if (!row) return;
+                    const answered = !!form.querySelector(`input[name="${id}"]:checked`);
+                    row.classList.toggle('answered', answered);
+                });
+            }
+
+            function updateProgress() {
+                if (!progressIndicator) return;
+                const total = questionIds.length;
+                const completed = questionIds.reduce((count, id) => {
+                    return count + (form.querySelector(`input[name="${id}"]:checked`) ? 1 : 0);
+                }, 0);
+                const template = progressIndicator.dataset.template || 'Rated {completed} of {total} procedures';
+                progressIndicator.textContent = template
+                    .replace('{completed}', completed)
+                    .replace('{total}', total);
+            }
+
+            function updateState() {
+                const ready = allAnswered();
+                nextBtn.disabled = !ready;
+                if (ready && errorBanner) {
+                    errorBanner.hidden = true;
+                    errorBanner.textContent = '';
                 }
+                refreshRowStates();
+                updateProgress();
             }
 
-            localStorage.setItem('procedural_last_index', currentIndex);
-
-            // Enable Next if a selection already exists (persisted from server)
-            function updateNext() {
-                const selected = form.querySelector('input[name="rating"]:checked');
-                nextBtn.disabled = !selected;
+            restoreSelections();
+            updateState();
+            if (allAnswered()) {
+                localStorage.setItem('procedural_completed', '1');
             }
 
-            // Radio listeners
-            radios.forEach(r => {
-                r.addEventListener("change", () => {
-                    localStorage.setItem('procedural_rating_' + currentIndex, r.value);
-                    updateNext(); // Enable Next as soon as user chooses
+            form.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    localStorage.setItem('procedural_rating_' + radio.name, radio.value);
+                    updateState();
                 });
             });
 
-            // Previous button behaves like Chrome back button
-            if (prevBtn) {
-                prevBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const previousIndex = currentIndex - 1;
-                    if (previousIndex >= 0) {
-                        const prevUrl = new URL('/procedural-ratings', window.location.origin);
-                        prevUrl.searchParams.set('index', previousIndex);
-                        const savedPrev = localStorage.getItem('procedural_rating_' + previousIndex);
-                        if (savedPrev) {
-                            prevUrl.searchParams.set('prefill', savedPrev);
+            form.addEventListener('submit', (event) => {
+                if (!allAnswered()) {
+                    event.preventDefault();
+                    if (errorBanner) {
+                        errorBanner.hidden = false;
+                        if (!errorBanner.textContent) {
+                            errorBanner.textContent = errorBanner.dataset.defaultMessage || 'Please select a rating for each procedure.';
                         }
-                        window.location.href = prevUrl.toString();
-                    } else {
-                        window.history.back();
                     }
-                });
-            }
+                } else {
+                    localStorage.setItem('procedural_completed', '1');
+                }
+            });
 
-            // Next button check
-            if (nextBtn) {
-                nextBtn.addEventListener("click", (e) => {
-                    const selected = form.querySelector('input[name="rating"]:checked');
-                    if (!selected) {
-                        e.preventDefault();
-                        return;
+            nextBtn.addEventListener('click', () => {
+                if (allAnswered()) {
+                    form.requestSubmit();
+                } else if (errorBanner) {
+                    errorBanner.hidden = false;
+                    if (!errorBanner.textContent) {
+                        errorBanner.textContent = errorBanner.dataset.defaultMessage || 'Please select a rating for each procedure.';
                     }
-                    dir.value = "next"; // forward navigation
-                });
-            }
+                }
+            });
 
-            // 🔑 Run once on load to restore state if user already answered
-            updateNext();
+            if (prevBtn) {
+                prevBtn.disabled = true;
+            }
         });
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const progressBar = document.getElementById("progress-bar");
-
-            // Map pages to steps
+        document.addEventListener('DOMContentLoaded', function () {
+            const progressBar = document.getElementById('progress-bar');
             const steps = {
                 "choice_experiment": 1,
                 "procedural_ratings": 2,
                 "demography": 3,
                 "group_preferences": 4
             };
-
-            const currentPage = document.body.getAttribute("data-page");
+            const currentPage = document.body.getAttribute('data-page');
             const totalSteps = 4;
-
             if (steps[currentPage]) {
                 const percent = (steps[currentPage] / totalSteps) * 100;
-                progressBar.style.width = percent + "%";
+                progressBar.style.width = percent + '%';
             }
         });
     </script>

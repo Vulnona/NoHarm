@@ -287,35 +287,26 @@
             // 🔙 Previous button just goes back in browser history
             prevBtn.addEventListener("click", function (event) {
                 event.preventDefault();
-                const lastIndex = localStorage.getItem('procedural_last_index');
-                let indexToUse = lastIndex !== null ? parseInt(lastIndex, 10) : null;
-                if (indexToUse !== null && Number.isNaN(indexToUse)) {
-                    indexToUse = null;
+                const proceduralVisited = localStorage.getItem('procedural_completed');
+
+                if (currentIndex === 0 && proceduralVisited) {
+                    window.location.href = '/procedural-ratings';
+                    return;
                 }
-                const priorAnswer = indexToUse !== null ? localStorage.getItem('procedural_rating_' + indexToUse) : null;
 
-                if (currentIndex === 0 && indexToUse !== null) {
-                    const url = new URL('/procedural-ratings', window.location.origin);
-                    url.searchParams.set('index', indexToUse);
-                    if (priorAnswer) {
-                        url.searchParams.set('prefill', priorAnswer);
+                const prevIndex = Math.max(0, currentIndex - 1);
+                const demographyUrl = new URL('/demography', window.location.origin);
+                demographyUrl.searchParams.set('index', prevIndex);
+
+                const prevQuestionId = localStorage.getItem('demography_index_' + prevIndex);
+                if (prevQuestionId) {
+                    const storedPrevAnswer = localStorage.getItem('demography_' + prevQuestionId);
+                    if (storedPrevAnswer !== null) {
+                        demographyUrl.searchParams.set('prefill', storedPrevAnswer);
                     }
-                    window.location.href = url.toString();
-                } else {
-                    const prevIndex = Math.max(0, currentIndex - 1);
-                    const demographyUrl = new URL('/demography', window.location.origin);
-                    demographyUrl.searchParams.set('index', prevIndex);
-
-                    const prevQuestionId = localStorage.getItem('demography_index_' + prevIndex);
-                    if (prevQuestionId) {
-                        const storedPrevAnswer = localStorage.getItem('demography_' + prevQuestionId);
-                        if (storedPrevAnswer !== null) {
-                            demographyUrl.searchParams.set('prefill', storedPrevAnswer);
-                        }
-                    }
-
-                    window.location.href = demographyUrl.toString();
                 }
+
+                window.location.href = demographyUrl.toString();
             });
 
             // 🟢 Run once at start

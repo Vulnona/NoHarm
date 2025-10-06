@@ -544,61 +544,84 @@ def procedural_ratings():
                     question['full_text'] = full_text
 
     if request.method == 'POST':
-        question_id = request.form.get('question_id')
-        rating = request.form.get('rating')
+        submitted_answers = {}
+        missing_questions = []
 
-        # Save the response to the database
+        for question in questions:
+            value = request.form.get(question['id'])
+            if value:
+                submitted_answers[question['id']] = value
+            else:
+                missing_questions.append(question['id'])
+
+        if missing_questions:
+            error_message = (
+                translations.get('procedural_ratings', {}).get('select_answer')
+                if translations else
+                "Please select a rating for each procedure."
+            )
+            for question in questions:
+                question['answer'] = submitted_answers.get(question['id'])
+            app.logger.warning('procedural ratings submission missing answers %s', missing_questions)
+            return render_template(
+                'procedural_ratings.html',
+                questions=questions,
+                scale_values=list(range(1, 7)),
+                error_message=error_message
+            )
+
         conn = get_db_connection()
 
-        # Ensure user ID exists
         if 'user_id' not in session:
             cursor = conn.cursor()
             cursor.execute('INSERT INTO user_responses DEFAULT VALUES')
             session['user_id'] = cursor.lastrowid
             conn.commit()
         else:
-            app.logger.info('session user_id set to {}'.format(session['user_id']))
+            app.logger.info('session user_id set to %s', session['user_id'])
 
-        # Store the response for the current question
         timestamp_now = datetime.datetime.now().isoformat()
-        conn.execute(f'''
-            UPDATE user_responses
-            SET {question_id} = ?,
-                session_start = COALESCE(session_start, ?)
-            WHERE id = ?
-        ''', (rating, timestamp_now, session['user_id']))
+        conn.execute(
+            'UPDATE user_responses SET session_start = COALESCE(session_start, ?) WHERE id = ?',
+            (timestamp_now, session['user_id'])
+        )
+
+        for question_id, value in submitted_answers.items():
+            conn.execute(
+                f'UPDATE user_responses SET {question_id} = ? WHERE id = ?',
+                (value, session['user_id'])
+            )
+
         conn.commit()
         conn.close()
-        app.logger.info('current ratings Q&A stored')
+        app.logger.info('all procedural ratings stored; redirecting to demographics')
+        return redirect('/demography')
 
-        # Move to the next question
-        current_index = next((i for i, q in enumerate(questions) if q['id'] == question_id), -1)
-        next_index = current_index + 1
+    existing_answers = {}
+    if 'user_id' in session:
+        conn = get_db_connection()
+        column_list = ', '.join(question['id'] for question in questions)
+        row = conn.execute(
+            f'SELECT {column_list} FROM user_responses WHERE id = ?',
+            (session['user_id'],)
+        ).fetchone()
+        conn.close()
+        if row:
+            existing_answers = {
+                question['id']: str(row[question['id']]) if row[question['id']] is not None else None
+                for question in questions
+            }
 
-        # Redirect to the next section if all questions are answered
-        if next_index >= len(questions):
-            app.logger.info('all ratings Q&A done, now moving on to demographics')
-            return redirect('/demography')
-        else:
-            app.logger.info('ratings Q&A continued')
+    for question in questions:
+        question['answer'] = existing_answers.get(question['id'])
 
-        # Redirect to the next question
-        app.logger.info('next rating question')
-        return redirect(f'/procedural-ratings?index={next_index}')
-    else:
-        app.logger.info('POST request not found')
-        app.logger.info(str(request.method) + ' request initiated')
-
-    # Get the current question based on the index in the query parameter
-    current_index = int(request.args.get('index', 0))
-    if current_index >= len(questions):
-        return redirect('/demography')  # Redirect to next section if all are answered
-    else:
-        app.logger.info('ratings Q&A cntd..')
-    question = questions[current_index]
-
-    app.logger.info('user procedural ratings successfully rendered')
-    return render_template('procedural_ratings.html', question=question, index=current_index)
+    app.logger.info('user procedural ratings successfully rendered (matrix view)')
+    return render_template(
+        'procedural_ratings.html',
+        questions=questions,
+        scale_values=list(range(1, 7)),
+        error_message=None
+    )
 
 
 
