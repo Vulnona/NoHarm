@@ -1072,7 +1072,8 @@ def download_csv():
         if columns:
             writer.writerow(columns)
             for row in user_responses:
-                writer.writerow([row[column] for column in columns])
+                row_dict = dict(row)
+                writer.writerow([row_dict.get(column, "") for column in columns])
 
         csv_content = buffer.getvalue()
         buffer.close()

@@ -62,6 +62,13 @@ function initDraggableDoctor() {
     const doctor = document.getElementById('draggableDoctor');
     const doctorSection = doctor ? doctor.closest('.doctor-section') : null;
     const patients = Array.from(document.querySelectorAll('.patient-card'));
+    const patientImages = patients
+        .map(card => card.querySelector('.patient-image'))
+        .filter(Boolean);
+    const instructionText = document.querySelector('.instruction-text');
+    const lockMessageContainer = instructionText || doctorSection;
+    const lockMessageId = 'doctor-lock-message';
+    let lockMessage = lockMessageContainer ? lockMessageContainer.querySelector(`#${lockMessageId}`) : null;
 
     if (!doctor || patients.length === 0) {
         return;
@@ -72,12 +79,158 @@ function initDraggableDoctor() {
     doctor.style.transition = 'none';
     doctor.style.opacity = '1';
 
+    let patientsRevealed = 0;
+    let doctorUnlocked = patientImages.length === 0;
     let isDragging = false;
     let startX = 0;
     let startY = 0;
     let initialTransform = { x: 0, y: 0 };
     let activeDropTarget = null;
     let dropTimeout = null;
+    let lockMessageTimeout = null;
+    let visibilityPoll = null;
+
+    if (!lockMessage && lockMessageContainer) {
+        lockMessage = document.createElement('div');
+        lockMessage.id = lockMessageId;
+        lockMessage.className = 'doctor-lock-message';
+        lockMessage.setAttribute('role', 'status');
+        lockMessage.setAttribute('aria-live', 'polite');
+        lockMessage.textContent = 'Please wait for the both patients to show up!';
+        lockMessageContainer.appendChild(lockMessage);
+    }
+
+    if (!doctorUnlocked) {
+        doctor.style.cursor = 'not-allowed';
+    }
+
+    function hideDoctorLockMessage() {
+        if (!lockMessage) {
+            return;
+        }
+
+        lockMessage.classList.remove('visible');
+
+        if (lockMessageTimeout) {
+            clearTimeout(lockMessageTimeout);
+            lockMessageTimeout = null;
+        }
+    }
+
+    function showDoctorLockMessage() {
+        if (!lockMessage) {
+            return;
+        }
+
+        lockMessage.textContent = 'Please wait for the both patients to show up!';
+        lockMessage.classList.add('visible');
+
+        if (lockMessageTimeout) {
+            clearTimeout(lockMessageTimeout);
+        }
+
+        lockMessageTimeout = setTimeout(() => {
+            hideDoctorLockMessage();
+        }, 2400);
+    }
+
+    function unlockDoctor() {
+        if (doctorUnlocked) {
+            return;
+        }
+
+        doctorUnlocked = true;
+        doctor.style.cursor = 'grab';
+        hideDoctorLockMessage();
+
+        if (visibilityPoll) {
+            clearInterval(visibilityPoll);
+            visibilityPoll = null;
+        }
+    }
+
+    function markPatientRevealed(image) {
+        if (image.dataset.revealed === 'true') {
+            return;
+        }
+
+        image.dataset.revealed = 'true';
+        patientsRevealed += 1;
+
+        if (patientsRevealed >= patientImages.length) {
+            unlockDoctor();
+        }
+    }
+
+    patientImages.forEach(image => {
+        const onAnimationStart = event => {
+            if (event?.animationName && event.animationName !== 'fadeIn') {
+                return;
+            }
+
+            markPatientRevealed(image);
+            image.removeEventListener('animationstart', onAnimationStart);
+        };
+
+        const onAnimationEnd = event => {
+            if (event?.animationName && event.animationName !== 'fadeIn') {
+                return;
+            }
+
+            markPatientRevealed(image);
+            image.removeEventListener('animationend', onAnimationEnd);
+        };
+
+        const onTransitionEnd = () => {
+            markPatientRevealed(image);
+            image.removeEventListener('transitionend', onTransitionEnd);
+        };
+
+        image.addEventListener('animationstart', onAnimationStart);
+        image.addEventListener('animationend', onAnimationEnd);
+        image.addEventListener('transitionend', onTransitionEnd);
+
+        const computedStyle = window.getComputedStyle(image);
+        const opacityValue = parseFloat(computedStyle.opacity);
+        if (opacityValue > 0 && computedStyle.visibility !== 'hidden') {
+            markPatientRevealed(image);
+            image.removeEventListener('animationstart', onAnimationStart);
+            image.removeEventListener('animationend', onAnimationEnd);
+            image.removeEventListener('transitionend', onTransitionEnd);
+        }
+    });
+
+    function evaluatePatientVisibility() {
+        if (doctorUnlocked) {
+            if (visibilityPoll) {
+                clearInterval(visibilityPoll);
+                visibilityPoll = null;
+            }
+            return;
+        }
+
+        const allVisible = patientImages.every(image => {
+            const style = window.getComputedStyle(image);
+            return parseFloat(style.opacity) > 0 && style.visibility !== 'hidden';
+        });
+
+        if (allVisible) {
+            patientImages.forEach(markPatientRevealed);
+        }
+    }
+
+    if (!doctorUnlocked && patientImages.length > 0) {
+        visibilityPoll = setInterval(evaluatePatientVisibility, 300);
+
+        setTimeout(() => {
+            evaluatePatientVisibility();
+            if (!doctorUnlocked) {
+                patientImages.forEach(markPatientRevealed);
+            }
+        }, 3600);
+    } 
+
+    // Unlock time for the doctor to be moveable. 
 
     function parseTransform(element) {
         const style = window.getComputedStyle(element);
@@ -176,6 +329,15 @@ function initDraggableDoctor() {
     }
 
     function startDrag(event) {
+        if (!doctorUnlocked) {
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+
+            showDoctorLockMessage();
+            return;
+        }
+
         if (dropTimeout) {
             clearTimeout(dropTimeout);
             dropTimeout = null;
