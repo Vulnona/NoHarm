@@ -528,6 +528,31 @@ input[type="submit"]:hover,
     text-align: center;
 }
 
+.mobile-patient-switcher {
+    display: none;
+    margin: 0 auto 1.25rem;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.mobile-switch-btn {
+    border: 0;
+    border-radius: 999px;
+    background: #edf1ff;
+    color: #1f3b8c;
+    padding: 0.45rem 1.15rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    box-shadow: inset 0 0 0 1px rgba(63, 120, 224, 0.18);
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobile-switch-btn.active {
+    background: #1f3b8c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(31, 59, 140, 0.32);
+}
+
 .doctor-lock-message {
     position: absolute;
     top: calc(100% + 12px);
@@ -557,6 +582,79 @@ input[type="submit"]:hover,
 
 .doctor-lock-message::after {
     content: none;
+}
+
+@media (max-width: 768px) {
+    .instruction-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .mobile-patient-switcher {
+        display: flex;
+        position: relative;
+        z-index: 2;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
+
+    .mobile-switch-btn {
+        flex: 1 1 48%;
+        text-align: center;
+    }
+
+    .patients-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+        max-width: 420px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .patients-grid > .patient-card {
+        width: 100%;
+        max-width: 360px;
+        margin: 0;
+        display: none;
+        order: 1;
+    }
+
+    .patients-grid > .patient-card.mobile-active {
+        display: block;
+    }
+
+    .patients-grid > .doctor-section {
+        order: 2;
+        width: 100%;
+        margin: 0 auto;
+        align-self: center;
+    }
+
+    .doctor-section {
+        min-height: 220px;
+    }
+
+    .doctor-image {
+        margin-top: 0.5rem;
+    }
+
+    .doctor-lock-message {
+        position: static;
+        transform: none;
+        margin: 0.6rem auto 0;
+        font-size: 0.82rem;
+        max-width: 90%;
+        white-space: normal;
+        text-align: center;
+        align-self: center;
+    }
+
+    .doctor-lock-message.visible {
+        transform: none;
+    }
 }
 
 /* Smoother doctor image movement */

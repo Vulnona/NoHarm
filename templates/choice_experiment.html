@@ -35,9 +35,18 @@
             <div class="question-progress" id="question-progress" aria-live="polite"
                 data-template="{{ progress_template }}" data-current="{{ current_value }}"
                 data-total="3">{{ progress_template.replace('{current}', current_value|string).replace('{total}', '3') }}</div>
-            <div class="instruction-text">
+            <div class="instruction-text" data-lock-message="{{ translations.choice_experiment.doctor_lock_message | default('please wait for the both patients to show up!') }}">
                 <p>{{ translations.choice_experiment.instruction_text | default('Not every patient can be treated in a medical emergency. A decision has to be made about which patient to treat. Which of the patients shown below should be treated?') }}</p>
             </div>
+        </div>
+
+        <div class="mobile-patient-switcher" id="mobile-patient-switcher" aria-label="{{ translations.choice_experiment.patient_toggle_label | default('Toggle between patients') }}">
+            <button type="button" class="mobile-switch-btn active" data-patient-index="0">
+                {{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}
+            </button>
+            <button type="button" class="mobile-switch-btn" data-patient-index="1">
+                {{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}
+            </button>
         </div>
 
 

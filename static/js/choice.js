@@ -69,6 +69,7 @@ function initDraggableDoctor() {
     const lockMessageContainer = instructionText || doctorSection;
     const lockMessageId = 'doctor-lock-message';
     let lockMessage = lockMessageContainer ? lockMessageContainer.querySelector(`#${lockMessageId}`) : null;
+    const fallbackLockCopy = instructionText?.dataset?.lockMessage || 'please wait for the both patients to show up!';
 
     if (!doctor || patients.length === 0) {
         return;
@@ -90,14 +91,45 @@ function initDraggableDoctor() {
     let lockMessageTimeout = null;
     let visibilityPoll = null;
 
+    const getLockMessageText = () => {
+        const translated = window.__i18n?.choice_experiment?.doctor_lock_message;
+        if (typeof translated === 'string' && translated.trim().length > 0) {
+            return translated;
+        }
+
+        if (instructionText?.dataset?.lockMessage) {
+            return instructionText.dataset.lockMessage;
+        }
+
+        return fallbackLockCopy;
+    };
+
+    const syncLockMessageCopy = newText => {
+        const message = typeof newText === 'string' && newText.trim().length > 0 ? newText : getLockMessageText();
+        if (instructionText) {
+            instructionText.dataset.lockMessage = message;
+        }
+        if (lockMessage) {
+            lockMessage.textContent = message;
+        }
+        return message;
+    };
+
+    window.updateDoctorLockMessageText = function updateDoctorLockMessageText(newText) {
+        syncLockMessageCopy(newText);
+    };
+
     if (!lockMessage && lockMessageContainer) {
         lockMessage = document.createElement('div');
         lockMessage.id = lockMessageId;
         lockMessage.className = 'doctor-lock-message';
         lockMessage.setAttribute('role', 'status');
         lockMessage.setAttribute('aria-live', 'polite');
-        lockMessage.textContent = 'Please wait for the both patients to show up!';
+        lockMessage.textContent = getLockMessageText();
         lockMessageContainer.appendChild(lockMessage);
+        syncLockMessageCopy(lockMessage.textContent);
+    } else {
+        syncLockMessageCopy();
     }
 
     if (!doctorUnlocked) {
@@ -122,7 +154,7 @@ function initDraggableDoctor() {
             return;
         }
 
-        lockMessage.textContent = 'Please wait for the both patients to show up!';
+        lockMessage.textContent = getLockMessageText();
         lockMessage.classList.add('visible');
 
         if (lockMessageTimeout) {
@@ -162,6 +194,22 @@ function initDraggableDoctor() {
         }
     }
 
+    function markPatientByIndex(index) {
+        if (index == null) {
+            return;
+        }
+
+        const numericIndex = Number(index);
+        if (Number.isNaN(numericIndex) || numericIndex < 0 || numericIndex >= patientImages.length) {
+            return;
+        }
+
+        const targetImage = patientImages[numericIndex];
+        if (targetImage) {
+            markPatientRevealed(targetImage);
+        }
+    }
+
     patientImages.forEach(image => {
         const onAnimationStart = event => {
             if (event?.animationName && event.animationName !== 'fadeIn') {
@@ -198,6 +246,10 @@ function initDraggableDoctor() {
             image.removeEventListener('animationend', onAnimationEnd);
             image.removeEventListener('transitionend', onTransitionEnd);
         }
+    });
+
+    document.addEventListener('patientShown', event => {
+        markPatientByIndex(event?.detail?.index);
     });
 
     function evaluatePatientVisibility() {
@@ -269,6 +321,10 @@ function initDraggableDoctor() {
         const padding = 24; // Allow a little forgiveness for touch input
 
         return patients.find(patient => {
+            if (patient.getAttribute('aria-hidden') === 'true') {
+                return false;
+            }
+
             const rect = patient.getBoundingClientRect();
             const extended = {
                 top: rect.top - padding,
@@ -434,6 +490,88 @@ function initDraggableDoctor() {
     console.log('Doctor draggable initialized');
 }
 
+function initMobilePatientSwitcher() {
+    const switcher = document.getElementById('mobile-patient-switcher');
+    const patientCards = Array.from(document.querySelectorAll('.patients-grid > .patient-card'));
+
+    if (!switcher || patientCards.length <= 1) {
+        return;
+    }
+
+    const buttons = Array.from(switcher.querySelectorAll('.mobile-switch-btn'));
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    let activeIndex = 0;
+    let lastAnnouncedIndex = -1;
+
+    const isMobile = () => mediaQuery.matches;
+
+    const applyState = (index, forceMobile) => {
+        const mobileMode = forceMobile ?? isMobile();
+        const targetIndex = Math.max(0, Math.min(index, patientCards.length - 1));
+        activeIndex = targetIndex;
+
+        patientCards.forEach((card, currentIndex) => {
+            const isActive = mobileMode ? currentIndex === targetIndex : true;
+            if (mobileMode) {
+                card.classList.toggle('mobile-active', isActive);
+                card.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            } else {
+                card.classList.remove('mobile-active');
+                card.removeAttribute('aria-hidden');
+            }
+        });
+
+        buttons.forEach((button, currentIndex) => {
+            const shouldActivate = mobileMode && currentIndex === targetIndex;
+            button.classList.toggle('active', shouldActivate);
+            button.setAttribute('aria-pressed', shouldActivate ? 'true' : 'false');
+        });
+
+        switcher.classList.toggle('is-mobile-visible', mobileMode);
+
+        if (mobileMode && targetIndex !== lastAnnouncedIndex) {
+            lastAnnouncedIndex = targetIndex;
+            document.dispatchEvent(new CustomEvent('patientShown', {
+                detail: { index: targetIndex }
+            }));
+        }
+
+        if (!mobileMode && lastAnnouncedIndex !== -1) {
+            lastAnnouncedIndex = -1;
+            patientCards.forEach((_, idx) => {
+                document.dispatchEvent(new CustomEvent('patientShown', {
+                    detail: { index: idx }
+                }));
+            });
+        }
+    };
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const index = Number(button.dataset.patientIndex);
+            if (!Number.isNaN(index)) {
+                applyState(index, true);
+            }
+        });
+    });
+
+    const handleViewportChange = event => {
+        if (event.matches) {
+            applyState(activeIndex, true);
+        } else {
+            applyState(activeIndex, false);
+        }
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', handleViewportChange);
+    } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener(handleViewportChange);
+    }
+
+    applyState(activeIndex, mediaQuery.matches);
+}
+
 
 function showReconsiderModal(data) {
     const modal = document.getElementById('reconsider-modal');
@@ -547,6 +685,7 @@ function handleReconsider(change) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Initializing doctor movement");
     initDraggableDoctor();
+    initMobilePatientSwitcher();
     
     // Animate in the elements
     const patients = document.querySelectorAll('.patient-card');

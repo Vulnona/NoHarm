@@ -83,16 +83,63 @@ document.addEventListener('DOMContentLoaded', function () {
                     initConsentLogic(data.intro);
                 } else if (currentPage === "choice_experiment") {
                     // For choice_experiment.html
-                    document.querySelector('.instruction-text p').textContent = data.choice_experiment.instruction_text;
-                    document.querySelectorAll('.patient-label')[0].textContent = data.choice_experiment.patient_label_1;
-                    document.querySelectorAll('.patient-label')[1].textContent = data.choice_experiment.patient_label_2;
-                    document.querySelector('.doctor-instruction').textContent = data.choice_experiment.doctor_instruction;
+                    const instructionContainer = document.querySelector('.instruction-text');
+                    if (instructionContainer) {
+                        const instructionParagraph = instructionContainer.querySelector('p');
+                        if (instructionParagraph) {
+                            instructionParagraph.textContent = data.choice_experiment.instruction_text;
+                        }
+                        if (data.choice_experiment.doctor_lock_message && window.updateDoctorLockMessageText) {
+                            window.updateDoctorLockMessageText(data.choice_experiment.doctor_lock_message);
+                        }
+                    }
+
+                    const patientLabels = document.querySelectorAll('.patient-label');
+                    if (patientLabels[0]) {
+                        patientLabels[0].textContent = data.choice_experiment.patient_label_1;
+                    }
+                    if (patientLabels[1]) {
+                        patientLabels[1].textContent = data.choice_experiment.patient_label_2;
+                    }
+
+                    const doctorInstruction = document.querySelector('.doctor-instruction');
+                    if (doctorInstruction) {
+                        doctorInstruction.textContent = data.choice_experiment.doctor_instruction;
+                    }
+
                     document.querySelector('.highlight-text').textContent = data.choice_experiment.reconsider_message;
                     document.querySelector('.decision-text').textContent = data.choice_experiment.decision_text;
-                    document.querySelectorAll('.selection-label')[0].textContent = data.choice_experiment.originally_selected;
-                    document.querySelectorAll('.selection-label')[1].textContent = data.choice_experiment.recommendation;
-                    document.querySelector('.btn-change').textContent = data.choice_experiment.yes_button;
-                    document.querySelector('.btn-keep').textContent = data.choice_experiment.no_button;
+
+                    const selectionLabels = document.querySelectorAll('.selection-label');
+                    if (selectionLabels[0]) {
+                        selectionLabels[0].textContent = data.choice_experiment.originally_selected;
+                    }
+                    if (selectionLabels[1]) {
+                        selectionLabels[1].textContent = data.choice_experiment.recommendation;
+                    }
+
+                    const changeBtn = document.querySelector('.btn-change');
+                    if (changeBtn) {
+                        changeBtn.textContent = data.choice_experiment.yes_button;
+                    }
+                    const keepBtn = document.querySelector('.btn-keep');
+                    if (keepBtn) {
+                        keepBtn.textContent = data.choice_experiment.no_button;
+                    }
+
+                    const mobileSwitcher = document.getElementById('mobile-patient-switcher');
+                    if (mobileSwitcher) {
+                        if (data.choice_experiment.patient_toggle_label) {
+                            mobileSwitcher.setAttribute('aria-label', data.choice_experiment.patient_toggle_label);
+                        }
+                        const switchButtons = mobileSwitcher.querySelectorAll('.mobile-switch-btn');
+                        if (switchButtons[0]) {
+                            switchButtons[0].textContent = data.choice_experiment.patient_label_1;
+                        }
+                        if (switchButtons[1]) {
+                            switchButtons[1].textContent = data.choice_experiment.patient_label_2;
+                        }
+                    }
 
                     const progressBadge = document.getElementById('question-progress');
                     if (progressBadge && data.choice_experiment.question_counter_template) {
