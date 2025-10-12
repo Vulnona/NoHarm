@@ -2097,7 +2097,7 @@ body[data-page="choice_experiment"] .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2140,7 +2140,7 @@ body[data-page="intro"] .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2183,7 +2183,7 @@ body[data-page="no_consent"] .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2227,7 +2227,7 @@ body[data-page="procedural_ratings"] .rating-container .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2267,7 +2267,7 @@ body[data-page="demography"] .demography-container .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2309,7 +2309,7 @@ body[data-page="admin_login"] .login-container .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -2908,7 +2908,7 @@ p b {
 /* REMOVE or COMMENT OUT this block completely */
 .language-switcher {
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     min-width: 120px;
     height: 45px;
     display: flex;
@@ -3035,7 +3035,7 @@ body[data-page="group_preferences"] .group-preferences-container .language-switc
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -3099,7 +3099,7 @@ body[data-page="thank_you"] .thank-you-box .language-switcher {
     align-items: center;
     justify-content: center;
     background-color: #007bff;
-    border-radius: 8px;
+    border-radius: 999px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
     z-index: 10;
 }
@@ -3297,18 +3297,18 @@ html[dir="rtl"] .demography-container .question-block > label {
         position: absolute;
         top: 0;
         inset-inline: 0;
-        height: 8px;
+        height: 10px;
         margin: 0;
         background: rgba(0, 123, 255, 0.08);
-        border-radius: 0 0 10px 10px;
+        border-radius: 15px 15px 0 0;
         box-shadow: none;
         overflow: hidden;
         pointer-events: none;
-        transform: translateY(-45%);
+        transform: translateY(0);
     }
 
     body[data-page="choice_experiment"] .progress-container .progress-bar {
         height: 100%;
-        border-radius: 0 0 10px 10px;
+        border-radius: inherit;
     }
 }
