@@ -18,10 +18,6 @@
 <body data-page="demography">
 
     <div class="demography-container">
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
         <!-- Language Switcher -->
         <div class="language-switcher">
             <select id="language-switcher">
@@ -82,6 +78,10 @@
                 <button type="submit" class="next-btn" disabled>{{ translations.demography.next_button | default('Next') }}</button>
             </div>
         </form>
+
+        <div class="progress-container progress-container--bottom">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>

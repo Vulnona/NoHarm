@@ -70,6 +70,8 @@ function initDraggableDoctor() {
     const lockMessageId = 'doctor-lock-message';
     let lockMessage = lockMessageContainer ? lockMessageContainer.querySelector(`#${lockMessageId}`) : null;
     const fallbackLockCopy = instructionText?.dataset?.lockMessage || 'please wait for the both patients to show up!';
+    const UNLOCK_DELAY_MS = 5000;
+    const mobileViewportQuery = window.matchMedia('(max-width: 768px)');
 
     if (!doctor || patients.length === 0) {
         return;
@@ -90,6 +92,9 @@ function initDraggableDoctor() {
     let dropTimeout = null;
     let lockMessageTimeout = null;
     let visibilityPoll = null;
+    let unlockDelayTimeout = null;
+    let unlockScheduled = false;
+    const seenPatients = new Set();
 
     const getLockMessageText = () => {
         const translated = window.__i18n?.choice_experiment?.doctor_lock_message;
@@ -171,7 +176,13 @@ function initDraggableDoctor() {
             return;
         }
 
+        if (unlockDelayTimeout) {
+            clearTimeout(unlockDelayTimeout);
+            unlockDelayTimeout = null;
+        }
+
         doctorUnlocked = true;
+        unlockScheduled = false;
         doctor.style.cursor = 'grab';
         hideDoctorLockMessage();
 
@@ -181,16 +192,35 @@ function initDraggableDoctor() {
         }
     }
 
-    function markPatientRevealed(image) {
-        if (image.dataset.revealed === 'true') {
+    function markPatientRevealed(image, { force = false } = {}) {
+        if (!image) {
+            return;
+        }
+
+        const index = patientImages.indexOf(image);
+        if (index === -1) {
+            return;
+        }
+
+        if (!force) {
+            const parentCard = image.closest('.patient-card');
+            const isHidden = parentCard?.getAttribute('aria-hidden') === 'true';
+
+            if (mobileViewportQuery.matches && isHidden) {
+                return;
+            }
+        }
+
+        if (seenPatients.has(index)) {
             return;
         }
 
         image.dataset.revealed = 'true';
-        patientsRevealed += 1;
+        seenPatients.add(index);
+        patientsRevealed = seenPatients.size;
 
-        if (patientsRevealed >= patientImages.length) {
-            unlockDoctor();
+        if (seenPatients.size >= patientImages.length) {
+            scheduleDoctorUnlock();
         }
     }
 
@@ -206,7 +236,7 @@ function initDraggableDoctor() {
 
         const targetImage = patientImages[numericIndex];
         if (targetImage) {
-            markPatientRevealed(targetImage);
+            markPatientRevealed(targetImage, { force: true });
         }
     }
 
@@ -248,6 +278,23 @@ function initDraggableDoctor() {
         }
     });
 
+    function scheduleDoctorUnlock() {
+        if (doctorUnlocked || unlockScheduled) {
+            return;
+        }
+
+        unlockScheduled = true;
+
+        if (unlockDelayTimeout) {
+            clearTimeout(unlockDelayTimeout);
+        }
+
+        unlockDelayTimeout = setTimeout(() => {
+            unlockDelayTimeout = null;
+            unlockDoctor();
+        }, UNLOCK_DELAY_MS);
+    }
+
     document.addEventListener('patientShown', event => {
         markPatientByIndex(event?.detail?.index);
     });
@@ -272,15 +319,21 @@ function initDraggableDoctor() {
     }
 
     if (!doctorUnlocked && patientImages.length > 0) {
+        if (mobileViewportQuery.matches) {
+            patientImages.forEach((image, index) => {
+                markPatientRevealed(image, { force: index === 0 });
+            });
+        }
+
         visibilityPoll = setInterval(evaluatePatientVisibility, 300);
 
         setTimeout(() => {
             evaluatePatientVisibility();
-            if (!doctorUnlocked) {
+            if (!doctorUnlocked && !mobileViewportQuery.matches) {
                 patientImages.forEach(markPatientRevealed);
             }
         }, 3600);
-    } 
+    }
 
     // Unlock time for the doctor to be moveable. 
 
@@ -502,6 +555,7 @@ function initMobilePatientSwitcher() {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
     let activeIndex = 0;
     let lastAnnouncedIndex = -1;
+    let mobilePrefetched = false;
 
     const isMobile = () => mediaQuery.matches;
 
@@ -544,6 +598,21 @@ function initMobilePatientSwitcher() {
                 }));
             });
         }
+
+        if (mobileMode && patientCards.length > 1 && !mobilePrefetched) {
+            mobilePrefetched = true;
+            const originalIndex = targetIndex;
+            const nextIndex = (targetIndex + 1) % patientCards.length;
+
+            if (nextIndex !== originalIndex) {
+                requestAnimationFrame(() => {
+                    applyState(nextIndex, true);
+                    requestAnimationFrame(() => {
+                        applyState(originalIndex, true);
+                    });
+                });
+            }
+        }
     };
 
     buttons.forEach(button => {
@@ -557,9 +626,11 @@ function initMobilePatientSwitcher() {
 
     const handleViewportChange = event => {
         if (event.matches) {
+            mobilePrefetched = false;
             applyState(activeIndex, true);
         } else {
             applyState(activeIndex, false);
+            mobilePrefetched = false;
         }
     };
 

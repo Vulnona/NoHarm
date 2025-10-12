@@ -11,7 +11,7 @@
     "patient_label_2": "2nd Patient",
     "patient_toggle_label": "Toggle between patients",
     "doctor_instruction": "Move the physician to the patient to be treated!",
-    "doctor_lock_message": "please wait for the both patients to show up!",
+    "doctor_lock_message": "Please wait for the both patients to show up!",
     "reconsider_message": "A data-driven computer model suggests treating the other patient!",
     "decision_text": "Would you like to change your decision?",
     "originally_selected": "Originally Selected",
