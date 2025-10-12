@@ -640,9 +640,9 @@ input[type="submit"]:hover,
     }
 
     .patients-grid > .patient-card {
-        width: 100%;
+        width: calc(100% - 1.5rem);
         max-width: 360px;
-        margin: 0;
+        margin: 0 auto;
         display: none;
         order: 1;
     }
@@ -3287,6 +3287,8 @@ html[dir="rtl"] .demography-container .question-block > label {
 
     body[data-page="choice_experiment"] .doctor-instruction {
         font-size: 0.82rem;
+        max-width: 100%;
+        white-space: nowrap;
     }
 
     body[data-page="choice_experiment"] .progress-container--bottom {
