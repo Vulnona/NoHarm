@@ -1,144 +1,146 @@
 <!DOCTYPE html>
+
 <html lang="{{ current_language|default('en') }}">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.choice_experiment.title | default('Choice Experiment') }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ translations.choice_experiment.title | default('Choice Experiment') }}</title>
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
 </head>
-
 <body data-page="choice_experiment">
-    <div class="choice-container">
-        <div class="instruction-header">
-            <div class="choice-header">
-                {% set progress_template = translations.choice_experiment.question_counter_template | default('Question {current} of {total}') %}
-                {% set current_value = current_set if current_set else 1 %}
-                <div class="question-progress" id="question-progress" aria-live="polite"
-                    data-template="{{ progress_template }}" data-current="{{ current_value }}"
-                    data-total="3">{{ progress_template.replace('{current}', current_value|string).replace('{total}', '3') }}</div>
-                <div class="language-switcher">
-                    <select id="language-switcher">
-                        <option value="ar">العربية</option>
-                        <option value="bn">বাংলা</option>
-                        <option value="zh">中文</option>
-                        <option value="en">English</option>
-                        <option value="fr">Français</option>
-                        <option value="de">Deutsch</option>
-                        <option value="hi">हिन्दी</option>
-                        <option value="ja">日本語</option>
-                        <option value="ru">Русский</option>
-                        <option value="es">Español</option>
-                        <option value="ur">اردو</option>
-                    </select>
-                </div>
-            </div>
-            <div class="instruction-text" data-lock-message="{{ translations.choice_experiment.doctor_lock_message | default('please wait for the both patients to show up!') }}">
-                <p>{{ translations.choice_experiment.instruction_text | default('Not every patient can be treated in a medical emergency. A decision has to be made about which patient to treat. Which of the patients shown below should be treated?') }}</p>
-            </div>
-        </div>
-
-        <div class="patients-grid">
-            <!-- First Patient -->
-            <div class="patient-card mobile-active" aria-hidden="false">
-                <div class="patient-label">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</div>
-                <div class="image-container">
-                    <img src="{{ url_for('static', filename=images[0]['filename']) }}"
-                        alt="{{ images[0]['description'] }}" class="patient-image fade-element"
-                        data-filename="{{ images[0]['filename'].split('/')[-1] }}"
-                        data-fullpath="{{ images[0]['filename'] }}">
-                    <div class="hover-description">{{ images[0]['description'] }}</div>
-                </div>
-            </div>
-
-            <div class="mobile-patient-switcher" id="mobile-patient-switcher" aria-label="{{ translations.choice_experiment.patient_toggle_label | default('Toggle between patients') }}">
-                <button type="button" class="mobile-switch-btn active" data-patient-index="0">
+<div class="choice-container">
+<div class="instruction-header">
+<div class="choice-header">
+<div class="language-switcher">
+<select id="language-switcher">
+<option value="ar">العربية</option>
+<option value="bn">বাংলা</option>
+<option value="zh">中文</option>
+<option value="en">English</option>
+<option value="fr">Français</option>
+<option value="de">Deutsch</option>
+<option value="hi">हिन्दी</option>
+<option value="ja">日本語</option>
+<option value="ru">Русский</option>
+<option value="es">Español</option>
+<option value="ur">اردو</option>
+</select>
+</div>
+</div>
+<div class="instruction-text" data-lock-message="{{ translations.choice_experiment.doctor_lock_message | default('please wait for the both patients to show up!') }}">
+<p>{{ translations.choice_experiment.instruction_text | default('Not every patient can be treated in a medical emergency. A decision has to be made about which patient to treat. Which of the patients shown below should be treated?') }}</p>
+</div>
+</div>
+<div class="patients-grid">
+<!-- First Patient -->
+<div aria-hidden="false" class="patient-card mobile-active" data-desktop-visible="true" data-patient-index="0">
+<div class="patient-label">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</div>
+<div class="image-container">
+<img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ url_for('static', filename=images[0]['filename']) }}"/>
+<div class="hover-description">{{ images[0]['description'] }}</div>
+</div>
+</div>
+<div aria-label="{{ translations.choice_experiment.patient_toggle_label | default('Toggle between patients') }}" class="mobile-patient-switcher" id="mobile-patient-switcher">
+<button class="mobile-switch-btn active" data-patient-index="0" type="button">
                     {{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}
                 </button>
-                <button type="button" class="mobile-switch-btn" data-patient-index="1">
+<button class="mobile-switch-btn" data-patient-index="1" type="button">
                     {{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}
                 </button>
-            </div>
-
-            <!-- Doctor Section -->
-            <div class="doctor-section">
-                <div class="doctor-resting-area" aria-hidden="true"></div>
-                <img src="{{ url_for('static', filename='images/doctor_image.png') }}" alt="Physician"
-                    class="doctor-image" id="draggableDoctor" style="cursor: grab;">
-                <div class="doctor-instruction">{{ translations.choice_experiment.doctor_instruction | default('Move the physician to the patient to be treated!') }}</div>
-            </div>
-
-            <!-- Second Patient -->
-            <div class="patient-card" aria-hidden="true">
-                <div class="patient-label">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</div>
-                <div class="image-container">
-                    <img src="{{ url_for('static', filename=images[1]['filename']) }}"
-                        alt="{{ images[1]['description'] }}" class="patient-image fade-element"
-                        data-filename="{{ images[1]['filename'].split('/')[-1] }}"
-                        data-fullpath="{{ images[1]['filename'] }}">
-                    <div class="hover-description">{{ images[1]['description'] }}</div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Enhanced Reconsider Modal -->
-        <div id="reconsider-modal" class="modal">
-            <div class="modal-content">
-                <div class="alert-message">
-                    <p class="highlight-text">{{ translations.choice_experiment.reconsider_message | default('A data-driven computer model suggests treating the other patient!') }}</p>
-                    <p class="decision-text">{{ translations.choice_experiment.decision_text | default('Would you like to change your decision?') }}</p>
-                </div>
-
-                <div class="comparison-grid">
-                    <!-- Originally Selected Patient -->
-                    <div class="patient-card faded" data-patient="1">
-                        <div class="selection-label">{{ translations.choice_experiment.originally_selected | default('Originally Selected') }}</div>
-                        <div class="image-container">
-                            <img src="" alt="Originally Selected Patient" class="patient-image" id="original-choice"
-                                data-filename="">
-                            <div class="hover-description" id="original-choice-description"></div>
-                        </div>
-                    </div>
-
-                    <!-- Suggested Alternative Patient -->
-                    <div class="patient-card highlighted" data-patient="2">
-                        <div class="selection-label">{{ translations.choice_experiment.recommendation | default('Recommendation') }}</div>
-                        <div class="image-container">
-                            <img src="" alt="Suggested Alternative Patient" class="patient-image" id="suggested-choice"
-                                data-filename="">
-                            <div class="hover-description" id="suggested-choice-description"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="decision-buttons">
-                    <button type="button" class="btn-change" onclick="handleReconsider(true)">
-                        {{ translations.choice_experiment.yes_button | default('Yes') }}
-                    </button>
-                    <button type="button" class="btn-keep" onclick="handleReconsider(false)">
-                        {{ translations.choice_experiment.no_button | default('No') }}
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Hidden form for submission -->
-        <form id="choice-form" method="POST" action="{{ url_for('choice_experiment') }}">
-            <input type="hidden" name="selected_image" id="selected-image">
-            <input type="hidden" name="reconsider_set" value="{{ reconsider_set }}">
-        </form>
-
-        <div class="progress-container progress-container--bottom">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-
-        <script src="{{ url_for('static', filename='js/choice.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/language.js') }}"></script>
-        <script>
+</div>
+<!-- Doctor Section -->
+<div class="doctor-section">
+<div aria-hidden="true" class="doctor-resting-area"></div>
+<img alt="Physician" class="doctor-image" id="draggableDoctor" src="{{ url_for('static', filename='images/doctor_image.png') }}" style="cursor: grab;"/>
+<div class="doctor-instruction">{{ translations.choice_experiment.doctor_instruction | default('Move the physician to the patient to be treated!') }}</div>
+</div>
+<!-- Second Patient -->
+<div aria-hidden="true" class="patient-card" data-desktop-visible="true" data-patient-index="1">
+<div class="patient-label">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</div>
+<div class="image-container">
+<img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ url_for('static', filename=images[1]['filename']) }}"/>
+<div class="hover-description">{{ images[1]['description'] }}</div>
+</div>
+</div>
+</div>
+<!-- Enhanced Reconsider Modal -->
+<div aria-describedby="reconsider-subtitle" aria-labelledby="reconsider-title" aria-modal="true" class="modal" id="reconsider-modal" role="dialog">
+<div class="modal-content reconsider-modal">
+<header class="reconsider-header">
+<h2 class="highlight-text" id="reconsider-title">{{ translations.choice_experiment.reconsider_message | default('A data-driven computer model suggests treating the other patient!') }}</h2>
+<p class="decision-text" id="reconsider-subtitle">{{ translations.choice_experiment.decision_text | default('Would you like to change your decision? Choose the patient you want to treat now. Your decision will be saved immediately.') }}</p>
+<div class="reconsider-view-toggle" role="tablist">
+<button aria-selected="true" class="reconsider-view-btn active" data-view="overview" role="tab" type="button">{{ translations.choice_experiment.reconsider_overview_toggle | default('Comparison view') }}</button>
+<button aria-selected="false" class="reconsider-view-btn" data-view="interactive" role="tab" type="button">{{ translations.choice_experiment.reconsider_interactive_toggle | default('Interactive view') }}</button>
+</div>
+</header>
+<div class="reconsider-panels">
+<div class="reconsider-panel active" data-view="overview">
+<div aria-label="{{ translations.choice_experiment.reconsider_group_label | default('Choose which patient to treat') }}" class="reconsider-options" role="group">
+<button aria-label="{{ translations.choice_experiment.keep_original_accessible | default('Keep treating your original patient') }}" class="decision-card" data-decision="keep" type="button">
+<span class="choice-badge">{{ translations.choice_experiment.originally_selected | default('Your initial choice') }}</span>
+<div class="decision-visual">
+<img alt="{{ translations.choice_experiment.original_image_alt | default('Your original patient choice') }}" class="patient-image" data-filename="" id="original-choice" src=""/>
+</div>
+<span class="choice-label" id="original-choice-description"></span>
+<span class="choice-action choice-action--secondary">{{ translations.choice_experiment.keep_original_button | default('Keep this patient') }}</span>
+</button>
+<button aria-label="{{ translations.choice_experiment.switch_recommendation_accessible | default('Switch to the recommended patient') }}" class="decision-card decision-card--recommendation" data-decision="switch" type="button">
+<span class="choice-badge choice-badge--highlight">{{ translations.choice_experiment.recommendation | default('Model recommendation') }}</span>
+<div class="decision-visual">
+<img alt="{{ translations.choice_experiment.recommended_image_alt | default('Recommended patient from the model') }}" class="patient-image" data-filename="" id="suggested-choice" src=""/>
+</div>
+<span class="choice-label" id="suggested-choice-description"></span>
+<span class="choice-action">{{ translations.choice_experiment.switch_recommendation_button | default('Treat this patient instead') }}</span>
+</button>
+</div>
+</div>
+<div class="reconsider-panel" data-view="interactive" hidden="">
+<div aria-label="{{ translations.choice_experiment.reconsider_group_label | default('Choose which patient to treat') }}" class="reconsider-interactive">
+<p class="interactive-hint">{{ translations.choice_experiment.reconsider_drag_hint | default('Drag the doctor to the patient you want to treat now.') }}</p>
+<div class="interactive-stage">
+<button aria-label="{{ translations.choice_experiment.keep_original_accessible | default('Keep treating your original patient') }}" class="decision-card drag-target drag-target--target" data-decision="keep" type="button">
+<span class="choice-badge">{{ translations.choice_experiment.originally_selected | default('Your initial choice') }}</span>
+<div class="decision-visual">
+<img alt="{{ translations.choice_experiment.original_image_alt | default('Your original patient choice') }}" class="patient-image" data-filename="" id="drag-original-choice" src=""/>
+</div>
+<span class="choice-label" id="drag-original-choice-description"></span>
+<span class="choice-action choice-action--secondary">{{ translations.choice_experiment.keep_original_button | default('Keep this patient') }}</span>
+</button>
+<div class="doctor-drag-column">
+<div class="doctor-drop-zone">
+<img alt="Physician" class="doctor-image" draggable="false" id="modal-draggable-doctor" src="{{ url_for('static', filename='images/doctor_image.png') }}"/>
+<div class="doctor-drop-hint">{{ translations.choice_experiment.reconsider_drag_doctor_hint | default('Drag me to choose') }}</div>
+</div>
+</div>
+<button aria-label="{{ translations.choice_experiment.switch_recommendation_accessible | default('Switch to the recommended patient') }}" class="decision-card decision-card--recommendation drag-target drag-target--target" data-decision="switch" type="button">
+<span class="choice-badge choice-badge--highlight">{{ translations.choice_experiment.recommendation | default('Model recommendation') }}</span>
+<div class="decision-visual">
+<img alt="{{ translations.choice_experiment.recommended_image_alt | default('Recommended patient from the model') }}" class="patient-image" data-filename="" id="drag-suggested-choice" src=""/>
+</div>
+<span class="choice-label" id="drag-suggested-choice-description"></span>
+<span class="choice-action">{{ translations.choice_experiment.switch_recommendation_button | default('Treat this patient instead') }}</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<p aria-live="assertive" class="reconsider-error" id="reconsider-error" role="alert"></p>
+</div>
+</div>
+<!-- Hidden form for submission -->
+<form action="{{ url_for('choice_experiment') }}" id="choice-form" method="POST">
+<input id="selected-image" name="selected_image" type="hidden"/>
+<input name="reconsider_set" type="hidden" value="{{ reconsider_set }}"/>
+</form>
+<div class="progress-container progress-container--bottom">
+<div class="progress-bar" id="progress-bar"></div>
+</div>
+<script src="{{ url_for('static', filename='js/choice.js') }}"></script>
+<script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script>
             document.addEventListener("DOMContentLoaded", function () {
                 const progressBar = document.getElementById("progress-bar");
-                const questionProgress = document.getElementById('question-progress');
 
                 // Map pages to steps
                 const steps = {
@@ -155,19 +157,7 @@
                     const percent = (steps[currentPage] / totalSteps) * 100;
                     progressBar.style.width = percent + "%";
                 }
-
-                const currentSet = {{ current_set if current_set else 1 }};
-                const totalSets = 3;
-                if (questionProgress) {
-                    questionProgress.dataset.current = currentSet;
-                    questionProgress.dataset.total = totalSets;
-                    const template = questionProgress.dataset.template || `Question {current} of {total}`;
-                    questionProgress.textContent = template
-                        .replace('{current}', currentSet)
-                        .replace('{total}', totalSets);
-                }
             });
         </script>
-</body>
-
+</div></body>
 </html>

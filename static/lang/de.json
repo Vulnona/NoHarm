@@ -1,6 +1,6 @@
 {
   "admin_login": {
-    "title": "Admin Login",
+    "title": "Administrator-Anmeldung",
     "password_label": "Admin-Passwort eingeben:",
     "login_button": "Anmelden"
   },

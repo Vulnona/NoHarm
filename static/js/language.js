@@ -118,13 +118,78 @@ document.addEventListener('DOMContentLoaded', function () {
                         selectionLabels[1].textContent = data.choice_experiment.recommendation;
                     }
 
-                    const changeBtn = document.querySelector('.btn-change');
-                    if (changeBtn) {
-                        changeBtn.textContent = data.choice_experiment.yes_button;
-                    }
-                    const keepBtn = document.querySelector('.btn-keep');
-                    if (keepBtn) {
-                        keepBtn.textContent = data.choice_experiment.no_button;
+                    const modal = document.getElementById('reconsider-modal');
+                    if (modal && data.choice_experiment) {
+                        const highlight = modal.querySelector('.highlight-text');
+                        if (highlight && data.choice_experiment.reconsider_message) {
+                            highlight.textContent = data.choice_experiment.reconsider_message;
+                        }
+
+                        const subtitle = modal.querySelector('.decision-text');
+                        if (subtitle && data.choice_experiment.decision_text) {
+                            subtitle.textContent = data.choice_experiment.decision_text;
+                        }
+
+                        const toggleButtons = modal.querySelectorAll('.reconsider-view-btn');
+                        toggleButtons.forEach(button => {
+                            if (button.dataset.view === 'overview' && data.choice_experiment.reconsider_overview_toggle) {
+                                button.textContent = data.choice_experiment.reconsider_overview_toggle;
+                            }
+                            if (button.dataset.view === 'interactive' && data.choice_experiment.reconsider_interactive_toggle) {
+                                button.textContent = data.choice_experiment.reconsider_interactive_toggle;
+                            }
+                        });
+
+                        const keepCard = modal.querySelector('.decision-card[data-decision="keep"]');
+                        if (keepCard) {
+                            const badge = keepCard.querySelector('.choice-badge');
+                            if (badge && data.choice_experiment.originally_selected) {
+                                badge.textContent = data.choice_experiment.originally_selected;
+                            }
+
+                            const action = keepCard.querySelector('.choice-action');
+                            if (action && data.choice_experiment.keep_original_button) {
+                                action.textContent = data.choice_experiment.keep_original_button;
+                            }
+
+                            const accessibleLabel = data.choice_experiment.keep_original_accessible || data.choice_experiment.keep_original_button;
+                            if (accessibleLabel) {
+                                keepCard.setAttribute('aria-label', accessibleLabel);
+                            }
+                        }
+
+                        const switchCard = modal.querySelector('.decision-card[data-decision="switch"]');
+                        if (switchCard) {
+                            const badge = switchCard.querySelector('.choice-badge');
+                            if (badge && data.choice_experiment.recommendation) {
+                                badge.textContent = data.choice_experiment.recommendation;
+                            }
+
+                            const action = switchCard.querySelector('.choice-action');
+                            if (action && data.choice_experiment.switch_recommendation_button) {
+                                action.textContent = data.choice_experiment.switch_recommendation_button;
+                            }
+
+                            const accessibleLabel = data.choice_experiment.switch_recommendation_accessible || data.choice_experiment.switch_recommendation_button;
+                            if (accessibleLabel) {
+                                switchCard.setAttribute('aria-label', accessibleLabel);
+                            }
+                        }
+
+                        const optionsGroup = modal.querySelector('.reconsider-options');
+                        if (optionsGroup && data.choice_experiment.reconsider_group_label) {
+                            optionsGroup.setAttribute('aria-label', data.choice_experiment.reconsider_group_label);
+                        }
+
+                        const dragHint = modal.querySelector('.interactive-hint');
+                        if (dragHint && data.choice_experiment.reconsider_drag_hint) {
+                            dragHint.textContent = data.choice_experiment.reconsider_drag_hint;
+                        }
+
+                        const doctorHint = modal.querySelector('.doctor-drop-hint');
+                        if (doctorHint && data.choice_experiment.reconsider_drag_doctor_hint) {
+                            doctorHint.textContent = data.choice_experiment.reconsider_drag_doctor_hint;
+                        }
                     }
 
                     const mobileSwitcher = document.getElementById('mobile-patient-switcher');
@@ -139,16 +204,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (switchButtons[1]) {
                             switchButtons[1].textContent = data.choice_experiment.patient_label_2;
                         }
-                    }
-
-                    const progressBadge = document.getElementById('question-progress');
-                    if (progressBadge && data.choice_experiment.question_counter_template) {
-                        progressBadge.dataset.template = data.choice_experiment.question_counter_template;
-                        const currentValue = parseInt(progressBadge.dataset.current, 10) || 1;
-                        const totalValue = parseInt(progressBadge.dataset.total, 10) || 3;
-                        progressBadge.textContent = data.choice_experiment.question_counter_template
-                            .replace('{current}', currentValue)
-                            .replace('{total}', totalValue);
                     }
 
                     // Update image descriptions if they exist

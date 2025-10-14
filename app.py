@@ -36,6 +36,13 @@ app = create_app()
 BASE_DIR = Path(__file__).resolve().parent
 TRANSLATIONS_DIR = BASE_DIR / 'static' / 'lang'
 
+
+@app.template_filter('basename')
+def basename_filter(value):
+    if isinstance(value, str):
+        return value.split('/')[-1]
+    return value
+
 # Ensure the database schema contains required columns (idempotent)
 try:
     create_database()
@@ -301,7 +308,6 @@ def choice_experiment():
         session['stored_images'] = None
         session['current_images'] = None
         session['popup_shown'] = False
-        session['awaiting_final_selection'] = False
         if 'user_id' in session:
             conn = get_db_connection()
             conn.execute('''
@@ -325,37 +331,6 @@ def choice_experiment():
         selected_image = request.form.get('selected_image')
         current_set = len(session.get('selected_images', [])) + 1
         app.logger.info('POST request initiated')
-        
-        # Handle final selection after reconsider popup
-        if session.get('awaiting_final_selection', False):
-            # This is the final selection after the reconsider popup
-            session['awaiting_final_selection'] = False
-            
-            # Store this as the final choice
-            session.setdefault('final_choices', []).append(selected_image)
-            
-            # Add to selected images to move to next set
-            session.setdefault('selected_images', []).append(selected_image)
-            session.modified = True
-            
-            # Get initial choice for this set
-            initial_choice = session['initial_choices'][-1]
-            
-            # Update database with both initial and final choices
-            conn = get_db_connection()
-            timestamp_now = datetime.datetime.now().isoformat()
-            conn.execute(f'''
-                UPDATE user_responses
-                SET choice{current_set} = ?,
-                    choice{current_set}_initial = ?,
-                    choice{current_set}_final = ?,
-                    session_start = COALESCE(session_start, ?)
-                WHERE id = ?
-            ''', (selected_image, initial_choice, selected_image, timestamp_now, session['user_id']))
-            conn.commit()
-            conn.close()
-            app.logger.info('db updated with both initial and final choices')
-            return jsonify({'show_reconsider': False})
         
         # Handle initial selection
         # Store the initial choice
@@ -452,33 +427,43 @@ def reconsider():
     session['changed_decision'] = changed_decision
     session.modified = True
     
-    # Get selected choice based on user decision
+    try:
+        initial_choice = session['initial_choices'][-1]
+    except (KeyError, IndexError):
+        app.logger.error('initial choice missing during reconsideration')
+        return jsonify({'error': 'Initial choice missing'}), 400
+
     suggested_choice = session['data_driven_tool_suggestion']
-    initial_choice = session['initial_choices'][-1]
-    
-    # Set a flag to indicate that we're waiting for the final selection
-    session['awaiting_final_selection'] = True
+    final_choice = suggested_choice if changed_decision else initial_choice
+    current_set = len(session.get('selected_images', [])) + 1
+
+    session.setdefault('final_choices', []).append(final_choice)
+    session.setdefault('selected_images', []).append(final_choice)
     session.modified = True
 
-    # Update database with the reconsideration data
+    timestamp_now = datetime.datetime.now().isoformat()
     conn = get_db_connection()
     try:
         conn.execute(f'''
             UPDATE user_responses
-            SET data_driven_tool_suggestion = ?,
-                changed_decision = ?
+            SET choice{current_set} = ?,
+                choice{current_set}_initial = ?,
+                choice{current_set}_final = ?,
+                data_driven_tool_suggestion = ?,
+                changed_decision = ?,
+                session_start = COALESCE(session_start, ?)
             WHERE id = ?
-        ''', (suggested_choice, changed_decision, session['user_id']))
+        ''', (final_choice, initial_choice, final_choice, suggested_choice, changed_decision, timestamp_now, session['user_id']))
         conn.commit()
-    except sqlite3.Error as e:
+    except sqlite3.Error as exc:
         conn.close()
-        app.logger.error('db connection error: '+ str(e))
-        return jsonify({'error': str(e)}), 500
+        app.logger.error('db connection error: %s', exc)
+        return jsonify({'error': str(exc)}), 500
     finally:
         conn.close()
 
-    app.logger.info('reconsider popup successful')
-    return jsonify({'success': True})
+    app.logger.info('reconsider decision saved (changed_decision=%s)', changed_decision)
+    return jsonify({'success': True, 'final_choice': final_choice})
 
 
 @app.route('/procedural-ratings', methods=['GET', 'POST'])
@@ -901,10 +886,10 @@ def group_preferences():
 @app.route('/thank-you')
 def thank_you():
     # Record session end time
+    language = session.get('language', 'en')
     if 'user_id' in session:
         conn = get_db_connection()
         session_end = datetime.datetime.now().isoformat()
-        language = session.get('language', 'en')
         conn.execute('''
             UPDATE user_responses
             SET session_end = COALESCE(session_end, ?),
@@ -914,8 +899,6 @@ def thank_you():
         conn.commit()
         conn.close()
 
-        # mock api call after survey completion sending the last row of the user input in the user_responses table
-        # check mock api output : https://webhook.site/#!/view/c4f75040-f408-45b0-8d99-44bca147ba58
         conn_read = get_db_connection()
         cursor = conn_read.cursor()
         last_row = cursor.execute('''
@@ -928,7 +911,6 @@ def thank_you():
         send_post_request('https://webhook.site/c4f75040-f408-45b0-8d99-44bca147ba58', payload)
         conn_read.close()
 
-        # Clear survey-specific session data so a new run starts cleanly
         session.pop('user_id', None)
         session.pop('selected_images', None)
         session.pop('initial_choices', None)
@@ -937,12 +919,19 @@ def thank_you():
         session.pop('stored_images', None)
         session.pop('current_images', None)
         session.pop('popup_shown', None)
-        session.pop('awaiting_final_selection', None)
     else:
         app.logger.warning('session: user_id not set in session')
 
+    session.pop('selectedLanguage', None)
+
+    response = make_response(render_template('thank_you.html', language=language))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+
     app.logger.info('survey recorded and final thank you page rendered successfully')
-    return render_template('thank_you.html', language=session.get('language'))
+    return response
 
 # Route for no consent page
 @app.route('/no-consent')

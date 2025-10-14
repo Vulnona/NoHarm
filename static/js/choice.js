@@ -573,6 +573,15 @@ function initMobilePatientSwitcher() {
                 card.classList.remove('mobile-active');
                 card.removeAttribute('aria-hidden');
             }
+
+            if (isActive) {
+                const image = card.querySelector('.patient-image');
+                if (image && !image.dataset.animationInitialized) {
+                    image.dataset.animationInitialized = 'true';
+                    image.classList.remove('patient-image--instant');
+                    void image.offsetWidth;
+                }
+            }
         });
 
         buttons.forEach((button, currentIndex) => {
@@ -592,10 +601,17 @@ function initMobilePatientSwitcher() {
 
         if (!mobileMode && lastAnnouncedIndex !== -1) {
             lastAnnouncedIndex = -1;
-            patientCards.forEach((_, idx) => {
+            patientCards.forEach((card, idx) => {
                 document.dispatchEvent(new CustomEvent('patientShown', {
                     detail: { index: idx }
                 }));
+
+                const image = card.querySelector('.patient-image');
+                if (image && !image.dataset.animationInitialized && card.dataset.desktopVisible === 'true') {
+                    image.dataset.animationInitialized = 'true';
+                    image.classList.remove('patient-image--instant');
+                    void image.offsetWidth;
+                }
             });
         }
 
@@ -640,7 +656,25 @@ function initMobilePatientSwitcher() {
         mediaQuery.addListener(handleViewportChange);
     }
 
+    patientCards.forEach(card => {
+        if (card.dataset.desktopVisible !== 'true') {
+            const image = card.querySelector('.patient-image');
+            if (image) {
+                image.classList.add('patient-image--instant');
+            }
+        }
+    });
+
     applyState(activeIndex, mediaQuery.matches);
+
+    if (!mediaQuery.matches) {
+        patientCards.forEach((card, idx) => {
+            const image = card.querySelector('.patient-image');
+            if (image) {
+                image.dataset.animationInitialized = 'true';
+            }
+        });
+    }
 }
 
 
@@ -650,6 +684,12 @@ function showReconsiderModal(data) {
     const suggestedChoice = document.getElementById('suggested-choice');
     const originalDesc = document.getElementById('original-choice-description');
     const suggestedDesc = document.getElementById('suggested-choice-description');
+    const errorMessage = document.getElementById('reconsider-error');
+    const dragOriginalChoice = document.getElementById('drag-original-choice');
+    const dragSuggestedChoice = document.getElementById('drag-suggested-choice');
+    const dragOriginalDesc = document.getElementById('drag-original-choice-description');
+    const dragSuggestedDesc = document.getElementById('drag-suggested-choice-description');
+    const modalDoctor = document.getElementById('modal-draggable-doctor');
    
     // Check if original path includes the resized_images prefix, if not add it
     const originalPath = data.original.includes('resized_images/') 
@@ -660,97 +700,479 @@ function showReconsiderModal(data) {
     originalChoice.src = `/static/${originalPath}`;
     suggestedChoice.src = `/static/${data.suggestion}`;
 
+    if (dragOriginalChoice) {
+        dragOriginalChoice.src = `/static/${originalPath}`;
+    }
+
+    if (dragSuggestedChoice) {
+        dragSuggestedChoice.src = `/static/${data.suggestion}`;
+    }
+
     
     // Set data-filename attributes for translation
     originalChoice.setAttribute('data-filename', data.original.split('/').pop());
     originalChoice.setAttribute('data-fullpath', data.original);
     suggestedChoice.setAttribute('data-filename', data.suggestion.split('/').pop());
     suggestedChoice.setAttribute('data-fullpath', data.suggestion);
-    
+    if (dragOriginalChoice) {
+        dragOriginalChoice.setAttribute('data-filename', data.original.split('/').pop());
+        dragOriginalChoice.setAttribute('data-fullpath', data.original);
+    }
+
+    if (dragSuggestedChoice) {
+        dragSuggestedChoice.setAttribute('data-filename', data.suggestion.split('/').pop());
+        dragSuggestedChoice.setAttribute('data-fullpath', data.suggestion);
+    }
+
     originalDesc.textContent = data.original_desc;
     suggestedDesc.textContent = data.suggestion_desc;
-   
+    if (dragOriginalDesc) {
+        dragOriginalDesc.textContent = data.original_desc;
+    }
+    if (dragSuggestedDesc) {
+        dragSuggestedDesc.textContent = data.suggestion_desc;
+    }
+    modal.dataset.originalChoice = data.original;
+    modal.dataset.suggestedChoice = data.suggestion;
+
+    if (errorMessage) {
+        errorMessage.textContent = '';
+        errorMessage.classList.remove('visible');
+    }
+
+    const decisionCards = modal.querySelectorAll('.decision-card');
+    decisionCards.forEach(card => {
+        card.disabled = false;
+        card.classList.remove('decision-card--selected');
+        card.onclick = () => finalizeReconsider(card.dataset.decision);
+    });
+
+    if (!modal._setReconsiderView) {
+        modal._setReconsiderView = createReconsiderViewManager(modal);
+    }
+
+    modal._setReconsiderView('overview');
+
+    if (modalDoctor && modalDoctor._modalDragController) {
+        modalDoctor._modalDragController.reset();
+    }
+
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('active'), 10);
     
     if (window.updateModalTranslations) {
         window.updateModalTranslations();
     }
+
+    initModalDoctorDrag(modal);
 }
 
 
+function finalizeReconsider(decision) {
+    const modal = document.getElementById('reconsider-modal');
+    if (!modal) {
+        console.error('Reconsider modal not found');
+        return;
+    }
 
-function handleReconsider(change) {
+    const decisionCards = modal.querySelectorAll('.decision-card');
+    const errorMessage = document.getElementById('reconsider-error');
+
+    const setError = message => {
+        if (!errorMessage) {
+            return;
+        }
+        errorMessage.textContent = message;
+        errorMessage.classList.add('visible');
+    };
+
+    if (errorMessage) {
+        errorMessage.textContent = '';
+        errorMessage.classList.remove('visible');
+    }
+
+    decisionCards.forEach(card => {
+        card.disabled = true;
+        if (card.dataset.decision === decision) {
+            card.classList.add('decision-card--selected');
+        } else {
+            card.classList.remove('decision-card--selected');
+        }
+    });
+
+    const modalDoctor = modal.querySelector('#modal-draggable-doctor');
+    if (modalDoctor && modalDoctor._modalDragController) {
+        modalDoctor._modalDragController.disable();
+    }
+
+    const payload = {
+        change_decision: decision === 'switch'
+    };
+
     fetch('/reconsider', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            change_decision: change
-        })
-    }).then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Hide the modal
-            const modal = document.getElementById('reconsider-modal');
-            modal.classList.remove('active');
-           
-            // Reset the doctor position to center
-            const doctor = document.getElementById('draggableDoctor');
-            if (doctor) {
-                const doctorSection = doctor.closest('.doctor-section');
-                doctor.classList.remove('dragging');
-                doctor.style.transition = 'transform 0.35s ease';
-                doctor.style.transform = 'translate(0px, 0px)';
-                if (doctorSection) {
-                    doctorSection.classList.remove('drag-active');
-                }
+        body: JSON.stringify(payload)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-           
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !data.success) {
+                throw new Error(data?.error || 'Unable to save decision');
+            }
+
+            modal.classList.remove('active');
+
             setTimeout(() => {
                 modal.style.display = 'none';
-            }, 300); // Short delay to allow transition to complete
-           
-            // Reset opacity of patient cards for new selection
-            const patientCards = document.querySelectorAll('.patient-card');
-            patientCards.forEach(card => {
-                const cardImage = card.querySelector('img');
-                cardImage.style.opacity = '1';
-                card.classList.remove('selected');
-                card.classList.remove('highlight');
+                window.location.reload();
+            }, 220);
+        })
+        .catch(error => {
+            console.error('Failed to finalize reconsideration:', error);
+            decisionCards.forEach(card => {
+                card.disabled = false;
+                card.classList.remove('decision-card--selected');
             });
-           
-            // Show message to user to make final selection using translations
-            const instructionText = document.querySelector('.instruction-text p');
-            if (instructionText) {
-                // Get current language from localStorage
-                const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
-                
-                // Fetch the translation file
-                fetch(`/static/lang/${currentLanguage}.json`)
-                    .then(response => response.json())
-                    .then(langData => {
-                        // Use the translation key for final selection instruction
-                        instructionText.textContent = langData.choice_experiment.final_selection_instruction;
-                        instructionText.style.fontWeight = "bold";
-                        instructionText.style.color = "#007bff";
-                    })
-                    .catch(err => {
-                        // Fallback to English if translation fails
-                        console.error('Error loading translation:', err);
-                        instructionText.textContent = "Now please make your final selection for which patient to treat.";
-                        instructionText.style.fontWeight = "bold";
-                        instructionText.style.color = "#007bff";
-                    });
+
+            if (modalDoctor && modalDoctor._modalDragController) {
+                modalDoctor._modalDragController.reset();
             }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+
+            setError('We could not save your decision. Please try again.');
+        });
 }
 
+
+
+function createReconsiderViewManager(modal) {
+    const buttons = Array.from(modal.querySelectorAll('.reconsider-view-btn'));
+    const panels = Array.from(modal.querySelectorAll('.reconsider-panel'));
+
+    const setView = targetView => {
+        buttons.forEach(button => {
+            const isActive = button.dataset.view === targetView;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-selected', isActive.toString());
+        });
+
+        panels.forEach(panel => {
+            const isActive = panel.dataset.view === targetView;
+            panel.classList.toggle('active', isActive);
+            if (isActive) {
+                panel.removeAttribute('hidden');
+            } else {
+                panel.setAttribute('hidden', 'hidden');
+            }
+        });
+
+        if (targetView === 'interactive') {
+            const doctor = modal.querySelector('#modal-draggable-doctor');
+            if (doctor && doctor._modalDragController) {
+                doctor._modalDragController.reset();
+            }
+        }
+    };
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (!button.classList.contains('active')) {
+                setView(button.dataset.view);
+            }
+        });
+    });
+
+    return setView;
+}
+
+
+function initModalDoctorDrag(modal) {
+    const doctor = modal.querySelector('#modal-draggable-doctor');
+    const dropZone = modal.querySelector('.doctor-drop-zone');
+    const dropTargets = modal.querySelectorAll('.reconsider-panel[data-view="interactive"] .drag-target');
+
+    if (!doctor || !dropZone || dropTargets.length === 0) {
+        return;
+    }
+
+    if (!doctor._modalDragController) {
+        doctor._modalDragController = setupModalDoctorDrag(modal, doctor, dropZone, dropTargets);
+    } else {
+        doctor._modalDragController.updateTargets(dropTargets);
+    }
+
+    doctor._modalDragController.reset();
+}
+
+
+function setupModalDoctorDrag(modal, doctor, dropZone, dropTargets) {
+    const state = {
+        dropTargets: Array.from(dropTargets),
+        isDragging: false,
+        disabled: false,
+        start: { x: 0, y: 0 },
+        origin: { x: 0, y: 0 },
+        activeTarget: null,
+        touchId: null
+    };
+
+    const parseTransform = element => {
+        const transform = window.getComputedStyle(element).getPropertyValue('transform');
+        if (transform && transform !== 'none') {
+            try {
+                const matrix = new DOMMatrix(transform);
+                return { x: matrix.m41, y: matrix.m42 };
+            } catch (error) {
+                console.warn('Unable to parse transform', error);
+            }
+        }
+        return { x: 0, y: 0 };
+    };
+
+    const applyTransform = (x, y, { animate = false } = {}) => {
+        if (animate) {
+            doctor.style.transition = 'transform 0.28s ease';
+        } else {
+            doctor.style.transition = 'none';
+        }
+        doctor.style.transform = `translate(${x}px, ${y}px)`;
+        if (animate) {
+            window.setTimeout(() => {
+                doctor.style.transition = '';
+            }, 300);
+        }
+    };
+
+    const setHoverTarget = target => {
+        if (state.activeTarget === target) {
+            return;
+        }
+
+        if (state.activeTarget) {
+            state.activeTarget.classList.remove('drag-hover');
+        }
+
+        state.activeTarget = target;
+
+        if (state.activeTarget) {
+            state.activeTarget.classList.add('drag-hover');
+        }
+    };
+
+    const evaluateHover = () => {
+        const doctorRect = doctor.getBoundingClientRect();
+        const centerX = doctorRect.left + doctorRect.width / 2;
+        const centerY = doctorRect.top + doctorRect.height / 2;
+
+        let hovered = null;
+        state.dropTargets.forEach(target => {
+            const rect = target.getBoundingClientRect();
+            const inside = centerX >= rect.left && centerX <= rect.right && centerY >= rect.top && centerY <= rect.bottom;
+            if (inside) {
+                hovered = target;
+            }
+        });
+
+        setHoverTarget(hovered);
+    };
+
+    const animateBackHome = () => {
+        applyTransform(0, 0, { animate: true });
+        setHoverTarget(null);
+    };
+
+    const snapToTarget = target => {
+        if (!target) {
+            animateBackHome();
+            return;
+        }
+
+        const doctorRect = doctor.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const deltaX = (targetRect.left + targetRect.width / 2) - (doctorRect.left + doctorRect.width / 2);
+        const deltaY = (targetRect.top + targetRect.height / 2) - (doctorRect.top + doctorRect.height / 2);
+        const current = parseTransform(doctor);
+        applyTransform(current.x + deltaX, current.y + deltaY, { animate: true });
+
+        window.setTimeout(() => {
+            finalizeReconsider(target.dataset.decision);
+        }, 260);
+    };
+
+    const beginDrag = (clientX, clientY) => {
+        if (state.disabled || state.isDragging) {
+            return false;
+        }
+
+        state.isDragging = true;
+        doctor.classList.add('dragging');
+        doctor.style.cursor = 'grabbing';
+        doctor.style.animation = 'none';
+        dropZone.classList.add('dragging');
+        state.start = { x: clientX, y: clientY };
+        state.origin = parseTransform(doctor);
+        setHoverTarget(null);
+        doctor.style.transition = 'none';
+        return true;
+    };
+
+    const updateDrag = (clientX, clientY) => {
+        if (!state.isDragging) {
+            return;
+        }
+
+        const dx = clientX - state.start.x;
+        const dy = clientY - state.start.y;
+        applyTransform(state.origin.x + dx, state.origin.y + dy);
+        evaluateHover();
+    };
+
+    const endDrag = () => {
+        if (!state.isDragging) {
+            return;
+        }
+
+        state.isDragging = false;
+        doctor.classList.remove('dragging');
+        doctor.style.cursor = 'grab';
+        dropZone.classList.remove('dragging');
+        doctor.style.animation = '';
+
+        const target = state.activeTarget;
+        setHoverTarget(null);
+        snapToTarget(target);
+    };
+
+    const onMouseMove = event => {
+        updateDrag(event.clientX, event.clientY);
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    const onMouseUp = event => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        endDrag();
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    const onMouseDown = event => {
+        if (event.button !== 0) {
+            return;
+        }
+
+        if (!beginDrag(event.clientX, event.clientY)) {
+            return;
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    const stopTouchTracking = () => {
+        document.removeEventListener('touchmove', onTouchMove, { passive: false });
+        document.removeEventListener('touchend', onTouchEnd, { passive: false });
+        document.removeEventListener('touchcancel', onTouchCancel, { passive: false });
+        state.touchId = null;
+    };
+
+    const onTouchMove = event => {
+        const touch = Array.from(event.changedTouches || []).find(({ identifier }) => identifier === state.touchId);
+        if (!touch) {
+            return;
+        }
+
+        updateDrag(touch.clientX, touch.clientY);
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    const onTouchEnd = event => {
+        const touch = Array.from(event.changedTouches || []).find(({ identifier }) => identifier === state.touchId);
+        if (!touch) {
+            return;
+        }
+
+        stopTouchTracking();
+        endDrag();
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    const onTouchCancel = onTouchEnd;
+
+    const onTouchStart = event => {
+        const touch = event.changedTouches && event.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        if (!beginDrag(touch.clientX, touch.clientY)) {
+            return;
+        }
+
+        state.touchId = touch.identifier;
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd, { passive: false });
+        document.addEventListener('touchcancel', onTouchCancel, { passive: false });
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+    };
+
+    doctor.addEventListener('mousedown', onMouseDown);
+    doctor.addEventListener('touchstart', onTouchStart, { passive: false });
+    doctor.addEventListener('dragstart', event => event.preventDefault());
+
+    applyTransform(0, 0);
+
+    return {
+        reset: () => {
+            state.disabled = false;
+            state.isDragging = false;
+            doctor.dataset.disabled = 'false';
+            doctor.classList.remove('dragging');
+            doctor.style.cursor = 'grab';
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            stopTouchTracking();
+            setHoverTarget(null);
+            dropZone.classList.remove('dragging');
+            applyTransform(0, 0);
+        },
+        disable: () => {
+            state.disabled = true;
+            state.isDragging = false;
+            doctor.dataset.disabled = 'true';
+            doctor.classList.remove('dragging');
+            doctor.style.cursor = 'default';
+            doctor.style.animation = '';
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            stopTouchTracking();
+            setHoverTarget(null);
+            dropZone.classList.remove('dragging');
+        },
+        updateTargets: newTargets => {
+            state.dropTargets = Array.from(newTargets);
+            setHoverTarget(null);
+        }
+    };
+}
 
 
 document.addEventListener('DOMContentLoaded', () => {
