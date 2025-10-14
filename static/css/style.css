@@ -1520,12 +1520,12 @@ body[data-page="procedural_ratings"] .procedural-carousel-nav {
     }
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
-        display: ruby;
+        display: flex;
     }
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row {
         display: grid;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
         gap: 0.5rem;
         width: 100%;
         padding: 0 0.15rem;
