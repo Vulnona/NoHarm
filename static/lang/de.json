@@ -154,6 +154,7 @@
       "5": "5",
       "6": "6"
     },
+    "progress_template": "Bewertet {completed} von {total} Verfahren",
     "submit_button": "Absenden"
   },
   "results": {

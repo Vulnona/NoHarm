@@ -154,6 +154,7 @@
       "5": "৫",
       "6": "৬"
     },
+    "progress_template": "মোট {total} প্রক্রিয়ার মধ্যে {completed}টি মূল্যায়িত হয়েছে",
     "submit_button": "জমা দিন"
   },
   "results": {

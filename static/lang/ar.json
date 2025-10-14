@@ -154,6 +154,7 @@
       "5": "٥",
       "6": "٦"
     },
+    "progress_template": "تم تقييم {completed} من {total} إجراءات",
     "submit_button": "إرسال"
   },
   "results": {

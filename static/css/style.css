@@ -1299,6 +1299,196 @@ p {
     gap: 0.25rem;
 }
 
+body[data-page="procedural_ratings"] .procedural-carousel-nav {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    body[data-page="procedural_ratings"] .matrix-scroll {
+        overflow: hidden;
+        margin-top: 1.4rem;
+    }
+
+    body[data-page="procedural_ratings"] .procedural-matrix {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    body[data-page="procedural_ratings"] .procedural-matrix[data-carousel="active"] .matrix-row.matrix-header {
+        display: none;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body {
+        display: none;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card {
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 20px 45px rgba(15, 35, 95, 0.12);
+        padding: 1.4rem 1.25rem 1.6rem;
+        display: none;
+        flex-direction: column;
+        gap: 1.1rem;
+        min-height: 0;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
+        display: ruby;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0 0.15rem;
+        box-sizing: border-box;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-question {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.65rem;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #0f235f;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-desc {
+        color: #4a4a4a;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-status {
+        display: none;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option,
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row .matrix-cell.matrix-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.48rem 0.29rem 0.58rem;
+        border-radius: 12px;
+        background: #f7f9ff;
+        box-shadow: inset 0 0 0 1px rgba(15, 35, 95, 0.08);
+        transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        margin-top: 17px;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        border: 2px solid rgba(15, 35, 95, 0.35);
+        background: #ffffff;
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option .matrix-dot {
+        display: none;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option .sr-only {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+        border: 0;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #0f235f;
+        letter-spacing: 0.01em;
+        text-align: center;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:hover {
+        transform: translateY(-2px);
+        box-shadow: inset 0 0 0 1px rgba(15, 35, 95, 0.18);
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) {
+        background: linear-gradient(135deg, rgba(15, 75, 255, 0.16), rgba(15, 75, 255, 0.08));
+        box-shadow: inset 0 0 0 2px rgba(15, 75, 255, 0.32), 0 10px 24px rgba(15, 75, 255, 0.18);
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) input[type="radio"] {
+        background: radial-gradient(circle at center, #0f4bff 0%, #2a68ff 55%, #0f4bff 100%);
+        border-color: rgba(10, 75, 255, 0.75);
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) .sr-only {
+        color: #0a4bff;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.answered {
+        box-shadow: 0 24px 50px rgba(15, 35, 95, 0.18);
+    }
+
+    body[data-page="procedural_ratings"] .procedural-carousel-nav {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 1.1rem;
+        margin-top: 1rem;
+        width: min(260px, 100%);
+        margin-inline: auto;
+        padding: 0 0.35rem;
+    }
+
+    body[data-page="procedural_ratings"] .procedural-carousel-nav button {
+        border: none;
+        border-radius: 999px;
+        background: #1f6bff;
+        color: #ffffff;
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        box-shadow: 0 10px 26px rgba(31, 107, 255, 0.24);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    body[data-page="procedural_ratings"] .procedural-carousel-nav button:disabled {
+        background: #b5c7ff;
+        box-shadow: none;
+    }
+
+    body[data-page="procedural_ratings"] .procedural-carousel-nav button:not(:disabled):active {
+        transform: scale(0.96);
+    }
+
+    body[data-page="procedural_ratings"] .procedural-carousel-nav .carousel-indicator {
+        flex: 1 1 auto;
+        text-align: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2352;
+    }
+
+    body[data-page="procedural_ratings"] .form-navigation {
+        margin-top: 1.4rem;
+    }
+}
+
 .matrix-row.matrix-header {
     position: sticky;
     top: 0;
@@ -3393,6 +3583,41 @@ html[dir="rtl"] .demography-container .question-block > label {
     body[data-page="group_preferences"] .group-preferences-container .language-switcher {
         top: 22px;
         margin-bottom: 0.35rem;
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container {
+        padding-top: 96px;
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+        inset-inline-end: 16px;
+        top: 28px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 1rem;
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container .question-block,
+    body[data-page="group_preferences"] .group-preferences-container form {
+        margin-top: 1.6rem;
+    }
+
+    body[data-page="demography"] .demography-container {
+        padding-top: 96px;
+    }
+
+    body[data-page="demography"] .demography-container .language-switcher {
+        inset-inline-end: 16px;
+        top: 28px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 1rem;
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
+    }
+
+    body[data-page="demography"] .demography-container .question-block {
+        margin-top: 1.6rem;
     }
 
     body[data-page="procedural_ratings"] .rating-intro {

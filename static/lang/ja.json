@@ -154,6 +154,7 @@
       "5": "5",
       "6": "6"
     },
+    "progress_template": "全{total}件中{completed}件の手順を評価しました",
     "submit_button": "送信"
   },
   "results": {

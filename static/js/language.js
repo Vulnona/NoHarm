@@ -291,6 +291,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                     }
 
+                    const progressEl = document.querySelector('.matrix-progress');
+                    if (progressEl) {
+                        if (proceduralData.progress_template) {
+                            progressEl.dataset.template = proceduralData.progress_template;
+                        }
+                        if (typeof window.updateProceduralProgress === 'function') {
+                            window.updateProceduralProgress();
+                        }
+                    }
+
                     if (Array.isArray(proceduralData.questions)) {
                         const lookup = new Map(proceduralData.questions.map(q => [q.id, q]));
                         document.querySelectorAll('.matrix-row.matrix-body').forEach(row => {

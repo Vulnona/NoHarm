@@ -103,6 +103,15 @@
             const nextBtn = form.querySelector('.next-btn');
             const errorBanner = form.querySelector('.form-error');
             const progressIndicator = document.querySelector('.matrix-progress');
+            const matrixScroll = document.querySelector('.matrix-scroll');
+            const matrix = matrixScroll ? matrixScroll.querySelector('.procedural-matrix') : null;
+            const matrixRows = matrix ? Array.from(matrix.querySelectorAll('.matrix-row.matrix-body')) : [];
+            const mobileCarouselQuery = window.matchMedia('(max-width: 600px)');
+            let carouselNav = null;
+            let carouselPrevBtn = null;
+            let carouselNextBtn = null;
+            let carouselIndicator = null;
+            let activeCardIndex = 0;
             const questionIds = Array.from(new Set(Array.from(form.querySelectorAll('input[type="radio"]')).map(r => r.name)));
 
             function restoreSelections() {
@@ -143,6 +152,119 @@
                     .replace('{total}', total);
             }
 
+            window.updateProceduralProgress = updateProgress;
+
+            function updateCarouselControls() {
+                if (!carouselNav || !matrixRows.length) {
+                    return;
+                }
+                if (carouselIndicator) {
+                    carouselIndicator.textContent = `${activeCardIndex + 1} / ${matrixRows.length}`;
+                }
+                if (carouselPrevBtn) {
+                    carouselPrevBtn.disabled = activeCardIndex === 0;
+                }
+                if (carouselNextBtn) {
+                    carouselNextBtn.disabled = activeCardIndex === matrixRows.length - 1;
+                }
+            }
+
+            function setActiveCard(index) {
+                if (!matrixRows.length) {
+                    return;
+                }
+                const clamped = Math.max(0, Math.min(index, matrixRows.length - 1));
+                activeCardIndex = clamped;
+                matrixRows.forEach((row, idx) => {
+                    const isActive = idx === clamped;
+                    row.classList.toggle('is-active', isActive);
+                    row.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+                });
+                if (matrixScroll && typeof matrixScroll.scrollTo === 'function') {
+                    matrixScroll.scrollTo({ top: 0, behavior: 'auto' });
+                }
+                updateCarouselControls();
+            }
+
+            function attachAutoAdvance(row, idx) {
+                row.querySelectorAll('input[type="radio"]').forEach(radio => {
+                    if (radio.dataset.carouselBound === '1') {
+                        return;
+                    }
+                    radio.addEventListener('change', () => {
+                        if (activeCardIndex === idx && idx < matrixRows.length - 1) {
+                            window.setTimeout(() => setActiveCard(idx + 1), 220);
+                        }
+                    });
+                    radio.dataset.carouselBound = '1';
+                });
+            }
+
+            function mountCarousel() {
+                if (!mobileCarouselQuery.matches || !matrix || !matrixRows.length) {
+                    return;
+                }
+                if (matrix.dataset.carousel === 'active') {
+                    updateCarouselControls();
+                    return;
+                }
+                matrix.dataset.carousel = 'active';
+                matrixRows.forEach((row, idx) => {
+                    row.classList.add('carousel-card');
+                    row.dataset.carouselIndex = String(idx);
+                    attachAutoAdvance(row, idx);
+                });
+
+                carouselNav = document.createElement('div');
+                carouselNav.className = 'procedural-carousel-nav';
+
+                carouselPrevBtn = document.createElement('button');
+                carouselPrevBtn.type = 'button';
+                carouselPrevBtn.className = 'carousel-nav-btn carousel-nav-btn--prev';
+                carouselPrevBtn.textContent = '‹';
+                carouselPrevBtn.setAttribute('aria-label', 'Previous procedure');
+
+                carouselIndicator = document.createElement('div');
+                carouselIndicator.className = 'carousel-indicator';
+
+                carouselNextBtn = document.createElement('button');
+                carouselNextBtn.type = 'button';
+                carouselNextBtn.className = 'carousel-nav-btn carousel-nav-btn--next';
+                carouselNextBtn.textContent = '›';
+                carouselNextBtn.setAttribute('aria-label', 'Next procedure');
+
+                carouselNav.append(carouselPrevBtn, carouselIndicator, carouselNextBtn);
+
+                if (matrixScroll) {
+                    matrixScroll.appendChild(carouselNav);
+                }
+
+                carouselPrevBtn.addEventListener('click', () => setActiveCard(activeCardIndex - 1));
+                carouselNextBtn.addEventListener('click', () => setActiveCard(activeCardIndex + 1));
+
+                const firstUnansweredIndex = questionIds.findIndex(id => !form.querySelector(`input[name="${id}"]:checked`));
+                setActiveCard(firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0);
+            }
+
+            function destroyCarousel() {
+                if (!matrix || matrix.dataset.carousel !== 'active') {
+                    return;
+                }
+                matrix.removeAttribute('data-carousel');
+                matrixRows.forEach(row => {
+                    row.classList.remove('carousel-card', 'is-active');
+                    row.removeAttribute('data-carousel-index');
+                    row.removeAttribute('aria-hidden');
+                });
+                if (carouselNav && carouselNav.parentNode) {
+                    carouselNav.parentNode.removeChild(carouselNav);
+                }
+                carouselNav = null;
+                carouselPrevBtn = null;
+                carouselNextBtn = null;
+                carouselIndicator = null;
+            }
+
             function updateState() {
                 const ready = allAnswered();
                 nextBtn.disabled = !ready;
@@ -152,12 +274,35 @@
                 }
                 refreshRowStates();
                 updateProgress();
+                updateCarouselControls();
             }
 
             restoreSelections();
             updateState();
             if (allAnswered()) {
                 localStorage.setItem('procedural_completed', '1');
+            }
+
+            if (mobileCarouselQuery.matches) {
+                mountCarousel();
+            }
+
+            if (typeof mobileCarouselQuery.addEventListener === 'function') {
+                mobileCarouselQuery.addEventListener('change', event => {
+                    if (event.matches) {
+                        mountCarousel();
+                    } else {
+                        destroyCarousel();
+                    }
+                });
+            } else if (typeof mobileCarouselQuery.addListener === 'function') {
+                mobileCarouselQuery.addListener(event => {
+                    if (event.matches) {
+                        mountCarousel();
+                    } else {
+                        destroyCarousel();
+                    }
+                });
             }
 
             form.querySelectorAll('input[type="radio"]').forEach(radio => {

@@ -154,6 +154,7 @@
       "5": "5",
       "6": "6"
     },
+    "progress_template": "已评估 {completed} 项，共 {total} 项程序",
     "submit_button": "提交"
   },
   "results": {

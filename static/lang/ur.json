@@ -154,6 +154,7 @@
       "5": "5",
       "6": "6"
     },
+    "progress_template": "کل {total} طریقہ کار میں سے {completed} کا جائزہ لیا گیا",
     "submit_button": "جمع کرائیں"
   },
   "results": {

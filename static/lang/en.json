@@ -154,6 +154,7 @@
       "5": "5",
       "6": "6"
     },
+    "progress_template": "Rated {completed} of {total} procedures",
     "submit_button": "Submit"
   },
   "results": {

@@ -154,6 +154,7 @@
       "5": "५",
       "6": "६"
     },
+    "progress_template": "कुल {total} प्रक्रियाओं में से {completed} का मूल्यांकन किया गया",
     "submit_button": "जमा करें"
   },
   "results": {
