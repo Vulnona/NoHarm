@@ -140,8 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         });
 
-                        const keepCard = modal.querySelector('.decision-card[data-decision="keep"]');
-                        if (keepCard) {
+                        const keepCards = modal.querySelectorAll('.decision-card[data-decision="keep"]');
+                        keepCards.forEach(keepCard => {
                             const badge = keepCard.querySelector('.choice-badge');
                             if (badge && data.choice_experiment.originally_selected) {
                                 badge.textContent = data.choice_experiment.originally_selected;
@@ -156,10 +156,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (accessibleLabel) {
                                 keepCard.setAttribute('aria-label', accessibleLabel);
                             }
-                        }
+                        });
 
-                        const switchCard = modal.querySelector('.decision-card[data-decision="switch"]');
-                        if (switchCard) {
+                        const switchCards = modal.querySelectorAll('.decision-card[data-decision="switch"]');
+                        switchCards.forEach(switchCard => {
                             const badge = switchCard.querySelector('.choice-badge');
                             if (badge && data.choice_experiment.recommendation) {
                                 badge.textContent = data.choice_experiment.recommendation;
@@ -174,9 +174,19 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (accessibleLabel) {
                                 switchCard.setAttribute('aria-label', accessibleLabel);
                             }
-                        }
+                        });
 
-                        const optionsGroup = modal.querySelector('.reconsider-options');
+                        const patientSwitchButtons = modal.querySelectorAll('.reconsider-switch-btn');
+                        patientSwitchButtons.forEach(btn => {
+                            if (btn.dataset.patient === 'recommendation' && data.choice_experiment.patient_label_1) {
+                                btn.textContent = data.choice_experiment.patient_label_1;
+                            }
+                            if (btn.dataset.patient === 'original' && data.choice_experiment.patient_label_2) {
+                                btn.textContent = data.choice_experiment.patient_label_2;
+                            }
+                        });
+
+                        const optionsGroup = modal.querySelector('.reconsider-options, .reconsider-cards');
                         if (optionsGroup && data.choice_experiment.reconsider_group_label) {
                             optionsGroup.setAttribute('aria-label', data.choice_experiment.reconsider_group_label);
                         }

@@ -908,6 +908,8 @@ function initModalDoctorDrag(modal) {
     }
 
     doctor._modalDragController.reset();
+
+    initModalPatientSwitchers(modal);
 }
 
 
@@ -1172,6 +1174,81 @@ function setupModalDoctorDrag(modal, doctor, dropZone, dropTargets) {
             setHoverTarget(null);
         }
     };
+}
+
+
+function initModalPatientSwitchers(modal) {
+    const switchers = Array.from(modal.querySelectorAll('.reconsider-patient-switcher'));
+    if (switchers.length === 0) {
+        return;
+    }
+
+    const doctor = modal.querySelector('#modal-draggable-doctor');
+    const cards = Array.from(modal.querySelectorAll('[data-patient-role]'));
+
+    const stage = modal.querySelector('.interactive-stage');
+    const recommendationCard = stage?.querySelector('[data-patient-role="recommendation"]') || null;
+    const originalCard = stage?.querySelector('[data-patient-role="original"]') || null;
+    const doctorColumn = stage?.querySelector('.doctor-drag-column') || null;
+
+    const updateDoctorTargets = () => {
+        if (doctor && doctor._modalDragController) {
+            const activeTargets = modal.querySelectorAll('.drag-target--target.is-active');
+            const fallbackTargets = modal.querySelectorAll('.drag-target--target');
+            doctor._modalDragController.updateTargets(activeTargets.length ? activeTargets : fallbackTargets);
+        }
+    };
+
+    const setActivePatient = key => {
+        switchers.forEach(switcher => {
+            switcher.querySelectorAll('.reconsider-switch-btn').forEach(btn => {
+                const isActive = btn.dataset.patient === key;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        });
+
+        cards.forEach(card => {
+            const isActive = card.dataset.patientRole === key;
+            card.classList.toggle('is-active', isActive);
+            card.setAttribute('aria-hidden', (!isActive).toString());
+            if (typeof card.disabled === 'boolean') {
+                card.disabled = !isActive;
+            }
+            card.tabIndex = isActive ? 0 : -1;
+        });
+
+        if (stage && recommendationCard && originalCard && doctorColumn) {
+            if (key === 'recommendation') {
+                stage.insertBefore(recommendationCard, doctorColumn);
+                stage.appendChild(originalCard);
+            } else {
+                stage.insertBefore(originalCard, doctorColumn);
+                stage.appendChild(recommendationCard);
+            }
+        }
+
+        updateDoctorTargets();
+    };
+
+    if (modal._patientSwitcherInitialized) {
+        setActivePatient('recommendation');
+        return;
+    }
+
+    modal._patientSwitcherInitialized = true;
+
+    switchers.forEach(switcher => {
+        switcher.querySelectorAll('.reconsider-switch-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!btn.classList.contains('active')) {
+                    setActivePatient(btn.dataset.patient);
+                }
+            });
+        });
+    });
+
+    setActivePatient('recommendation');
 }
 
 

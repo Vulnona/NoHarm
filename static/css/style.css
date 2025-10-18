@@ -798,7 +798,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 .reconsider-modal {
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 1.55rem;
 }
 
 .reconsider-header {
@@ -813,7 +813,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    margin: 0.35rem auto 0;
+    margin: 0.2rem auto 0;
     padding: 0.25rem;
     background: rgba(79, 120, 225, 0.08);
     border-radius: 999px;
@@ -866,10 +866,13 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     margin: 0;
 }
 
-.reconsider-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
+.reconsider-options,
+.reconsider-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    width: 100%;
 }
 
 .reconsider-interactive {
@@ -879,6 +882,61 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     align-items: center;
 }
 
+.reconsider-patient-switcher {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(79, 120, 225, 0.12);
+    border-radius: 999px;
+    padding: 0.25rem;
+}
+
+.reconsider-switch-btn {
+    border: none;
+    border-radius: 999px;
+    background: #edf1ff;
+    color: #1f3b8c;
+    padding: 0.32rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0;
+}
+
+.reconsider-switch-btn.active {
+    background: #1f3b8c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(31, 59, 140, 0.28);
+}
+
+.reconsider-switch-btn:focus-visible {
+    outline: 2px solid #1f3b8c;
+    outline-offset: 2px;
+}
+
+.reconsider-options [data-patient-role],
+.reconsider-cards [data-patient-role],
+.interactive-stage [data-patient-role] {
+    display: none;
+}
+
+.reconsider-options [data-patient-role].is-active,
+.reconsider-cards [data-patient-role].is-active,
+.interactive-stage [data-patient-role].is-active {
+    display: flex;
+}
+
+.reconsider-options .decision-card,
+.reconsider-cards .decision-card,
+.interactive-stage .decision-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 1.1rem;
+}
+
 .interactive-hint {
     margin: 0;
     font-size: 0.95rem;
@@ -886,10 +944,10 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 }
 
 .interactive-stage {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     width: 100%;
 }
 
@@ -930,8 +988,9 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 240px;
-    min-width: 240px;
+    min-height: 200px;
+    min-width: 180px;
+    width: 100%;
 }
 
 .doctor-drop-zone {
@@ -951,16 +1010,13 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 }
 
 #modal-draggable-doctor {
-    z-index: 6;
-}
-
-#modal-draggable-doctor {
-    width: 92px;
+    width: 86px;
     height: auto;
     cursor: grab;
     user-select: none;
     touch-action: none;
     transition: transform 0.18s ease, filter 0.18s ease;
+    z-index: 6;
 }
 
 #modal-draggable-doctor.dragging {
@@ -1519,9 +1575,42 @@ body[data-page="procedural_ratings"] .procedural-carousel-nav {
         min-height: 0;
     }
 
-    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
-        display: flex;
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
+    display: flex;
+}
+
+@media (min-width: 720px) {
+    .interactive-stage {
+        flex-direction: row;
+        align-items: center;
     }
+
+    .interactive-stage .doctor-drag-column {
+        width: auto;
+        min-width: 220px;
+        min-height: 220px;
+    }
+}
+
+@media (max-height: 760px) {
+    .reconsider-modal {
+        gap: 1.25rem;
+    }
+
+    .reconsider-options .decision-card,
+    .reconsider-cards .decision-card,
+    .interactive-stage .decision-card {
+        padding: 0.95rem;
+    }
+
+    .doctor-drag-column {
+        min-height: 180px;
+    }
+
+    #modal-draggable-doctor {
+        width: 80px;
+    }
+}
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row {
         display: grid;
