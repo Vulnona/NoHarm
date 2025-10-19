@@ -64,15 +64,21 @@
                             <span class="matrix-question-desc" data-question-description>{{ q.full_text }}</span>
                             <span class="matrix-question-status" aria-hidden="true">✓</span>
                         </div>
-                        {% for value in scale_values %}
-                        {% set value_str = value|string %}
-                        <label class="matrix-cell matrix-option" role="cell">
-                            <input type="radio" name="{{ q.id }}" value="{{ value }}"
-                                {% if q.answer and q.answer|string == value_str %}checked{% endif %}>
-                            <span class="matrix-dot" aria-hidden="true"></span>
-                            <span class="sr-only">{{ translations.procedural_ratings.numbers[value_str] | default(value) }}</span>
-                        </label>
-                        {% endfor %}
+                        <div class="matrix-options-row" role="group">
+                            {% for value in scale_values %}
+                            {% set value_str = value|string %}
+                            <label class="matrix-cell matrix-option" role="cell">
+                                <input type="radio" name="{{ q.id }}" value="{{ value }}"
+                                    {% if q.answer and q.answer|string == value_str %}checked{% endif %}>
+                                <span class="matrix-dot" aria-hidden="true"></span>
+                                <span class="sr-only">{{ translations.procedural_ratings.numbers[value_str] | default(value) }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="matrix-mobile-scale">
+                            <span class="mobile-scale-caption mobile-scale-caption-start">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
+                            <span class="mobile-scale-caption mobile-scale-caption-end">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>

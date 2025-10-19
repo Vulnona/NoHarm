@@ -1535,8 +1535,25 @@ p {
 
 .matrix-row {
     display: grid;
-    grid-template-columns: minmax(360px, 2.5fr) repeat(6, minmax(52px, 1fr));
     align-items: stretch;
+    gap: 0.25rem;
+}
+
+.matrix-mobile-scale {
+    display: none;
+}
+
+.matrix-row.matrix-header {
+    grid-template-columns: minmax(360px, 2.5fr) repeat(6, minmax(52px, 1fr));
+}
+
+.matrix-row.matrix-body {
+    grid-template-columns: minmax(360px, 2.5fr) minmax(0, 4fr);
+}
+
+.matrix-row.matrix-body .matrix-options-row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(52px, 1fr));
     gap: 0.25rem;
 }
 
@@ -1575,50 +1592,23 @@ body[data-page="procedural_ratings"] .procedural-carousel-nav {
         min-height: 0;
     }
 
-body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
-    display: flex;
-}
-
-@media (min-width: 720px) {
-    .interactive-stage {
-        flex-direction: row;
-        align-items: center;
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
+        display: flex;
     }
-
-    .interactive-stage .doctor-drag-column {
-        width: auto;
-        min-width: 220px;
-        min-height: 220px;
-    }
-}
-
-@media (max-height: 760px) {
-    .reconsider-modal {
-        gap: 1.25rem;
-    }
-
-    .reconsider-options .decision-card,
-    .reconsider-cards .decision-card,
-    .interactive-stage .decision-card {
-        padding: 0.95rem;
-    }
-
-    .doctor-drag-column {
-        min-height: 180px;
-    }
-
-    #modal-draggable-doctor {
-        width: 80px;
-    }
-}
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.4rem;
         width: 100%;
-        padding: 0 0.15rem;
+        padding: 0 0.1rem;
         box-sizing: border-box;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row .matrix-cell.matrix-option {
+        width: auto;
+        margin-top: 0;
+        min-width: 44px;
     }
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-question {
@@ -1679,7 +1669,7 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-ac
         position: static;
         width: auto;
         height: auto;
-        margin: 0;
+        margin: 0 auto;
         overflow: visible;
         clip: auto;
         white-space: normal;
@@ -1712,6 +1702,41 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-ac
 
     body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.answered {
         box-shadow: 0 24px 50px rgba(15, 35, 95, 0.18);
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        margin-top: 0.45rem;
+        padding: 0 0.25rem;
+        column-gap: 0.4rem;
+        row-gap: 0;
+        text-align: center;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #0f235f;
+        opacity: 0.88;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-start {
+        grid-column: 1 / 2;
+        justify-self: start;
+    }
+
+    body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-end {
+        grid-column: 6 / 7;
+        justify-self: end;
+    }
+
+    html[dir="rtl"] body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-start {
+        justify-self: end;
+    }
+
+    html[dir="rtl"] body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-end {
+        justify-self: start;
     }
 
     body[data-page="procedural_ratings"] .procedural-carousel-nav {
@@ -1763,6 +1788,38 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-ac
     }
 }
 
+@media (min-width: 720px) {
+    .interactive-stage {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .interactive-stage .doctor-drag-column {
+        width: auto;
+        min-width: 220px;
+        min-height: 220px;
+    }
+}
+
+@media (max-height: 760px) {
+    .reconsider-modal {
+        gap: 1.25rem;
+    }
+
+    .reconsider-options .decision-card,
+    .reconsider-cards .decision-card,
+    .interactive-stage .decision-card {
+        padding: 0.95rem;
+    }
+
+    .doctor-drag-column {
+        min-height: 180px;
+    }
+
+    #modal-draggable-doctor {
+        width: 80px;
+    }
+}
 .matrix-row.matrix-header {
     position: sticky;
     top: 0;
@@ -3623,28 +3680,55 @@ html[dir="rtl"] .demography-container .question-block > label {
     body[data-page="choice_experiment"] .choice-header {
         position: relative;
         width: 100%;
-        margin-bottom: 0.25rem;
-        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+        gap: 0.65rem;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding-top: 2.25rem;
+        padding-top: 0;
     }
 
     body[data-page="choice_experiment"] .choice-header .language-switcher {
-        position: absolute !important;
-        top: 0;
-        right: 0;
-        margin: 0;
-        width: auto;
-        min-width: 116px;
-        height: 40px;
-        padding: 0 0.75rem;
-        box-shadow: 0 5px 12px rgba(0, 132, 255, 0.2);
+        position: relative !important;
+        top: auto;
+        right: auto;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 220px;
+        min-width: 0;
+        height: 44px;
+        padding: 0;
+        overflow: visible;
+        box-shadow: 0 8px 18px rgba(0, 123, 255, 0.25);
         flex: 0 0 auto;
+        z-index: 5;
+    }
+
+    body[data-page="choice_experiment"] .choice-header .language-switcher::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 16px;
+        transform: translateY(-50%);
+        border-style: solid;
+        border-width: 6px 5px 0 5px;
+        border-color: #ffffff transparent transparent transparent;
+        pointer-events: none;
     }
 
     body[data-page="choice_experiment"] .choice-header .language-switcher select {
-        font-size: 0.95rem;
+        width: 100%;
+        height: 100%;
+        padding: 0 2.5rem 0 1.15rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: left;
+        background: transparent;
+    }
+
+    html[dir="rtl"] body[data-page="choice_experiment"] .choice-header .language-switcher select {
+        text-align: right;
+        padding: 0 1.15rem 0 2.5rem;
     }
 
     body[data-page="choice_experiment"] .instruction-text {
