@@ -347,6 +347,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         endCaption.textContent = proceduralData.very_fair;
                     }
 
+                    if (proceduralData.not_fair) {
+                        document.querySelectorAll('.mobile-scale-caption-start').forEach(el => {
+                            el.textContent = proceduralData.not_fair;
+                        });
+                    }
+
+                    if (proceduralData.very_fair) {
+                        document.querySelectorAll('.mobile-scale-caption-end').forEach(el => {
+                            el.textContent = proceduralData.very_fair;
+                        });
+                    }
+
                     if (proceduralData.numbers) {
                         document.querySelectorAll('[data-scale-value]').forEach(element => {
                             const key = element.getAttribute('data-scale-value');
