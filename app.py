@@ -5,6 +5,7 @@ import io
 import json
 import os
 import random
+import re
 import socket
 import sqlite3
 from functools import lru_cache
@@ -35,6 +36,10 @@ app = create_app()
 
 BASE_DIR = Path(__file__).resolve().parent
 TRANSLATIONS_DIR = BASE_DIR / 'static' / 'lang'
+RESIZED_IMAGE_DIR = BASE_DIR / 'static' / 'resized_images'
+ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp'}
+IMAGE_EXTENSION_PRIORITY = {'.png': 0, '.webp': 1, '.jpg': 2, '.jpeg': 3}
+EXCLUDED_IMAGE_STEMS = {'doctor_image'}
 
 
 @app.template_filter('basename')
@@ -261,30 +266,61 @@ def submit():
         return redirect('/no-consent')
 
 
-IMAGES = [
-    {"id": 1, "filename": "child_simple.png", "description": "Child"},
-    {"id": 2, "filename": "Disability.png", "description": "Person with Disability"},
-    {"id": 3, "filename": "old_male_female_simpler.png", "description": "Elderly Couple"},
-    {"id": 4, "filename": "Overweight_simpler.png", "description": "Overweight Person"},
-    {"id": 5, "filename": "test_0_0_1_1_0.png", "description": "Test Image 1"},
-    {"id": 6, "filename": "test_0_0_2_3_1.png", "description": "Test Image 2"},
-    {"id": 7, "filename": "test_0_2_3_3_2.png", "description": "Test Image 3"},
-    {"id": 8, "filename": "test_1_0_3_2_0.png", "description": "Test Image 4"},
-    {"id": 9, "filename": "test_1_3_2_2_1.png", "description": "Test Image 5"},
-    {"id": 10, "filename": "Patient_at_Laptop_with_Head_Bandage.png", "description": "Patient at Laptop with Head Bandage"},
-    {"id": 11, "filename": "Patient_on_a_Stretcher.png", "description": "Patient on a Stretcher"},
-    {"id": 12, "filename": "Patient_with_Arm_Sling.png", "description": "Patient with Arm Sling"},
-    {"id": 13, "filename": "Patient_with_IV_and_Arm_Sling.png", "description": "Patient with IV and Arm Sling"},
-    {"id": 14, "filename": "Patient_with_IV_Drip.png", "description": "Patient with IV Drip"},
-    {"id": 15, "filename": "pregnant_woman_care.webp", "description": "Pregnant Woman Care"},
-    {"id": 16, "filename": "Pregnant_woman_lying_on_hospital_bed.png", "description": "Pregnant Woman Lying on Hospital Bed"},
-    {"id": 17, "filename": "Walking_Patient_with_Crutches.png", "description": "Walking Patient with Crutches"}
-]
+def _humanize_image_name(filename: str) -> str:
+    """Return a readable fallback description based on the filename."""
+    stem = Path(filename).stem
+    stem = re.sub(r'[_\-]+', ' ', stem)
+    stem = re.sub(r'(?<=\D)(\d)', r' \1', stem)
+    stem = re.sub(r'\s+', ' ', stem).strip()
+    if not stem:
+        return 'Patient'
+    return stem.title()
 
 
-# Update the filename paths to use the resized directory
-for image in IMAGES:
-    image["filename"] = f"resized_images/{image['filename']}"
+def _gather_image_files():
+    if not RESIZED_IMAGE_DIR.exists():
+        app.logger.warning('resized image directory not found: %s', RESIZED_IMAGE_DIR)
+        return []
+
+    chosen = {}
+    for path in RESIZED_IMAGE_DIR.iterdir():
+        ext = path.suffix.lower()
+        if ext not in ALLOWED_IMAGE_EXTENSIONS:
+            continue
+        stem = path.stem.lower()
+        if stem in EXCLUDED_IMAGE_STEMS:
+            continue
+
+        current = chosen.get(stem)
+        if current is None:
+            chosen[stem] = path
+            continue
+
+        current_priority = IMAGE_EXTENSION_PRIORITY.get(current.suffix.lower(), 99)
+        new_priority = IMAGE_EXTENSION_PRIORITY.get(ext, 99)
+        if new_priority < current_priority:
+            chosen[stem] = path
+
+    return sorted(chosen.values(), key=lambda p: p.name.lower())
+
+
+def load_available_images():
+    image_files = _gather_image_files()
+    images = []
+    for idx, path in enumerate(image_files, start=1):
+        images.append({
+            "id": idx,
+            "filename": f"resized_images/{path.name}",
+            "description": _humanize_image_name(path.name)
+        })
+
+    if len(images) < 2:
+        app.logger.warning('insufficient patient images found for choice experiment (count=%s)', len(images))
+
+    return images
+
+
+IMAGES = load_available_images()
 
 
 
