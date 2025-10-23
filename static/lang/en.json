@@ -14,7 +14,7 @@
     "doctor_lock_message": "Please wait for the both patients to show up!",
     "reconsider_message": "A data-driven computer model suggests treating the other patient!",
     "decision_text": "Would you like to change your decision?",
-    "originally_selected": "Originally Selected",
+    "originally_selected": "Your Choice",
     "recommendation": "Recommendation",
     "yes_button": "Yes",
     "no_button": "No",

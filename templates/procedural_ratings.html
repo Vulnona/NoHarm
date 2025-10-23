@@ -112,7 +112,6 @@
             const matrixScroll = document.querySelector('.matrix-scroll');
             const matrix = matrixScroll ? matrixScroll.querySelector('.procedural-matrix') : null;
             const matrixRows = matrix ? Array.from(matrix.querySelectorAll('.matrix-row.matrix-body')) : [];
-            const mobileCarouselQuery = window.matchMedia('(max-width: 600px)');
             let carouselNav = null;
             let carouselPrevBtn = null;
             let carouselNextBtn = null;
@@ -207,7 +206,7 @@
             }
 
             function mountCarousel() {
-                if (!mobileCarouselQuery.matches || !matrix || !matrixRows.length) {
+                if (!matrix || !matrixRows.length) {
                     return;
                 }
                 if (matrix.dataset.carousel === 'active') {
@@ -252,25 +251,6 @@
                 setActiveCard(firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0);
             }
 
-            function destroyCarousel() {
-                if (!matrix || matrix.dataset.carousel !== 'active') {
-                    return;
-                }
-                matrix.removeAttribute('data-carousel');
-                matrixRows.forEach(row => {
-                    row.classList.remove('carousel-card', 'is-active');
-                    row.removeAttribute('data-carousel-index');
-                    row.removeAttribute('aria-hidden');
-                });
-                if (carouselNav && carouselNav.parentNode) {
-                    carouselNav.parentNode.removeChild(carouselNav);
-                }
-                carouselNav = null;
-                carouselPrevBtn = null;
-                carouselNextBtn = null;
-                carouselIndicator = null;
-            }
-
             function updateState() {
                 const ready = allAnswered();
                 nextBtn.disabled = !ready;
@@ -289,27 +269,7 @@
                 localStorage.setItem('procedural_completed', '1');
             }
 
-            if (mobileCarouselQuery.matches) {
-                mountCarousel();
-            }
-
-            if (typeof mobileCarouselQuery.addEventListener === 'function') {
-                mobileCarouselQuery.addEventListener('change', event => {
-                    if (event.matches) {
-                        mountCarousel();
-                    } else {
-                        destroyCarousel();
-                    }
-                });
-            } else if (typeof mobileCarouselQuery.addListener === 'function') {
-                mobileCarouselQuery.addListener(event => {
-                    if (event.matches) {
-                        mountCarousel();
-                    } else {
-                        destroyCarousel();
-                    }
-                });
-            }
+            mountCarousel();
 
             form.querySelectorAll('input[type="radio"]').forEach(radio => {
                 radio.addEventListener('change', () => {

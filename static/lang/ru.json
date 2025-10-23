@@ -14,7 +14,7 @@
     "doctor_lock_message": "Пожалуйста, дождитесь появления обоих пациентов!",
     "reconsider_message": "Компьютерная модель, основанная на данных, предлагает лечить другого пациента!",
     "decision_text": "Хотите ли вы изменить своё решение?",
-    "originally_selected": "Первоначально выбрано",
+    "originally_selected": "Ваш выбор",
     "recommendation": "Рекомендация",
     "yes_button": "Да",
     "no_button": "Нет",

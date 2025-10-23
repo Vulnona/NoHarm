@@ -14,7 +14,7 @@
     "doctor_lock_message": "请等待两个病人都出现！",
     "reconsider_message": "数据驱动的计算机模型建议治疗另一位患者！",
     "decision_text": "您想改变您的决定吗？",
-    "originally_selected": "最初选择",
+    "originally_selected": "你的选择",
     "recommendation": "推荐",
     "yes_button": "是",
     "no_button": "否",

@@ -14,7 +14,7 @@
     "doctor_lock_message": "कृपया दोनों मरीजों के दिखाई देने तक प्रतीक्षा करें!",
     "reconsider_message": "डेटा-आधारित कंप्यूटर मॉडल दूसरे मरीज का इलाज करने का सुझाव देता है!",
     "decision_text": "क्या आप अपना निर्णय बदलना चाहेंगे?",
-    "originally_selected": "मूल रूप से चयनित",
+    "originally_selected": "आपकी पसंद",
     "recommendation": "अनुशंसा",
     "yes_button": "हां",
     "no_button": "नहीं",

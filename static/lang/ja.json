@@ -14,7 +14,7 @@
     "doctor_lock_message": "両方の患者が表示されるまでお待ちください！",
     "reconsider_message": "データ駆動型コンピューターモデルは他の患者を治療することを提案しています！",
     "decision_text": "決定を変更しますか？",
-    "originally_selected": "当初選択",
+    "originally_selected": "あなたの選択",
     "recommendation": "推奨",
     "yes_button": "はい",
     "no_button": "いいえ",
