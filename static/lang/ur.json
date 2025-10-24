@@ -9,14 +9,17 @@
     "instruction_text": "طبی ہنگامی صورتحال میں ہر مریض کا علاج نہیں کیا جا سکتا۔ یہ فیصلہ کرنا ہوگا کہ کس مریض کا علاج کیا جائے۔ ذیل میں دکھائے گئے مریضوں میں سے کس کا علاج کیا جانا چاہیے؟",
     "patient_label_1": "پہلا مریض",
     "patient_label_2": "دوسرا مریض",
+    "patient_toggle_label": "مریضوں کے درمیان سوئچ کریں",
     "doctor_instruction": "ڈاکٹر کو اس مریض کی طرف لے جائیں جس کا علاج کرنا ہے!",
+    "doctor_lock_message": "براہ کرم دونوں مریضوں کے ظاہر ہونے تک انتظار کریں!",
     "reconsider_message": "ڈیٹا سے چلنے والا کمپیوٹر ماڈل دوسرے مریض کا علاج کرنے کی تجویز دیتا ہے!",
     "decision_text": "کیا آپ اپنا فیصلہ تبدیل کرنا چاہیں گے؟",
-    "originally_selected": "اصل میں منتخب",
+    "originally_selected": "آپ کا انتخاب",
     "recommendation": "سفارش",
     "yes_button": "ہاں",
     "no_button": "نہیں",
-    "final_selection_instruction": "اب براہ کرم یہ حتمی انتخاب کریں کہ کس مریض کا علاج کیا جائے۔"
+    "final_selection_instruction": "اب براہ کرم یہ حتمی انتخاب کریں کہ کس مریض کا علاج کیا جائے۔",
+    "question_counter_template": "سوال {current} میں سے {total}"
   },
   "demography": {
     "title": "آبادیاتی سوالات",
@@ -27,12 +30,15 @@
     "prefer_not_to_disclose_label": "بتانا نہیں چاہتے",
     "age_question": "آپ کی عمر کیا ہے؟",
     "age_placeholder": "اپنی عمر درج کریں",
+    "age_invalid": "⚠️ عمر درست نہیں۔ براہِ مہربانی 16 اور 120 کے درمیان قدر درج کریں۔",
     "religion_question": "آپ کا مذہب کیا ہے؟",
     "no_religion": "نہیں، میں کسی مذہب کا پیروکار نہیں ہوں",
     "christian_label": "عیسائی",
     "islam_label": "اسلام",
     "hinduism_label": "ہندو مت",
     "buddhism_label": "بدھ مت",
+    "previous_button": "پچھلا",
+    "next_button": "اگلا",
     "other_label": "دیگر"
   },
   "group_preferences": {
@@ -51,7 +57,9 @@
     "children_question": "کیا آپ کے بچے ہیں یا آپ بچے پیدا کرنے کا ارادہ رکھتے ہیں؟",
     "children_yes": "ہاں",
     "children_no": "نہیں",
-    "submit_button": "جمع کرائیں"
+    "previous_button": "پچھلا",
+    "next_button": "اگلا",
+    "submit_button": "سروے جمع کریں"
   },
   "instructions": {
     "title": "بہت بہت شکریہ! آگے ہم آپ سے مزید چند عمومی سوالات پوچھنا چاہیں گے۔",
@@ -66,7 +74,14 @@
     "consent_message": "براہ کرم اب فیصلہ کریں کہ کیا آپ اپنے جوابات کو سائنسی مقاصد کے لیے استعمال کرنے کی اجازت دینا چاہتے ہیں۔ اگر آپ متفق نہیں ہیں، تو آپ کو سروے کے اختتام پر بھیج دیا جائے گا۔",
     "yes_label": "میں اس سوالنامے کے حصے کے طور پر جمع کرائے گئے اپنے ڈیٹا کو تحقیقی مقاصد کے لیے استعمال کرنے کی رضامندی دیتا ہوں۔",
     "no_label": "میں اس سوالنامے کے حصے کے طور پر جمع کرائے گئے اپنے ڈیٹا کو تحقیقی مقاصد کے لیے استعمال کرنے کی رضامندی نہیں دیتا۔",
-    "start_button": "رضامندی جمع کرائیں"
+    "start_button": "جاری رکھنے کے لیے کوئی اختیار منتخب کریں",
+    "callout-1": "شرکت رضاکارانہ ہے۔",
+    "callout-2": "جوابات گمنام طریقے سے جمع کیے جاتے ہیں اور ڈیٹا تحفظ کے قواعد کے مطابق سنبھالے جاتے ہیں۔",
+    "callout-3": "آپ کسی بھی وقت روک سکتے ہیں، بغیر کسی نقصان کے۔",
+    "yes-desc": "آپ ہمیں آپ کے گمنام جوابات تحقیق کے لیے استعمال کرنے کی اجازت دیتے ہیں۔",
+    "no-desc": "آپ کے فیصلے کا احترام کیا جائے گا اور سروے ختم کر دیا جائے گا۔",
+    "agree_button": "متفق ہوں اور جاری رکھیں",
+    "disagree_button": "رضامندی نہیں دیتا، سروے ختم کریں"
   },
   "no_consent": {
     "no_consent_title": "آپ کے وقت کے لیے شکریہ!",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "ان مریضوں کا انتخاب کرنا جن کے لیے دوا سب سے زیادہ مؤثر ہے",
     "rating_random_selection": "مریضوں کا بے ترتیب انتخاب",
     "select_answer": "درجہ بندی منتخب کریں",
+    "previous_button": "پچھلا",
+    "next_button": "اگلا",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "کل {total} طریقہ کار میں سے {completed} کا جائزہ لیا گیا",
     "submit_button": "جمع کرائیں"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "آپ کے جوابات ریکارڈ کر لیے گئے ہیں۔ ہم اس تحقیق میں مدد کرنے کے لیے آپ کے وقت اور کوشش کی قدر کرتے ہیں۔"
   },
   "images": {
-    "child_simple.jpg": "بچہ",
-    "Disability.jpg": "معذور شخص",
-    "old_male_female_simpler.jpg": "بوڑھا جوڑا",
-    "Overweight_simpler.jpg": "موٹے شخص",
-    "test_0_0_1_1_0.jpg": "ٹیسٹ تصویر 1",
-    "test_0_0_2_3_1.jpg": "ٹیسٹ تصویر 2",
-    "test_0_2_3_3_2.jpg": "ٹیسٹ تصویر 3",
-    "test_1_0_3_2_0.jpg": "ٹیسٹ تصویر 4",
-    "test_1_3_2_2_1.jpg": "ٹیسٹ تصویر 5",
+    "child_simple.png": "بچہ",
+    "Disability.png": "معذور شخص",
+    "old_male_female_simpler.png": "بوڑھا جوڑا",
+    "Overweight_simpler.png": "موٹے شخص",
+    "test_0_0_1_1_0.png": "ٹیسٹ تصویر 1",
+    "test_0_0_2_3_1.png": "ٹیسٹ تصویر 2",
+    "test_0_2_3_3_2.png": "ٹیسٹ تصویر 3",
+    "test_1_0_3_2_0.png": "ٹیسٹ تصویر 4",
+    "test_1_3_2_2_1.png": "ٹیسٹ تصویر 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "سر پر پٹی کے ساتھ لیپ ٹاپ پر مریض",
     "Patient_on_a_Stretcher.png": "سٹریچر پر مریض",
     "Patient_with_Arm_Sling.png": "بازو کی سلنگ کے ساتھ مریض",
-    "Patient_with_IV_and_Arm_Sling.jpg": "آئی وی اور بازو کی سلنگ کے ساتھ مریض",
+    "Patient_with_IV_and_Arm_Sling.png": "آئی وی اور بازو کی سلنگ کے ساتھ مریض",
     "Patient_with_IV_Drip.png": "آئی وی ڈرپ کے ساتھ مریض",
     "pregnant_woman_care.webp": "حاملہ خاتون کی دیکھ بھال",
     "Pregnant_woman_lying_on_hospital_bed.png": "ہسپتال کے بستر پر لیٹی حاملہ عورت",
-    "Walking_Patient_with_Crutches.jpg": "بیساکھیوں کے ساتھ چلتا ہوا مریض"
+    "Walking_Patient_with_Crutches.png": "بیساکھیوں کے ساتھ چلتا ہوا مریض"
   }
 }

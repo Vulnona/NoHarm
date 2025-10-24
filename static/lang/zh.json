@@ -9,14 +9,17 @@
     "instruction_text": "在医疗紧急情况下，并非每位患者都能得到治疗。必须决定治疗哪位患者。以下展示的患者中，应该治疗哪一位？",
     "patient_label_1": "第一位患者",
     "patient_label_2": "第二位患者",
+    "patient_toggle_label": "在患者之间切换",
     "doctor_instruction": "将医生移动到要治疗的患者处！",
+    "doctor_lock_message": "请等待两个病人都出现！",
     "reconsider_message": "数据驱动的计算机模型建议治疗另一位患者！",
     "decision_text": "您想改变您的决定吗？",
-    "originally_selected": "最初选择",
+    "originally_selected": "你的选择",
     "recommendation": "推荐",
     "yes_button": "是",
     "no_button": "否",
-    "final_selection_instruction": "现在请做出最终选择，决定治疗哪位患者。"
+    "final_selection_instruction": "现在请做出最终选择，决定治疗哪位患者。",
+    "question_counter_template": "第 {current} 题（共 {total} 题）"
   },
   "demography": {
     "title": "人口统计问题",
@@ -27,10 +30,13 @@
     "prefer_not_to_disclose_label": "不愿透露",
     "age_question": "您的年龄是多少？",
     "age_placeholder": "输入您的年龄",
+    "age_invalid": "⚠️ 无效的年龄。请输入16到120之间的数值。",
     "religion_question": "您认同以下哪种宗教？",
     "no_religion": "不，我没有宗教信仰",
     "christian_label": "基督教",
     "islam_label": "伊斯兰教",
+    "previous_button": "上一页",
+    "next_button": "下一页",
     "hinduism_label": "印度教",
     "buddhism_label": "佛教",
     "other_label": "其他"
@@ -44,6 +50,8 @@
     "fair": "一般",
     "good": "好",
     "very_good": "很好",
+    "previous_button": "上一页",
+    "next_button": "下一页",
     "excellent": "极好",
     "illness_question": "您在过去一年中是否患过严重疾病？",
     "illness_yes": "是",
@@ -51,7 +59,7 @@
     "children_question": "您是否有孩子或计划生育？",
     "children_yes": "是",
     "children_no": "否",
-    "submit_button": "提交"
+    "submit_button": "提交问卷"
   },
   "instructions": {
     "title": "非常感谢！接下来，我们想问您一些更一般性的问题。",
@@ -66,7 +74,14 @@
     "consent_message": "请现在决定您是否同意将您的回答用于科学目的。如果您不同意，您将被重定向至调查结束页面。",
     "yes_label": "我同意将我作为本问卷一部分提交的数据用于研究目的。",
     "no_label": "我不同意将我作为本问卷一部分提交的数据用于研究目的。",
-    "start_button": "提交同意"
+    "start_button": "请选择一个选项以继续",
+    "callout-1": "参与是自愿的。",
+    "callout-2": "回答将以匿名方式收集，并根据数据保护规则处理。",
+    "callout-3": "您可以在任何时候停止参与，不会有任何不利后果。",
+    "yes-desc": "您允许我们使用您的匿名回答进行研究。",
+    "no-desc": "我们会尊重您的决定，并结束问卷。",
+    "agree_button": "同意并继续",
+    "disagree_button": "不同意，结束调查"
   },
   "no_consent": {
     "no_consent_title": "感谢您的时间！",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "选择那些药物最有效的患者",
     "rating_random_selection": "随机选择患者",
     "select_answer": "选择评分",
+    "previous_button": "上一页",
+    "next_button": "下一页",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "已评估 {completed} 项，共 {total} 项程序",
     "submit_button": "提交"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "您的回复已被记录。我们感谢您在帮助我们进行这项研究时所付出的时间和努力。"
   },
   "images": {
-    "child_simple.jpg": "儿童",
-    "Disability.jpg": "残疾人士",
-    "old_male_female_simpler.jpg": "老年夫妇",
-    "Overweight_simpler.jpg": "超重人士",
-    "test_0_0_1_1_0.jpg": "测试图片1",
-    "test_0_0_2_3_1.jpg": "测试图片2",
-    "test_0_2_3_3_2.jpg": "测试图片3",
-    "test_1_0_3_2_0.jpg": "测试图片4",
-    "test_1_3_2_2_1.jpg": "测试图片5",
+    "child_simple.png": "儿童",
+    "Disability.png": "残疾人士",
+    "old_male_female_simpler.png": "老年夫妇",
+    "Overweight_simpler.png": "超重人士",
+    "test_0_0_1_1_0.png": "测试图片1",
+    "test_0_0_2_3_1.png": "测试图片2",
+    "test_0_2_3_3_2.png": "测试图片3",
+    "test_1_0_3_2_0.png": "测试图片4",
+    "test_1_3_2_2_1.png": "测试图片5",
     "Patient_at_Laptop_with_Head_Bandage.png": "头部绑带的笔记本电脑前患者",
     "Patient_on_a_Stretcher.png": "担架上的患者",
     "Patient_with_Arm_Sling.png": "手臂吊带的患者",
-    "Patient_with_IV_and_Arm_Sling.jpg": "静脉注射和手臂吊带的患者",
+    "Patient_with_IV_and_Arm_Sling.png": "静脉注射和手臂吊带的患者",
     "Patient_with_IV_Drip.png": "静脉滴注的患者",
     "pregnant_woman_care.webp": "孕妇护理",
     "Pregnant_woman_lying_on_hospital_bed.png": "躺在医院床上的孕妇",
-    "Walking_Patient_with_Crutches.jpg": "拄拐行走的患者"
+    "Walking_Patient_with_Crutches.png": "拄拐行走的患者"
   }
 }

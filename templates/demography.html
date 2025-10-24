@@ -1,52 +1,342 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demographic Questions</title>
+    <title>{{ translations.demography.title | default('Demographic Questions') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
+
 <body data-page="demography">
-    <!-- Language switcher in the corner -->
-    <div class="language-switcher">
-        <select id="language-switcher">
-            <option value="ar">العربية</option>
-            <option value="bn">বাংলা</option>
-            <option value="zh">中文</option>
-            <option value="en">English</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="hi">हिन्दी</option>
-            <option value="ja">日本語</option>
-            <option value="ru">Русский</option>
-            <option value="es">Español</option>
-            <option value="ur">اردو</option>
-        </select>
-    </div>
 
     <div class="demography-container">
-        <form method="POST" action="/demography" id="demography-form">
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <select id="language-switcher">
+                <option value="ar">العربية</option>
+                <option value="bn">বাংলা</option>
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ja">日本語</option>
+                <option value="ru">Русский</option>
+                <option value="es">Español</option>
+                <option value="ur">اردو</option>
+            </select>
+        </div>
+
+        <!-- Main Form -->
+        <form method="POST" action="/demography" id="demography-form" novalidate>
             <input type="hidden" name="question_id" value="{{ question.id }}">
             <input type="hidden" name="current_index" value="{{ index }}">
 
+            {% if show_intro %}
+            <div class="demography-intro" id="demography-intro">
+                {{ translations.instructions.title | default('Thank you very much! In the following we would like to ask you a few more general questions.') }}
+            </div>
+            {% endif %}
+
             <div class="question-block">
                 <label>{{ question.label }}</label>
+
                 {% if question.type == "radio" %}
-                    {% for option in question.options %}
-                        <div class="radio-container">
-                            <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}" onchange="this.form.submit()">
-                            <label for="{{ option.value }}">{{ option.label }}</label>
-                        </div>
-                    {% endfor %}
+                {% for option in question.options %}
+                <div class="radio-container">
+                    <input type="radio" name="answer" id="{{ option.value }}" value="{{ option.value }}">
+                    <label for="{{ option.value }}">{{ option.label }}</label>
+                </div>
+                {% endfor %}
+
                 {% elif question.type == "text" %}
-                    <input type="text" name="answer" placeholder="{{ question.placeholder }}" onchange="this.form.submit()">
+                <input type="text" name="answer" placeholder="{{ question.placeholder }}">
+
                 {% elif question.type == "number" %}
-                    <input type="number" name="answer" id="age-input" placeholder="{{ question.placeholder }}" min="16" max="120" onchange="this.form.submit()">
+                {% if question.id == "age" %}
+                <div class="form-group">
+                    <input type="number" name="answer" id="age-input" placeholder="Enter your age" min="16" max="120" step="1" inputmode="numeric" pattern="\\d*" autocomplete="off">
+                    <div id="age-error-msg" class="error-message" style="color:red; display:none;"></div>
+                </div>
+                {% else %}
+                <input type="number" name="answer" class="number-input" id="{{ question.id }}"
+                    placeholder="{{ question.placeholder }}">
+                {% endif %}
                 {% endif %}
             </div>
+
+            <div class="form-navigation">
+                <button type="button" class="prev-btn">{{ translations.demography.previous_button | default('Previous') }}</button>
+                <button type="submit" class="next-btn" disabled>{{ translations.demography.next_button | default('Next') }}</button>
+            </div>
         </form>
+
+        <div class="progress-container progress-container--bottom">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
     </div>
+
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>
 
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("demography-form");
+            const ageInput = document.getElementById("age-input");
+            const questionIdField = form ? form.querySelector("input[name='question_id']") : null;
+            const questionId = questionIdField ? questionIdField.value : null;
+
+            if (!ageInput) {
+                return;
+            }
+
+            if (questionId) {
+                const savedAge = localStorage.getItem('demography_' + questionId);
+                if (savedAge !== null) {
+                    ageInput.value = savedAge;
+                } else if (ageInput.value) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
+            }
+
+            function showError(message) {
+                let errorMsg = document.getElementById("age-error-msg");
+                if (!errorMsg) {
+                    errorMsg = document.createElement("div");
+                    errorMsg.id = "age-error-msg";
+                    errorMsg.style.color = "red";
+                    errorMsg.style.fontWeight = "bold";
+                    errorMsg.style.marginTop = "5px";
+                    ageInput.parentNode.insertBefore(errorMsg, ageInput.nextSibling);
+                }
+
+                if (window.__i18n?.ageInvalid) {
+                    errorMsg.dataset.errorText = window.__i18n.ageInvalid;
+                }
+
+                errorMsg.textContent = message;
+                errorMsg.style.display = "block";
+            }
+
+            function clearError() {
+                const errorMsg = document.getElementById("age-error-msg");
+                if (errorMsg) {
+                    errorMsg.textContent = "";
+                    errorMsg.style.display = "none";
+                }
+            }
+
+            // 🔴 Validate on form submit
+            form.addEventListener("submit", function (event) {
+                const age = parseInt(ageInput.value, 10);
+
+                if (isNaN(age) || age < 16 || age > 120) {
+                    event.preventDefault(); // stop sending to Flask
+                    const ageErrorElement = document.getElementById("age-error-msg");
+                    const langErrorMsg = ageErrorElement?.dataset.errorText
+                        || window.__i18n?.ageInvalid
+                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+
+                    showError(langErrorMsg);
+                    ageInput.focus();
+                    return;
+                }
+
+                clearError();
+                if (questionId) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
+            });
+
+            ageInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+
+            ageInput.addEventListener('wheel', function (event) {
+                event.preventDefault();
+            }, { passive: false });
+
+            // 🟢 Live validation while typing
+            ageInput.addEventListener("input", function () {
+                const age = parseInt(ageInput.value, 10);
+
+                if (ageInput.value === "") {
+                    clearError(); // nothing typed → clear error
+                } else if (!isNaN(age) && age >= 16 && age <= 120) {
+                    clearError(); // valid → clear error
+                } else {
+                    const ageErrorElement = document.getElementById("age-error-msg");
+                    const langErrorMsg = ageErrorElement?.dataset.errorText
+                        || window.__i18n?.ageInvalid
+                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+
+                    showError(langErrorMsg);
+                }
+
+                if (questionId) {
+                    localStorage.setItem('demography_' + questionId, ageInput.value);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("demography-form");
+            const nextBtn = document.querySelector(".next-btn");
+            const prevBtn = document.querySelector(".prev-btn");
+            // Disable Previous on the very first question
+            const currentIndex = parseInt(form.querySelector("input[name='current_index']").value, 10);
+            const questionId = form.querySelector("input[name='question_id']").value;
+            const radios = form.querySelectorAll("input[type=radio][name='answer']");
+            const textInput = form.querySelector("input[type=text][name='answer']");
+            const ageField = document.getElementById("age-input");
+            const otherNumberInput = !ageField ? form.querySelector("input[type=number][name='answer']") : null;
+            const urlParams = new URLSearchParams(window.location.search);
+            const prefillParam = urlParams.get('prefill');
+
+            if (!Number.isNaN(currentIndex)) {
+                localStorage.setItem('demography_index_' + currentIndex, questionId);
+            }
+
+            if (prefillParam !== null) {
+                localStorage.setItem('demography_' + questionId, prefillParam);
+            }
+
+            const savedAnswer = prefillParam !== null
+                ? prefillParam
+                : localStorage.getItem('demography_' + questionId);
+            prevBtn.disabled = false;
+
+            if (savedAnswer !== null) {
+                if (radios.length > 0) {
+                    radios.forEach(r => {
+                        if (r.value === savedAnswer) {
+                            r.checked = true;
+                        }
+                    });
+                } else if (textInput) {
+                    textInput.value = savedAnswer;
+                } else if (!ageField && otherNumberInput) {
+                    otherNumberInput.value = savedAnswer;
+                }
+            } else {
+                if (radios.length > 0) {
+                    const checked = Array.from(radios).find(r => r.checked);
+                    if (checked) {
+                        localStorage.setItem('demography_' + questionId, checked.value);
+                    }
+                } else if (textInput && textInput.value.trim().length > 0) {
+                    localStorage.setItem('demography_' + questionId, textInput.value);
+                } else if (!ageField && otherNumberInput && otherNumberInput.value.trim().length > 0) {
+                    localStorage.setItem('demography_' + questionId, otherNumberInput.value);
+                }
+            }
+
+            // Enable/disable Next based on input
+            function toggleNextButton() {
+                const radioValid = radios.length > 0 ? Array.from(radios).some(r => r.checked) : false;
+                const textValid = textInput ? textInput.value.trim().length > 0 : false;
+                let numberValid = false;
+                if (ageField) {
+                    const age = parseInt(ageField.value, 10);
+                    numberValid = !isNaN(age) && age >= 16 && age <= 120;
+                } else if (otherNumberInput) {
+                    numberValid = otherNumberInput.value.trim().length > 0;
+                }
+
+                const valid = radioValid || textValid || numberValid;
+
+                if (nextBtn) {
+                    nextBtn.disabled = !valid;
+                }
+            }
+
+            // Listen for input changes
+            form.addEventListener("input", toggleNextButton);
+
+            radios.forEach(r => {
+                r.addEventListener("change", () => {
+                    localStorage.setItem('demography_' + questionId, r.value);
+                    toggleNextButton();
+                });
+            });
+
+            if (textInput) {
+                textInput.addEventListener("input", () => {
+                    localStorage.setItem('demography_' + questionId, textInput.value);
+                });
+            }
+
+            if (otherNumberInput) {
+                otherNumberInput.addEventListener("input", () => {
+                    localStorage.setItem('demography_' + questionId, otherNumberInput.value);
+                });
+            }
+
+            // 🔙 Previous button just goes back in browser history
+            prevBtn.addEventListener("click", function (event) {
+                event.preventDefault();
+                const proceduralVisited = localStorage.getItem('procedural_completed');
+
+                if (currentIndex === 0 && proceduralVisited) {
+                    window.location.href = '/procedural-ratings';
+                    return;
+                }
+
+                const prevIndex = Math.max(0, currentIndex - 1);
+                const demographyUrl = new URL('/demography', window.location.origin);
+                demographyUrl.searchParams.set('index', prevIndex);
+
+                const prevQuestionId = localStorage.getItem('demography_index_' + prevIndex);
+                if (prevQuestionId) {
+                    const storedPrevAnswer = localStorage.getItem('demography_' + prevQuestionId);
+                    if (storedPrevAnswer !== null) {
+                        demographyUrl.searchParams.set('prefill', storedPrevAnswer);
+                    }
+                }
+
+                window.location.href = demographyUrl.toString();
+            });
+
+            // 🟢 Run once at start
+            toggleNextButton();
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const progressBar = document.getElementById("progress-bar");
+
+            // Map pages to steps
+            const steps = {
+                "choice_experiment": 1,
+                "procedural_ratings": 2,
+                "demography": 3,
+                "group_preferences": 4
+            };
+
+            const currentPage = document.body.getAttribute("data-page");
+            const totalSteps = 4;
+
+            if (steps[currentPage]) {
+                const percent = (steps[currentPage] / totalSteps) * 100;
+                progressBar.style.width = percent + "%";
+            }
+        });
+    </script>
+
+
 </body>
+
 </html>

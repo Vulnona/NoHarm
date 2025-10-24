@@ -1,35 +1,37 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Declined</title>
+    <title>{{ translations.no_consent.no_consent_title | default('Survey Declined') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="no_consent">
 
 <!-- Language switcher in the corner -->
-<div class="language-switcher">
-    <select id="language-switcher">
-        <option value="ar">العربية</option>
-        <option value="bn">বাংলা</option>
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option>
-        <option value="ru">Русский</option>
-        <option value="es">Español</option>
-        <option value="ur">اردو</option>
-    </select>
-</div>
+
 
 
     <div class="thank-you-container">
-        <h1 id="no-consent-title">Thank you for your time!</h1>
-        <p id="no-consent-message">Since you did not consent to participate in the survey, your responses were not recorded. We appreciate your time.</p>
+        <div class="language-switcher">
+            <select id="language-switcher">
+                <option value="ar">العربية</option>
+                <option value="bn">বাংলা</option>
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ja">日本語</option>
+                <option value="ru">Русский</option>
+                <option value="es">Español</option>
+                <option value="ur">اردو</option>
+            </select>
+        </div>
+
+        <h1 id="no-consent-title">{{ translations.no_consent.no_consent_title | default('Thank you for your time!') }}</h1>
+        <p id="no-consent-message">{{ translations.no_consent.no_consent_message | default('Since you did not consent to participate in the survey, your responses were not recorded. We appreciate your time.') }}</p>
     </div>
 
     <script src="{{ url_for('static', filename='js/language.js') }}"></script>

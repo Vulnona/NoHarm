@@ -1,64 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Procedural Ratings</title>
+    <title>{{ translations.procedural_ratings.rating_title | default('Procedural Ratings') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body data-page="procedural_ratings">
-<!-- Language switcher -->
-<div class="language-switcher">
-    <select id="language-switcher">
-        <option value="ar">العربية</option>
-        <option value="bn">বাংলা</option>
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option>
-        <option value="ru">Русский</option>
-        <option value="es">Español</option>
-        <option value="ur">اردو</option>
-    </select>
-</div>
 
-<!-- Rating container -->
-<div class="rating-container">
-    <p>Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.</p>
+    <div class="rating-container">
 
-    <!-- Question Block -->
-    <form method="POST" action="/procedural-ratings">
-        <input type="hidden" name="question_id" value="{{ question.id }}">
-        <input type="hidden" name="current_index" value="{{ index }}">
+        <div class="language-switcher">
+            <select id="language-switcher">
+                <option value="ar">العربية</option>
+                <option value="bn">বাংলা</option>
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ja">日本語</option>
+                <option value="ru">Русский</option>
+                <option value="es">Español</option>
+                <option value="ur">اردو</option>
+            </select>
+        </div>
 
-        <div class="procedure-block">
-            <div class="question-text">
-                <label class="bold-text question-label">{{ question.label }}</label>
-                <p class="question-description">{{ question.full_text.replace(question.label + ': ', '') }}</p>
-            </div>
-            <div class="rating-components">
-                <div class="gradient-bar"></div>
-                <div class="rating-scale">
-                    <div class="scale-buttons">
-                        {% for i in range(1, 7) %}
-                            <label class="circle-btn">
-                                <input type="radio" name="rating" value="{{ i }}" onchange="this.form.submit()">
-                                <div class="circle"></div>
-                            </label>
+        <p class="rating-intro">
+            {{ translations.procedural_ratings.rating_intro | default('Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.') }}
+        </p>
+
+        
+
+        <form method="POST" action="/procedural-ratings" id="procedural-form" novalidate>
+            <div class="matrix-scroll">
+                <div class="procedural-matrix" role="table"
+                    aria-label="{{ translations.procedural_ratings.rating_title | default('Procedural Ratings') }}">
+                    <div class="matrix-row matrix-header" role="row">
+                        <div class="matrix-cell matrix-question-heading" role="columnheader"></div>
+                        {% for value in scale_values %}
+                        {% set value_str = value|string %}
+                        <div class="matrix-cell matrix-scale-heading" role="columnheader">
+                            <span class="scale-number" data-scale-value="{{ value }}">
+                                {{ translations.procedural_ratings.numbers[value_str] | default(value) }}
+                            </span>
+                            {% if loop.first %}
+                            <span class="scale-caption scale-caption-start">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
+                            {% elif loop.last %}
+                            <span class="scale-caption scale-caption-end">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
+                            {% else %}
+                            <span class="scale-caption" aria-hidden="true">&nbsp;</span>
+                            {% endif %}
+                        </div>
                         {% endfor %}
                     </div>
-                    <div class="scale-labels">
-                        <span class="scale-label">Not fair at all</span>
-                        <span class="scale-label">Very fair</span>
+
+                    {% for q in questions %}
+                    <div class="matrix-row matrix-body" role="row" data-question-id="{{ q.id }}">
+                        <div class="matrix-cell matrix-question" role="rowheader">
+                            <span class="matrix-question-title" data-question-label>{{ q.label }}</span>
+                            <span class="matrix-question-desc" data-question-description>{{ q.full_text }}</span>
+                            <span class="matrix-question-status" aria-hidden="true">✓</span>
+                        </div>
+                        <div class="matrix-options-row" role="group">
+                            {% for value in scale_values %}
+                            {% set value_str = value|string %}
+                            <label class="matrix-cell matrix-option" role="cell">
+                                <input type="radio" name="{{ q.id }}" value="{{ value }}"
+                                    {% if q.answer and q.answer|string == value_str %}checked{% endif %}>
+                                <span class="matrix-dot" aria-hidden="true"></span>
+                                <span class="sr-only">{{ translations.procedural_ratings.numbers[value_str] | default(value) }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="matrix-mobile-scale">
+                            <span class="mobile-scale-caption mobile-scale-caption-start">{{ translations.procedural_ratings.not_fair | default('Not Fair at All') }}</span>
+                            <span class="mobile-scale-caption mobile-scale-caption-end">{{ translations.procedural_ratings.very_fair | default('Very Fair') }}</span>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-    </form>
-</div>
-<script src="{{ url_for('static', filename='js/language.js') }}"></script>
 
+            {% set default_error = translations.procedural_ratings.select_answer | default('Please select a rating for each procedure.') %}
+            <div class="form-error" role="alert" data-default-message="{{ default_error }}"
+                {% if not error_message %}hidden{% endif %}>{{ error_message or '' }}</div>
+
+            <div class="matrix-progress" data-template="{{ translations.procedural_ratings.progress_template | default('Rated {completed} of {total} procedures') }}" aria-live="polite"></div>
+
+            <div class="form-navigation">
+                <button type="button" class="prev-btn" disabled>{{ translations.procedural_ratings.previous_button | default('Previous') }}</button>
+                <button type="button" class="next-btn" disabled>{{ translations.procedural_ratings.next_button | default('Next') }}</button>
+            </div>
+        </form>
+
+        <div class="progress-container progress-container--bottom">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('procedural-form');
+            const prevBtn = form.querySelector('.prev-btn');
+            const nextBtn = form.querySelector('.next-btn');
+            const errorBanner = form.querySelector('.form-error');
+            const progressIndicator = document.querySelector('.matrix-progress');
+            const matrixScroll = document.querySelector('.matrix-scroll');
+            const matrix = matrixScroll ? matrixScroll.querySelector('.procedural-matrix') : null;
+            const matrixRows = matrix ? Array.from(matrix.querySelectorAll('.matrix-row.matrix-body')) : [];
+            let carouselNav = null;
+            let carouselPrevBtn = null;
+            let carouselNextBtn = null;
+            let carouselIndicator = null;
+            let activeCardIndex = 0;
+            const questionIds = Array.from(new Set(Array.from(form.querySelectorAll('input[type="radio"]')).map(r => r.name)));
+
+            function restoreSelections() {
+                questionIds.forEach((id) => {
+                    const saved = localStorage.getItem('procedural_rating_' + id);
+                    if (!saved) {
+                        return;
+                    }
+                    const input = form.querySelector(`input[name="${id}"][value="${saved}"]`);
+                    if (input) {
+                        input.checked = true;
+                    }
+                });
+            }
+
+            function allAnswered() {
+                return questionIds.every(id => form.querySelector(`input[name="${id}"]:checked`));
+            }
+
+            function refreshRowStates() {
+                questionIds.forEach(id => {
+                    const row = form.querySelector(`.matrix-row[data-question-id="${id}"]`);
+                    if (!row) return;
+                    const answered = !!form.querySelector(`input[name="${id}"]:checked`);
+                    row.classList.toggle('answered', answered);
+                });
+            }
+
+            function updateProgress() {
+                if (!progressIndicator) return;
+                const total = questionIds.length;
+                const completed = questionIds.reduce((count, id) => {
+                    return count + (form.querySelector(`input[name="${id}"]:checked`) ? 1 : 0);
+                }, 0);
+                const template = progressIndicator.dataset.template || 'Rated {completed} of {total} procedures';
+                progressIndicator.textContent = template
+                    .replace('{completed}', completed)
+                    .replace('{total}', total);
+            }
+
+            window.updateProceduralProgress = updateProgress;
+
+            function updateCarouselControls() {
+                if (!carouselNav || !matrixRows.length) {
+                    return;
+                }
+                if (carouselIndicator) {
+                    carouselIndicator.textContent = `${activeCardIndex + 1} / ${matrixRows.length}`;
+                }
+                if (carouselPrevBtn) {
+                    carouselPrevBtn.disabled = activeCardIndex === 0;
+                }
+                if (carouselNextBtn) {
+                    carouselNextBtn.disabled = activeCardIndex === matrixRows.length - 1;
+                }
+            }
+
+            function setActiveCard(index) {
+                if (!matrixRows.length) {
+                    return;
+                }
+                const clamped = Math.max(0, Math.min(index, matrixRows.length - 1));
+                activeCardIndex = clamped;
+                matrixRows.forEach((row, idx) => {
+                    const isActive = idx === clamped;
+                    row.classList.toggle('is-active', isActive);
+                    row.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+                });
+                if (matrixScroll && typeof matrixScroll.scrollTo === 'function') {
+                    matrixScroll.scrollTo({ top: 0, behavior: 'auto' });
+                }
+                updateCarouselControls();
+            }
+
+            function attachAutoAdvance(row, idx) {
+                row.querySelectorAll('input[type="radio"]').forEach(radio => {
+                    if (radio.dataset.carouselBound === '1') {
+                        return;
+                    }
+                    radio.addEventListener('change', () => {
+                        if (activeCardIndex === idx && idx < matrixRows.length - 1) {
+                            window.setTimeout(() => setActiveCard(idx + 1), 220);
+                        }
+                    });
+                    radio.dataset.carouselBound = '1';
+                });
+            }
+
+            function mountCarousel() {
+                if (!matrix || !matrixRows.length) {
+                    return;
+                }
+                if (matrix.dataset.carousel === 'active') {
+                    updateCarouselControls();
+                    return;
+                }
+                matrix.dataset.carousel = 'active';
+                matrixRows.forEach((row, idx) => {
+                    row.classList.add('carousel-card');
+                    row.dataset.carouselIndex = String(idx);
+                    attachAutoAdvance(row, idx);
+                });
+
+                carouselNav = document.createElement('div');
+                carouselNav.className = 'procedural-carousel-nav';
+
+                carouselPrevBtn = document.createElement('button');
+                carouselPrevBtn.type = 'button';
+                carouselPrevBtn.className = 'carousel-nav-btn carousel-nav-btn--prev';
+                carouselPrevBtn.textContent = '‹';
+                carouselPrevBtn.setAttribute('aria-label', 'Previous procedure');
+
+                carouselIndicator = document.createElement('div');
+                carouselIndicator.className = 'carousel-indicator';
+
+                carouselNextBtn = document.createElement('button');
+                carouselNextBtn.type = 'button';
+                carouselNextBtn.className = 'carousel-nav-btn carousel-nav-btn--next';
+                carouselNextBtn.textContent = '›';
+                carouselNextBtn.setAttribute('aria-label', 'Next procedure');
+
+                carouselNav.append(carouselPrevBtn, carouselIndicator, carouselNextBtn);
+
+                if (matrixScroll) {
+                    matrixScroll.appendChild(carouselNav);
+                }
+
+                carouselPrevBtn.addEventListener('click', () => setActiveCard(activeCardIndex - 1));
+                carouselNextBtn.addEventListener('click', () => setActiveCard(activeCardIndex + 1));
+
+                const firstUnansweredIndex = questionIds.findIndex(id => !form.querySelector(`input[name="${id}"]:checked`));
+                setActiveCard(firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0);
+            }
+
+            function updateState() {
+                const ready = allAnswered();
+                nextBtn.disabled = !ready;
+                if (ready && errorBanner) {
+                    errorBanner.hidden = true;
+                    errorBanner.textContent = '';
+                }
+                refreshRowStates();
+                updateProgress();
+                updateCarouselControls();
+            }
+
+            restoreSelections();
+            updateState();
+            if (allAnswered()) {
+                localStorage.setItem('procedural_completed', '1');
+            }
+
+            mountCarousel();
+
+            form.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    localStorage.setItem('procedural_rating_' + radio.name, radio.value);
+                    updateState();
+                });
+            });
+
+            form.addEventListener('submit', (event) => {
+                if (!allAnswered()) {
+                    event.preventDefault();
+                    if (errorBanner) {
+                        errorBanner.hidden = false;
+                        if (!errorBanner.textContent) {
+                            errorBanner.textContent = errorBanner.dataset.defaultMessage || 'Please select a rating for each procedure.';
+                        }
+                    }
+                } else {
+                    localStorage.setItem('procedural_completed', '1');
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (allAnswered()) {
+                    form.requestSubmit();
+                } else if (errorBanner) {
+                    errorBanner.hidden = false;
+                    if (!errorBanner.textContent) {
+                        errorBanner.textContent = errorBanner.dataset.defaultMessage || 'Please select a rating for each procedure.';
+                    }
+                }
+            });
+
+            if (prevBtn) {
+                prevBtn.disabled = true;
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const progressBar = document.getElementById('progress-bar');
+            const steps = {
+                "choice_experiment": 1,
+                "procedural_ratings": 2,
+                "demography": 3,
+                "group_preferences": 4
+            };
+            const currentPage = document.body.getAttribute('data-page');
+            const totalSteps = 4;
+            if (steps[currentPage]) {
+                const percent = (steps[currentPage] / totalSteps) * 100;
+                progressBar.style.width = percent + '%';
+            }
+        });
+    </script>
 </body>
+
 </html>

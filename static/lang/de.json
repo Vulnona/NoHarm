@@ -1,6 +1,6 @@
 {
   "admin_login": {
-    "title": "Admin Login",
+    "title": "Administrator-Anmeldung",
     "password_label": "Admin-Passwort eingeben:",
     "login_button": "Anmelden"
   },
@@ -9,14 +9,17 @@
     "instruction_text": "In einem medizinischen Notfall kann nicht jeder Patient behandelt werden. Es muss entschieden werden, welcher Patient behandelt wird. Welcher der unten gezeigten Patienten sollte behandelt werden?",
     "patient_label_1": "erster Patient",
     "patient_label_2": "zweiter Patient",
+    "patient_toggle_label": "Zwischen den Patienten wechseln",
     "doctor_instruction": "Bewegen Sie den Arzt zum Patienten, der behandelt werden soll!",
+    "doctor_lock_message": "Bitte warten Sie, bis beide Patienten angezeigt werden!",
     "reconsider_message": "Ein datengesteuertes Computermodell empfiehlt, den anderen Patienten zu behandeln!",
     "decision_text": "Möchten Sie Ihre Entscheidung ändern?",
-    "originally_selected": "Ursprünglich ausgewählt",
+    "originally_selected": "Ihre Wahl",
     "recommendation": "Empfehlung",
     "yes_button": "Ja",
     "no_button": "Nein",
-    "final_selection_instruction": "Bitte treffen Sie nun Ihre endgültige Entscheidung, welcher Patient behandelt werden soll."
+    "final_selection_instruction": "Bitte treffen Sie nun Ihre endgültige Entscheidung, welcher Patient behandelt werden soll.",
+    "question_counter_template": "Frage {current} von {total}"
   },
   "demography": {
     "title": "Demographische Fragen",
@@ -27,11 +30,14 @@
     "prefer_not_to_disclose_label": "Keine Angabe",
     "age_question": "Wie alt sind Sie?",
     "age_placeholder": "Alter eingeben",
+    "age_invalid": "⚠️ Ungültiges Alter. Bitte einen Wert zwischen 16 und 120 eingeben.",
     "religion_question": "Welcher Religion gehören Sie an?",
     "no_religion": "Keiner",
     "christian_label": "Christentum",
     "islam_label": "Islam",
     "hinduism_label": "Hinduismus",
+    "previous_button": "Zurück",
+    "next_button": "Weiter",
     "buddhism_label": "Buddhismus",
     "other_label": "Andere"
   },
@@ -51,7 +57,9 @@
     "children_question": "Haben Sie Kinder oder planen Sie, Kinder zu bekommen?",
     "children_yes": "Ja",
     "children_no": "Nein",
-    "submit_button": "Absenden"
+    "previous_button": "Zurück",
+    "next_button": "Weiter",
+    "submit_button": "Umfrage absenden"
   },
   "instructions": {
     "title": "Vielen Dank! Im Folgenden möchten wir Ihnen noch einige allgemeine Fragen stellen.",
@@ -66,7 +74,14 @@
     "consent_message": "Bitte entscheiden Sie jetzt, ob Sie der Verwendung Ihrer Antworten für wissenschaftliche Zwecke zustimmen möchten. Wenn Sie nicht einverstanden sind, werden Sie zum Ende der Umfrage weitergeleitet.",
     "yes_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke zu.",
     "no_label": "Ich stimme der Verwendung meiner im Rahmen dieses Fragebogens übermittelten Daten für Forschungszwecke nicht zu.",
-    "start_button": "Einwilligung abschicken"
+    "start_button": "Bitte wählen Sie eine Option, um fortzufahren",
+    "callout-1": "Die Teilnahme ist freiwillig.",
+    "callout-2": "Ihre Antworten werden anonym gesammelt und gemäß den Datenschutzbestimmungen verarbeitet.",
+    "callout-3": "Sie können jederzeit ohne Nachteil abbrechen.",
+    "yes-desc": "Sie erlauben uns, Ihre anonymen Antworten für Forschungszwecke zu verwenden.",
+    "no-desc": "Ihre Entscheidung wird respektiert und die Umfrage wird beendet.",
+    "agree_button": "Zustimmen & Fortfahren",
+    "disagree_button": "Nicht zustimmen, Umfrage beenden"
   },
   "no_consent": {
     "no_consent_title": "Vielen Dank für Ihre Zeit!",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "Auswahl von Patienten, bei denen Medikamente am wirksamsten sind",
     "rating_random_selection": "Zufällige Auswahl von Patienten",
     "select_answer": "Bewertung auswählen",
+    "previous_button": "Zurück",
+    "next_button": "Weiter",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "Bewertet {completed} von {total} Verfahren",
     "submit_button": "Absenden"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "Ihre Antworten wurden erfasst. Wir bedanken uns für Ihre Zeit und Mühe bei der Unterstützung dieser Forschung."
   },
   "images": {
-    "child_simple.jpg": "Kind",
-    "Disability.jpg": "Person mit Behinderung",
-    "old_male_female_simpler.jpg": "Älteres Paar",
-    "Overweight_simpler.jpg": "Übergewichtige Person",
-    "test_0_0_1_1_0.jpg": "Testbild 1",
-    "test_0_0_2_3_1.jpg": "Testbild 2",
-    "test_0_2_3_3_2.jpg": "Testbild 3",
-    "test_1_0_3_2_0.jpg": "Testbild 4",
-    "test_1_3_2_2_1.jpg": "Testbild 5",
+    "child_simple.png": "Kind",
+    "Disability.png": "Person mit Behinderung",
+    "old_male_female_simpler.png": "Älteres Paar",
+    "Overweight_simpler.png": "Übergewichtige Person",
+    "test_0_0_1_1_0.png": "Testbild 1",
+    "test_0_0_2_3_1.png": "Testbild 2",
+    "test_0_2_3_3_2.png": "Testbild 3",
+    "test_1_0_3_2_0.png": "Testbild 4",
+    "test_1_3_2_2_1.png": "Testbild 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient am Laptop mit Kopfverband",
     "Patient_on_a_Stretcher.png": "Patient auf einer Trage",
     "Patient_with_Arm_Sling.png": "Patient mit Armschlinge",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient mit Infusion und Armschlinge",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient mit Infusion und Armschlinge",
     "Patient_with_IV_Drip.png": "Patient mit Infusion",
     "pregnant_woman_care.webp": "Schwangere Frau in Betreuung",
     "Pregnant_woman_lying_on_hospital_bed.png": "Schwangere Frau im Krankenhausbett",
-    "Walking_Patient_with_Crutches.jpg": "Gehender Patient mit Krücken"
+    "Walking_Patient_with_Crutches.png": "Gehender Patient mit Krücken"
   }
 }

@@ -1,17 +1,37 @@
+
+.mobile-only { display: none; }
+
 /* General Styling */
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    /* centers horizontally */
+    align-items: center;
+    /* centers vertically */
     min-height: 100vh;
+    /* ensures it takes full screen height */
     margin: 0;
-    padding: 0 20px;
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    transform: scale(0.90); /*  zoom-out controlling */
-    transform-origin: top center; /* Ensure the scaling starts from the top center */
+    /* remove browser default margin */
+    background-color: #f9f9f9;
+    /* optional: add a nice background */
 }
+
+
+.intro-container {
+    max-width: 800px;
+    /* keeps content readable */
+    width: 100%;
+    /* responsive shrink on smaller screens */
+    background: #fff;
+    /* white box */
+    padding: 2rem;
+    /* spacing */
+    border-radius: 12px;
+    /* rounded corners */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* subtle shadow */
+}
+
 
 .signature {
     margin-bottom: 0;
@@ -19,81 +39,143 @@ body {
     /* Additional custom styles */
 }
 
+#intro-title {
+    font-size: 1.5rem;
+    /* smaller than default h2 */
+    font-weight: 600;
+    /* optional: adjust boldness */
+    margin-bottom: 1rem;
+    /* add spacing if needed */
+    text-align: center;
+    /* keep it centered */
+}
+
+
+
+#consent-title {
+    font-size: 1.5rem;
+    /* smaller than default h2 */
+    font-weight: 600;
+    /* optional: adjust boldness */
+    margin-bottom: 1rem;
+    /* add spacing if needed */
+    text-align: center;
+    /* keep it centered */
+}
+
+
+
+
 
 .top-space {
     width: 100%;
-    height: 60px; /* Space height at the top */
+    height: 60px;
+    /* Space height at the top */
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 5px 20px; /* Added some space for better alignment */
+    padding: 5px 20px;
+    /* Added some space for better alignment */
     background: transparent;
 }
 
-.language-switcher {
-    position: fixed; /* Fix the button position relative to the viewport */
-    bottom: -50px; /* Slight margin from the bottom of the screen */
-    left: 50%; /* Align it to the center horizontally */
-    transform: translateX(-50%); /* Center the button horizontally */
-    background-color: #007bff; /* Button background color */
-    border-radius: 8px; /* Rounded corners for the button */
-    width: 70px; /* Slightly wider for better design */
-    height: 45px; /* Add height to make the button look more balanced */
-    display: flex; /* Enable flexbox for centering */
-    align-items: center; /* Center the text vertically */
-    justify-content: center; /* Center the text horizontally */
-    cursor: pointer; /* Ensure the button looks clickable */
-    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition effects */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    overflow: hidden; /* Prevent any overflow */
-}
 
-.language-switcher:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
-    transform: translateX(-50%) scale(1.05); /* Ensure it scales without shifting position */
-}
+
 
 .language-switcher select {
-    appearance: none; /* Remove default styling */
+    appearance: none;
+    /* Remove default styling */
     -webkit-appearance: none;
     -moz-appearance: none;
-    outline: none; /* Remove focus outline */
-    border: none; /* Remove default border */
-    background: transparent; /* Transparent background to blend with parent */
-    width: 100%; /* Take full width of parent */
-    height: 100%; /* Take full height of parent */
-    color: white; /* Text color */
-    font-size: 0.8em; /* Adjust font size */
-    padding: 0; /* Add some padding for better spacing */
-    text-align: center; /* Center the text */
-    cursor: pointer; /* Ensure it's clickable */
-    box-shadow: none; /* Ensure no shadow on the select element */
+    outline: none;
+    /* Remove focus outline */
+    border: none;
+    /* Remove default border */
+    background: transparent;
+    /* Transparent background to blend with parent */
+    width: 100%;
+    /* Take full width of parent */
+    height: 100%;
+    /* Take full height of parent */
+    color: white;
+    /* Text color */
+    font-size: 1em;
+    /* Adjust font size */
+    padding: 0;
+    /* Add some padding for better spacing */
+    text-align: center;
+    /* Center the text */
+    cursor: pointer;
+    /* Ensure it's clickable */
+    box-shadow: none;
+    /* Ensure no shadow on the select element */
 }
 
 .language-switcher select:focus {
-    outline: none; /* Remove focus outline */
+    outline: none;
+    /* Remove focus outline */
     box-shadow: none;
 }
 
 .language-switcher select option {
     color: #333;
     background-color: #f9f9f9;
-    padding: 10px; /* Better spacing for dropdown items */
-    margin: 5px 0; /* Add some spacing between items */
-    border-radius: 5px; /* Rounded corners for options */
-    border: 1px solid #ddd; /* Light border for individual options */
-    font-size: 1em; /* Adjust font size for readability */
-    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition for hover */
+    padding: 10px;
+    /* Better spacing for dropdown items */
+    margin: 5px 0;
+    /* Add some spacing between items */
+    border-radius: 5px;
+    /* Rounded corners for options */
+    border: 1px solid #ddd;
+    /* Light border for individual options */
+    font-size: 1em;
+    /* Adjust font size for readability */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    /* Smooth transition for hover */
 }
 
 .language-switcher select option:hover {
-    background-color: #007bff; /* Highlight hovered item with blue */
-    color: white; /* Change text color for contrast */
+    background-color: #007bff;
+    /* Highlight hovered item with blue */
+    color: white;
+    /* Change text color for contrast */
+}
+
+@media (min-width: 769px) {
+    .language-switcher {
+        position: relative;
+    }
+
+    .language-switcher::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 12px;
+        transform: translateY(-50%);
+        border-style: solid;
+        border-width: 6px 5px 0 5px;
+        border-color: #ffffff transparent transparent transparent;
+        pointer-events: none;
+    }
+
+    .language-switcher select {
+        padding-inline-end: 2.25rem;
+        padding-inline-start: 1.25rem;
+        padding-top: 4px;
+    }
 }
 
 
 /* Shared Container for all pages */
-.intro-container, .choice-container, .instruction-container, .thank-you-container, .login-container, .rating-container, .demography-container, .group-preferences-container, .result-container {
+.intro-container,
+.choice-container,
+.instruction-container,
+.thank-you-container,
+.login-container,
+.rating-container,
+.demography-container,
+.group-preferences-container,
+.result-container {
     background-color: #ffffff;
     padding: 40px;
     border-radius: 15px;
@@ -102,11 +184,13 @@ body {
     max-width: 900px;
     margin: 0 auto;
     text-align: left;
-    margin-top: 10px; /* Align content with top-space */
+    margin-top: 10px;
+    /* Align content with top-space */
 }
 
 /* Headings for all pages */
-h1, h2 {
+h1,
+h2 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
@@ -116,31 +200,38 @@ h1, h2 {
 }
 
 /* Text Styles for Labels and Paragraphs */
-label, p {
+label,
+p {
     font-size: 1.1em;
     font-weight: normal;
     color: #444;
-    margin-bottom: 5px; /* Closer spacing for better layout */
+    margin-bottom: 5px;
+    /* Closer spacing for better layout */
     display: block;
     font-family: 'Roboto', sans-serif;
 }
 
-.consent-section label, .login-container label {
+.consent-section label,
+.login-container label {
     font-size: 1.1em;
 }
 
 /* Question and Answer Styling */
 .choice-container .decision-pair {
-    margin-bottom: 25px; /* Space between decision pairs */
+    margin-bottom: 25px;
+    /* Space between decision pairs */
 }
 
 .choice-container p {
-    margin-bottom: 10px; /* Less space below question text */
+    margin-bottom: 10px;
+    /* Less space below question text */
 }
 
 .choice-container .patients {
-    margin-top: 5px; /* Less space between the question text and answer options */
-    margin-bottom: 20px; /* Keeps a larger space below the answer options to next question */
+    margin-top: 5px;
+    /* Less space between the question text and answer options */
+    margin-bottom: 20px;
+    /* Keeps a larger space below the answer options to next question */
 }
 
 .patient img {
@@ -178,66 +269,101 @@ label, p {
 /* For Radio Buttons and Labels Inline */
 .radio-container {
     display: flex;
-    align-items: center; /* Align the radio button and label text vertically */
-    gap: 8px; /* Space between the radio button and the label */
+    align-items: center;
+    /* Align the radio button and label text vertically */
+    gap: 8px;
+    /* Space between the radio button and the label */
 }
 
 .radio-container input[type="radio"] {
-    margin: 0; /* Remove any browser-specific margin */
-    transform: translateY(1px); /* Slight vertical adjustment for perfect alignment */
+    margin: 0;
+    /* Remove any browser-specific margin */
+    transform: translateY(1px);
+    /* Slight vertical adjustment for perfect alignment */
 }
 
 .radio-container label {
-    margin: 0; /* Ensure no additional spacing is added */
-    line-height: 1.4; /* Fine-tune text alignment if necessary */
+    margin: 0;
+    /* Ensure no additional spacing is added */
+    line-height: 1.4;
+    /* Fine-tune text alignment if necessary */
 }
 
 /* Form Inputs (Number, Select, Text) */
-input[type="number"], select, input[type="text"], input[type="email"], textarea {
+input[type="number"],
+select,
+input[type="text"],
+input[type="email"],
+textarea {
     width: 100%;
     padding: 12px;
-    margin-top: 5px; /* Closer spacing between input and label */
-    margin-bottom: 10px; /* Less space between form fields */
+    margin-top: 5px;
+    /* Closer spacing between input and label */
+    margin-bottom: 10px;
+    /* Less space between form fields */
     border-radius: 8px;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
     font-size: 1em;
     color: #333;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover/focus effect */
-    box-shadow: 0 2px 0 #ddd; /* Add grey shadow under the box */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    /* Add transition for hover/focus effect */
+    box-shadow: 0 2px 0 #ddd;
+    /* Add grey shadow under the box */
 }
 
 /* Input Focus Effect */
-input[type="number"]:focus, select:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+input[type="number"]:focus,
+select:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
     border-color: #ddd;
     outline: none;
-    box-shadow: 0 2px 0 #ddd; /* Enhance the shadow on focus for emphasis */
+    box-shadow: 0 2px 0 #ddd;
+    /* Enhance the shadow on focus for emphasis */
 }
 
 
 /* Buttons */
-button, input[type="submit"], .submit-btn, .start-btn, .consent-section button[type="submit"] {
+button,
+input[type="submit"],
+.submit-btn,
+.start-btn,
+.consent-section button[type="submit"] {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 15px 30px; /* Larger button size */
+    padding: 15px 30px;
+    /* Larger button size */
     font-size: 1.2em;
-    font-weight: bold;
+    font-weight: normal;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 30px; /* Spacing from content */
+    margin-top: 30px;
+    /* Spacing from content */
     display: block;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.35;
+    word-break: break-word;
 }
 
 /* Button Hover Effect */
-button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
+button:hover,
+input[type="submit"]:hover,
+.submit-btn:hover,
+.start-btn:hover {
     background-color: #0056b3;
-    transform: scale(1.05); /* Slightly enlarge button */
+    transform: scale(1.05);
+    /* Slightly enlarge button */
 }
+
 /* Common Container Styles */
-.choice-container, .reconsider-container {
+.choice-container,
+.reconsider-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -245,7 +371,7 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
 }
 
 /* Update grid spacing */
-.patients-grid, .comparison-grid {
+.patients-grid {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     gap: 4rem;
@@ -262,7 +388,7 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
+    animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 
@@ -273,53 +399,50 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 1.5s;
+    animation: fadeIn 0.2s ease-in-out forwards;
+    animation-delay: 0.2s;
 }
 
-/* First patient image - appears third */
-.patient-card:nth-child(1) .patient-image {
+/* First patient reveal */
+.patient-card[data-patient-index="0"] .patient-image {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 2.5s;
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 0.45s;
 }
 
-/* First patient description - appears fourth */
-.patient-card:nth-child(1) .hover-description {
+.patient-card[data-patient-index="0"] .hover-description {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 3.5s;
-    display: block; /* Make sure it's visible without hover */
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 0.9s;
+    display: block;
     text-align: center;
     margin-top: 0.5rem;
     font-size: 0.9rem;
     color: #555;
 }
 
-/* Second patient label - appears fifth */
-.patient-card:nth-child(3) .patient-label {
+/* Second patient reveal */
+.patient-card[data-patient-index="1"] .patient-label {
     font-style: italic;
     font-size: 1.2rem;
     margin-bottom: 1rem;
     color: #333;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 4.5s;
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 0.45s;
 }
 
-/* Second patient image - appears sixth */
-.patient-card:nth-child(3) .patient-image {
+.patient-card[data-patient-index="1"] .patient-image {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 5.5s;
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 0.8s;
 }
 
-/* Second patient description - appears seventh */
-.patient-card:nth-child(3) .hover-description {
+.patient-card[data-patient-index="1"] .hover-description {
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 6.5s;
-    display: block; /* Make sure it's visible without hover */
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 1.2s;
+    display: block;
     text-align: center;
     margin-top: 0.5rem;
     font-size: 0.9rem;
@@ -333,22 +456,18 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     color: #333;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    font-weight: 600;
     opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 7.5s;
-}
-
-/* Arrow controls - appears last (ninth) */
-.arrow-controls {
-    position: relative;
-    display: flex;
-    gap: 3rem;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-in-out forwards;
-    animation-delay: 8.5s;
+    animation: fadeIn 0.45s ease-in-out forwards;
+    animation-delay: 0.7s;
+    width: 100%;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 0.9rem;
+    box-sizing: border-box;
+    line-height: 1.3;
+    word-break: break-word;
 }
 
 /* Make descriptions visible by default */
@@ -365,39 +484,232 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     position: relative;
     width: 200px;
     padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    background: #ffffff;
+    border: 2px solid transparent;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-sizing: border-box;
 }
 
-/* Enhanced Doctor Animation */
+/* Doctor area styling */
 .doctor-section {
     position: relative;
-    width: 200px;
-    height: auto;
+    width: min(220px, 100%);
+    min-height: 240px;
     margin: 0 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    align-self: flex-start; /* Align with top of patient cards */
-    padding-top: 1.5rem; /* Match patient card top padding */
+    align-self: flex-start;
+    gap: 0.85rem;
+    padding-top: 1.5rem;
+}
+
+.doctor-resting-area {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(0, 123, 255, 0.18) 0%, rgba(0, 123, 255, 0.05) 55%, rgba(0, 123, 255, 0) 75%);
+    border: 2px dashed rgba(0, 123, 255, 0.35);
+    transition: transform 0.35s ease, opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.doctor-section.drag-active .doctor-resting-area {
+    transform: translateX(-50%) scale(1.08);
+    border-color: rgba(0, 123, 255, 0.6);
+    box-shadow: 0 0 24px rgba(0, 123, 255, 0.25);
+}
+
+.instruction-text {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.choice-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.mobile-patient-switcher {
+    display: none;
+    margin: 1rem auto 0;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.mobile-switch-btn {
+    border: 0;
+    border-radius: 999px;
+    background: #edf1ff;
+    color: #1f3b8c;
+    padding: 0.45rem 1.15rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    box-shadow: inset 0 0 0 1px rgba(63, 120, 224, 0.18);
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobile-switch-btn.active {
+    background: #1f3b8c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(31, 59, 140, 0.32);
+}
+
+.doctor-lock-message {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translate(-50%, -6px);
+    background: rgba(13, 110, 253, 0.95);
+    color: #ffffff;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 18px 36px rgba(13, 110, 253, 0.18);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    z-index: 1002;
+}
+
+.doctor-lock-message.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.doctor-lock-message::after {
+    content: none;
+}
+
+@media (max-width: 768px) {
+    .instruction-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .mobile-patient-switcher {
+        display: flex;
+        position: relative;
+        z-index: 2;
+        flex-wrap: wrap;
+        margin: 0.75rem auto 0;
+    }
+
+    .mobile-switch-btn {
+        flex: 1 1 48%;
+        text-align: center;
+    }
+
+    .patients-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+        max-width: 420px;
+        margin: 0 auto 1.55rem;
+    }
+
+    .patients-grid > .patient-card {
+        width: calc(100% - 1.5rem);
+        max-width: 360px;
+        margin: 0 auto;
+        display: none;
+        order: 1;
+    }
+
+    .patients-grid > .patient-card {
+        width: calc(100% - 1.5rem);
+        max-width: 360px;
+        margin: 0 auto;
+        display: none;
+        order: 1;
+    }
+
+    .patients-grid > .patient-card.mobile-active {
+        display: block;
+    }
+
+    .patients-grid > .mobile-patient-switcher {
+        order: 2;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .patients-grid > .doctor-section {
+        order: 3;
+        width: 100%;
+        margin: 0 auto;
+        align-self: center;
+    }
+
+    .doctor-section {
+        min-height: 220px;
+    }
+
+    .doctor-image {
+        margin-top: 0.5rem;
+    }
+
+    .doctor-lock-message {
+        position: static;
+        transform: none;
+        margin: 0.6rem auto 0;
+        font-size: 0.82rem;
+        max-width: 90%;
+        white-space: normal;
+        text-align: center;
+        align-self: center;
+    }
+
+    .doctor-lock-message.visible {
+        transform: none;
+    }
+
+    .progress-container--bottom {
+        margin-top: 28px;
+    }
 }
 
 /* Smoother doctor image movement */
 .doctor-image {
-    width: 90px; /* Added explicit width for consistency */
+    width: 90px;
     height: auto;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
     cursor: grab;
     user-select: none;
-    z-index: 1000;
-    margin-bottom: 20px;
+    z-index: 1;
+    margin-bottom: 0;
     will-change: transform;
     opacity: 0;
-    animation: doctorFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    animation-delay: 0.5s; /* First to appear */
-    -webkit-user-drag: none; /* Prevent default drag behavior */
+    animation: doctorFadeIn 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 0.45s;
+    -webkit-user-drag: none;
+    touch-action: none;
+}
+
+body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
+    animation: none !important;
+    opacity: 1 !important;
 }
 
 .doctor-image:active {
@@ -405,20 +717,24 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
 }
 
 
-/* Highlight effect when hovering over patient cards */
+/* Highlight effect when the doctor hovers over a patient */
 .patient-card.highlight {
-    background-color: rgba(0, 123, 255, 0.1);
-    transition: background-color 0.2s ease;
+    border-color: rgba(13, 110, 253, 0.75);
+    box-shadow: 0 18px 40px rgba(13, 110, 253, 0.2);
+    transform: translateY(-8px);
 }
 
 /* Dragging state for doctor image */
 .doctor-image.dragging {
     cursor: grabbing;
-    opacity: 0.9;
+    opacity: 0.95;
     z-index: 1001;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
 }
+
 .patient-card:hover .patient-image {
-    transform: scale(1.02); /* Subtle hover effect */
+    transform: scale(1.02);
+    /* Subtle hover effect */
     transition: transform 0.2s ease;
 }
 
@@ -429,52 +745,11 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
 
 .dragging {
     opacity: 0.9;
-  }
-  
-  .highlight {
-    border: 2px solid #007bff;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-  }
-  
-  .move-left {
-    transition: transform 0.5s ease;
-  }
-  
-  .move-right {
-    transition: transform 0.5s ease;
-  }
-  
-
-
-.arrow-controls {
-    position: relative;
-    display: flex;
-    gap: 3rem;
-    margin-top: 15px;
-    justify-content: center;
 }
 
-.arrow-btn {
-    width: 50px;
-    height: 40px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    background: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: 900;
-}
-
-.arrow-btn:hover {
-    background: #0056b3;
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.highlight {
+    border: 2px solid rgba(13, 110, 253, 0.75);
+    box-shadow: 0 18px 40px rgba(13, 110, 253, 0.2);
 }
 
 /* Modal Styling */
@@ -485,24 +760,31 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
     z-index: 9999;
     opacity: 0;
     transition: opacity 0.3s ease;
+    padding: 1.5rem;
+    box-sizing: border-box;
 }
 
 .modal-content {
     background: white;
-    padding: 3rem;
+    padding: 2.25rem;
     border-radius: 15px;
     text-align: center;
     width: 90%;
     max-width: 800px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    max-height: 92vh;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     transform: scale(0.9);
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .modal.active {
@@ -513,64 +795,331 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     transform: scale(1);
 }
 
-.modal .image-description {
-    font-size: 1.1em;
-    color: #444;
-    margin-top: 10px;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-
-.comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin: 30px 0;
-}
-
-/* Fixed: Decision buttons side by side */
-.decision-buttons {
+.reconsider-modal {
     display: flex;
+    flex-direction: column;
+    gap: 1.55rem;
+}
+
+.reconsider-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.reconsider-view-toggle {
+    display: inline-flex;
     justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.2rem auto 0;
+    padding: 0.25rem;
+    background: rgba(79, 120, 225, 0.08);
+    border-radius: 999px;
 }
 
-.btn-change, .btn-keep {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 30px;
+.reconsider-view-btn {
     border: none;
-    border-radius: 6px;
-    font-size: 1.1em;
-    font-weight: bold;
+    background: transparent;
+    color: #3b4a73;
+    padding: 0.2rem 0.95rem 0.3rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    flex: 0 1 auto; /* Prevent buttons from stretching */
-    min-width: 120px; /* Ensure minimum width */
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0 !important;
 }
 
-.btn-keep {
-    background-color: #dc3545;
+.reconsider-view-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
 }
 
-.btn-change:hover, .btn-keep:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.reconsider-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.reconsider-panel {
+    display: none;
+}
+
+.reconsider-panel.active {
+    display: block;
 }
 
 .highlight-text {
-    color: #2c3e50;
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 1rem;
+    color: #1f3b8c;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0;
 }
 
 .decision-text {
-    color: #666;
-    font-size: 1.1em;
-    margin-bottom: 2rem;
+    color: #4c5a6f;
+    font-size: 1rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.reconsider-options,
+.reconsider-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.reconsider-interactive {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+}
+
+.reconsider-patient-switcher {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(79, 120, 225, 0.12);
+    border-radius: 999px;
+    padding: 0.25rem;
+}
+
+.reconsider-switch-btn {
+    border: none;
+    border-radius: 999px;
+    background: #edf1ff;
+    color: #1f3b8c;
+    padding: 0.32rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0;
+}
+
+.reconsider-switch-btn.active {
+    background: #1f3b8c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(31, 59, 140, 0.28);
+}
+
+.reconsider-switch-btn:focus-visible {
+    outline: 2px solid #1f3b8c;
+    outline-offset: 2px;
+}
+
+.reconsider-options [data-patient-role],
+.reconsider-cards [data-patient-role],
+.interactive-stage [data-patient-role] {
+    display: none;
+}
+
+.reconsider-options [data-patient-role].is-active,
+.reconsider-cards [data-patient-role].is-active,
+.interactive-stage [data-patient-role].is-active {
+    display: flex;
+}
+
+.reconsider-options .decision-card,
+.reconsider-cards .decision-card,
+.interactive-stage .decision-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 1.1rem;
+}
+
+.interactive-hint {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #4c5a6f;
+}
+
+.interactive-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.decision-card {
+    border: 1px solid rgba(31, 59, 140, 0.12);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.drag-target {
+    position: relative;
+}
+
+.drag-target.drag-hover {
+    border-color: rgba(13, 110, 253, 0.55);
+    box-shadow: 0 20px 32px rgba(13, 110, 253, 0.22);
+}
+
+.drag-target--target {
+    position: relative;
+    z-index: 2;
+}
+
+.drag-target--target.drag-hover {
+    z-index: 3;
+}
+
+.doctor-drag-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    min-width: 180px;
+    width: 100%;
+}
+
+.doctor-drop-zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1rem;
+    border-radius: 22px;
+    min-width: 180px;
+    min-height: 220px;
+    background: radial-gradient(circle at center, rgba(13, 110, 253, 0.18) 0%, rgba(13, 110, 253, 0.08) 55%, rgba(13, 110, 253, 0.0) 100%);
+    transition: box-shadow 0.2s ease, background 0.2s ease;
+    z-index: 4;
+}
+
+#modal-draggable-doctor {
+    width: 86px;
+    height: auto;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transition: transform 0.18s ease, filter 0.18s ease;
+    z-index: 6;
+}
+
+#modal-draggable-doctor.dragging {
+    cursor: grabbing;
+    filter: drop-shadow(0 12px 22px rgba(13, 110, 253, 0.35));
+}
+
+.doctor-drop-hint {
+    font-size: 0.85rem;
+    color: #3b4a73;
+    font-weight: 600;
+}
+
+.decision-card:hover,
+.decision-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(31, 59, 140, 0.45);
+    box-shadow: 0 12px 28px rgba(31, 59, 140, 0.18);
+    outline: none;
+}
+
+.decision-card:disabled {
+    cursor: wait;
+    opacity: 0.72;
+    transform: none;
+    box-shadow: none;
+}
+
+.decision-card--recommendation {
+    border-color: rgba(13, 110, 253, 0.32);
+    background: linear-gradient(180deg, #f3f8ff 0%, #ffffff 100%);
+    box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.12);
+}
+
+.decision-card--selected {
+    border-color: rgba(13, 110, 253, 0.6);
+    box-shadow: 0 16px 32px rgba(13, 110, 253, 0.2);
+    transform: translateY(-6px);
+}
+
+.choice-badge {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #4c5a6f;
+    background: rgba(79, 120, 225, 0.12);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+}
+
+.choice-badge--highlight {
+    color: #0f4db6;
+    background: rgba(13, 110, 253, 0.18);
+}
+
+.decision-visual {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(31, 59, 140, 0.08);
+}
+
+.decision-visual img {
+    max-width: 180px;
+    height: auto;
+}
+
+.choice-label {
+    font-weight: 600;
+    color: #1f2a44;
+    font-size: 1rem;
+}
+
+
+.choice-action {
+    display: inline-flex;
+    align-items: center;
+    color: #0f4db6;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.choice-action--secondary {
+    color: #4c5a6f;
+}
+
+.reconsider-error {
+    display: none;
+    font-size: 0.9rem;
+    color: #c0392b;
+    text-align: center;
+    margin: 0;
+    font-weight: 600;
+}
+
+.reconsider-error.visible {
+    display: block;
+    margin-top: -0.35rem;
 }
 
 /* Fixed fadeIn animation */
@@ -579,6 +1128,7 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
         opacity: 0;
         transform: translateY(25px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -591,10 +1141,12 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
         opacity: 0;
         transform: translateY(15px) scale(0.95);
     }
+
     70% {
         opacity: 1;
         transform: translateY(-5px) scale(1.02);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -602,7 +1154,8 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
 }
 
 /* Smooth movement classes */
-.doctor-image.move-left, .doctor-image.move-right {
+.doctor-image.move-left,
+.doctor-image.move-right {
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -616,149 +1169,295 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
 }
 
 @keyframes moveLeftBounce {
-    0% { transform: translateX(0); }
-    80% { transform: translateX(-125%); }
-    100% { transform: translateX(-120%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    80% {
+        transform: translateX(-125%);
+    }
+
+    100% {
+        transform: translateX(-120%);
+    }
 }
 
 @keyframes moveRightBounce {
-    0% { transform: translateX(0); }
-    80% { transform: translateX(125%); }
-    100% { transform: translateX(120%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    80% {
+        transform: translateX(125%);
+    }
+
+    100% {
+        transform: translateX(120%);
+    }
 }
 
-/* Improved mobile optimizations - keep side-by-side layout but scale everything down */
-@media screen and (max-width: 768px) {
-    /* Make the container fit the screen better */
+@media screen and (max-width: 900px) {
+
     .choice-container {
-        padding: 15px; /* Reduced padding */
-        max-width: 100%; /* Allow full width */
-        margin: 0 auto;
-        border-radius: 10px; /* Slightly smaller border radius */
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Softer shadow */
-        transform-origin: top center;
-    }
-    
-     /* Adjust the instruction text */
-     .instruction-text p {
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    h2 {
-        font-size: 1.8rem; /* Smaller heading */
-        margin-bottom: 10px;
-    }
-    /* Keep the grid layout but make everything smaller */
-    .patients-grid {
-        grid-template-columns: 1fr auto 1fr; /* Keep side-by-side */
-        gap: 0.6rem; /* Reduced gap for smaller screens */
+        padding: 18px;
         max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .patient-card[data-patient-index="0"] .patient-label,
+    .patient-card[data-patient-index="0"] .patient-image,
+    .patient-card[data-patient-index="0"] .hover-description,
+    .patient-card[data-patient-index="1"] .patient-label,
+    .patient-card[data-patient-index="1"] .patient-image,
+    .patient-card[data-patient-index="1"] .hover-description {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+
+    .instruction-header {
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .instruction-text p {
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    .patients-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 1.5rem;
+        row-gap: 2rem;
         width: 100%;
+        align-items: start;
     }
-    
+
+    .patients-grid > .doctor-section {
+        grid-column: 1 / -1;
+        display: grid;
+        align-items: center;
+        justify-items: center;
+        gap: 0.85rem;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .patient-card {
-        width: 110px; /* Smaller cards */
-        padding: 0.5rem;
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto;
+        padding: 0.85rem;
     }
-    
+
     .patient-label {
-        font-size: 0.8rem;
-        margin-bottom: 0.4rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
     }
-    
+
     .doctor-section {
-        width: 80px; /* Smaller doctor section */
-        height: auto;
-        padding-top: 0.5rem; /* Smaller padding on mobile */
-        align-self: flex-start; /* Keep aligned with top */
+        min-height: 210px;
     }
-    
+
+    .doctor-resting-area {
+        width: 140px;
+        height: 140px;
+        top: 1.25rem;
+    }
+
     .doctor-image {
-        width: 60px; /* Smaller doctor image */
-        margin-bottom: 8px;
+        width: 80px;
     }
-    
+
     .doctor-instruction {
-        font-size: 0.75rem;
-        margin: 0.4rem 0;
-        max-width: 80px;
-        line-height: 1.2;
+        font-size: 0.95rem;
+        max-width: 280px;
+        line-height: 1.3;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
-    
-    .arrow-controls {
-        gap: 0.8rem; /* Smaller gap between arrows */
-    }
-    
-    .arrow-btn {
-        width: 30px; /* Smaller buttons */
-        height: 22px;
-        font-size: 16px;
-    }
-    
-    /* Ensure decision buttons stay side-by-side */
-    .decision-buttons {
-        flex-direction: row;
-        gap: 1rem;
-    }
-    
-    .btn-change, .btn-keep {
-        padding: 8px 15px;
-        font-size: 0.8em;
-        min-width: 80px;
-    }
-    
-    /* Patient image size control */
+
     .patient-image {
-        max-width: 100px;
-        height: auto;
+        max-width: 180px;
     }
-    
-    /* Control modal size for mobile */
-    .modal-content {
-        padding: 1.5rem;
-        max-width: 90%;
+
+    .reconsider-options {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        justify-content: center;
     }
-    
-    .comparison-grid {
-        gap: 15px;
+
+    .interactive-stage {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
     }
-    
-    .highlight-text {
-        font-size: 1.1em;
-    }
-    
-    .decision-text {
-        font-size: 0.9em;
-    }
-    
-    /* Ensure animations still work on mobile */
-    .patient-card, .doctor-section {
-        transform-origin: center center;
-        will-change: opacity, transform;
-    }
-    /* Handle very small screens */
-    @media screen and (max-width: 360px) {
+
+@media screen and (max-width: 600px) {
+
+        .modal {
+            padding: 1rem;
+        }
+
         .choice-container {
-            padding: 10px;
+            padding: 12px;
         }
-        
+
+        .instruction-header {
+            align-items: center;
+            text-align: center;
+        }
+
         .patients-grid {
-            gap: 0.4rem;
+            grid-template-columns: 1fr;
+            row-gap: 1.75rem;
         }
-        
-        .patient-card {
-            width: 90px;
-            padding: 0.4rem;
+
+        .patients-grid > .doctor-section {
+            gap: 0.85rem;
         }
-        
+
         .doctor-section {
-            width: 70px;
+            min-height: 200px;
         }
-        
-        .doctor-image {
-            width: 50px;
+
+        .doctor-resting-area {
+            width: 130px;
+            height: 130px;
+            top: 2.1rem;
         }
+
+        .patient-image {
+            max-width: 200px;
+        }
+
+        .reconsider-options {
+            grid-template-columns: 1fr;
+            row-gap: 0.85rem;
+            margin: 1rem 0 1.25rem;
+        }
+
+        .interactive-stage {
+            grid-template-columns: 1fr;
+            row-gap: 0.75rem;
+            align-items: stretch;
+        }
+
+        .interactive-stage .decision-card {
+            padding: 1rem;
+            gap: 0.65rem;
+        }
+
+        .interactive-stage .decision-card .decision-visual img {
+            max-width: 148px;
+        }
+
+        .interactive-stage .doctor-drag-column {
+            min-height: 140px;
+        }
+
+        .interactive-stage .doctor-drop-zone {
+            min-height: 150px;
+            padding: 1rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .interactive-stage .doctor-drop-hint {
+            font-size: 0.8rem;
+        }
+
+        #modal-draggable-doctor {
+            width: 74px;
+        }
+
+        .modal-content {
+            padding: 1.5rem;
+            width: 94%;
+            max-height: 88vh;
+        }
+
+        .decision-card {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .decision-visual img {
+            max-width: 160px;
+        }
+
+        /* Very small devices */
+        @media screen and (max-width: 360px) {
+            .choice-container {
+                padding: 10px;
+            }
+
+            .patients-grid {
+                row-gap: 1.3rem;
+            }
+
+            .patient-card {
+                max-width: 220px;
+                padding: 0.6rem;
+            }
+
+            .doctor-image {
+                width: 65px;
+            }
+
+            .reconsider-options {
+                gap: 0.6rem;
+            }
+
+            .decision-card {
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 900px) {
+
+    .patients-grid {
+        grid-template-columns: 1fr;
+        row-gap: 1.8rem;
+        justify-items: center;
+    }
+
+    .patients-grid > .doctor-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .patient-card {
+        margin: 0 auto;
+        max-width: 280px;
+    }
+
+    .doctor-section {
+        min-height: 210px;
+    }
+
+    .doctor-resting-area {
+        width: 135px;
+        height: 135px;
+        top: 1.2rem;
+    }
+
+    .doctor-instruction {
+        text-align: center;
+        max-width: 260px;
+    }
+
+    .reconsider-options {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        justify-content: center;
+    }
+
+    .decision-card {
+        max-width: 320px;
+        width: 100%;
     }
 }
 
@@ -791,23 +1490,28 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     flex-direction: column;
 }
 
-.login-container input[type="password"],
-.login-container input[type="submit"] {
+.login-container input[type="password"] {
     padding: 10px;
     margin-bottom: 20px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border-radius: 8px;
     border: 1px solid #ddd;
     width: 100%;
 }
 
-.login-container input[type="submit"] {
+.login-container .admin-login-btn {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1.1em;
+    align-self: center;
+    margin-top: 10px;
 }
 
-.login-container input[type="submit"]:hover {
+.login-container .admin-login-btn:hover {
     background-color: #0056b3;
 }
 
@@ -819,6 +1523,17 @@ button:hover, input[type="submit"]:hover, .submit-btn:hover, .start-btn:hover {
     max-width: 900px;
     margin: 0 auto;
     text-align: center;
+}
+
+body[data-page="procedural_ratings"] .rating-container {
+    max-width: 560px;
+    padding: 32px 26px 36px;
+}
+
+.rating-intro {
+    max-width: 760px;
+    margin: 0 auto 1.55rem;
+    line-height: 1.55;
 }
 
 h1 {
@@ -834,154 +1549,361 @@ p {
     margin-bottom: 20px;
 }
 
-/* Modified Rating Container Styles */
-.procedure-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 40px;
-    gap: 30px;
-}
-
-/* Ensure text stays on the left side */
-.question-text {
-    flex: 1;
-    text-align: left;
-    max-width: 45%; /* Adjusted width to prevent text overflow */
-    word-wrap: break-word;
-}
-
-/* Label text alignment */
-.question-label {
-    flex: 1;
-    font-size: 1.1em;
-    margin: 0;
-    text-align: left;
-    white-space: pre-line;
-    margin-right: 20px; /* Adjusted margin to ensure proper spacing */
-    line-height: 1.6;
-}
-
-.question-description {
-    font-size: 1.1em;
-    line-height: 1.4;
-    color: #444;
-}
-
-/* Ensure rating components align properly */
-.rating-components {
-    flex: 1;
+/* Procedural ratings matrix */
+.matrix-scroll {
+    overflow: hidden;
+    margin-top: 1.4rem;
     position: relative;
-    max-width: 50%; /* Prevents shifting */
+}
+
+.procedural-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+}
+
+.matrix-row {
+    width: 100%;
+}
+
+.matrix-row.matrix-header {
+    display: none;
+}
+
+body[data-page="procedural_ratings"] .procedural-matrix[data-carousel="active"] .matrix-row.matrix-header {
+    display: none;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 20px 45px rgba(15, 35, 95, 0.12);
+    padding: 1.18rem 0.0rem 1.42rem;
+    min-height: 0;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto 1.4rem;
+    position: relative;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card {
+    display: none;
+    margin-bottom: 0;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.is-active {
+    display: flex;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 0.24rem;
+    width: 100%;
+    padding: 0 0.25rem;
+    box-sizing: border-box;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row .matrix-cell.matrix-option {
+    flex: 1 1 0;
+    width: auto;
+    margin-top: 0;
+    min-width: 48px;
+    box-sizing: border-box;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-question {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f235f;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-desc {
+    color: #4a4a4a;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-status {
+    display: none;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option,
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row .matrix-cell.matrix-option {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.42rem 0.28rem 0.5rem;
+    border-radius: 12px;
+    background: #f7f9ff;
+    box-shadow: inset 0 0 0 1px rgba(15, 35, 95, 0.08);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    margin-top: 0.65rem;
 }
 
-/* Gradient Bar Positioning */
-.gradient-bar {
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    border: 2px solid rgba(15, 35, 95, 0.35);
+    background: #ffffff;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option .matrix-dot {
+    display: none;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option .sr-only {
+    position: static;
+    display: block;
     width: 100%;
-    height: 12px;
-    background: linear-gradient(to right, #d3d3d3, #000);
-    border-radius: 10px;
-    margin-bottom: 25px;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
+    border: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0f235f;
+    letter-spacing: 0.01em;
+    text-align: center;
 }
 
-/* Rating Scale Adjustments */
-.rating-scale {
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px rgba(15, 35, 95, 0.18);
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) {
+    background: linear-gradient(135deg, rgba(15, 75, 255, 0.16), rgba(15, 75, 255, 0.08));
+    box-shadow: inset 0 0 0 2px rgba(15, 75, 255, 0.32), 0 10px 24px rgba(15, 75, 255, 0.18);
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) input[type="radio"] {
+    background: radial-gradient(circle at center, #0f4bff 0%, #2a68ff 55%, #0f4bff 100%);
+    border-color: rgba(10, 75, 255, 0.75);
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option:has(input[type="radio"]:checked) .sr-only {
+    color: #0a4bff;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.answered {
+    box-shadow: 0 24px 50px rgba(15, 35, 95, 0.18);
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    padding: 0 0.35rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #0f235f;
+    opacity: 0.9;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-start {
+    text-align: left;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-end {
+    text-align: right;
+}
+
+html[dir="rtl"] body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-start,
+html[dir="rtl"] body[data-page="procedural_ratings"] .matrix-row.matrix-body .mobile-scale-caption-end {
+    text-align: inherit;
+}
+
+body[data-page="procedural_ratings"] .procedural-carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    margin-top: 2rem;
+    width: min(280px, 100%);
+    margin-inline: auto;
+    padding: 0;
+}
+
+body[data-page="procedural_ratings"] .procedural-carousel-nav button {
+    border: none;
+    border-radius: 999px;
+    background: #1f6bff;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    box-shadow: 0 10px 26px rgba(31, 107, 255, 0.24);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body[data-page="procedural_ratings"] .procedural-carousel-nav button:disabled {
+    background: #b5c7ff;
+    box-shadow: none;
+}
+
+body[data-page="procedural_ratings"] .procedural-carousel-nav button:not(:disabled):active {
+    transform: scale(0.96);
+}
+
+body[data-page="procedural_ratings"] .procedural-carousel-nav .carousel-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1f2352;
+}
+
+body[data-page="procedural_ratings"] .form-navigation {
+    margin-top: 1.4rem;
+}
+
+@media (min-width: 720px) {
+    .interactive-stage {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .interactive-stage .doctor-drag-column {
+        width: auto;
+        min-width: 220px;
+        min-height: 220px;
+    }
+}
+
+@media (max-height: 760px) {
+    .reconsider-modal {
+        gap: 1.25rem;
+    }
+
+    .reconsider-options .decision-card,
+    .reconsider-cards .decision-card,
+    .interactive-stage .decision-card {
+        padding: 0.95rem;
+    }
+
+    .doctor-drag-column {
+        min-height: 180px;
+    }
+
+    #modal-draggable-doctor {
+        width: 80px;
+    }
+}
+
+
+.matrix-cell.matrix-scale-heading {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
     width: 100%;
 }
 
-/* Ensure radio button labels are evenly spaced */
-.scale-buttons {
+.scale-number {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+    display: block;
+    line-height: 1;
+}
+
+.scale-caption {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.matrix-question-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: #22c55e;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.28);
+}
+
+.matrix-row.answered .matrix-question-status {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
 }
 
-/* Keep scale labels properly aligned */
-.scale-labels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 8px;
+.matrix-row.answered .matrix-question {
+    border-left: 3px solid #22c55e;
+    padding-left: calc(0.65rem - 3px);
 }
 
-.scale-label {
-    font-size: 0.9em;
-    color: #666;
+.matrix-progress {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #4b5563;
+    font-weight: 500;
 }
 
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
-    .rating-container {
-        padding: 20px;
-        max-width: 95%; /* Utilize more screen width */
-    }
-
-    .procedure-block {
-        flex-direction: column; /* Stack elements vertically */
-        gap: 15px; /* Reduce gap for better spacing */
-        align-items: center; /* Center content */
-    }
-
-    .question-text {
-        max-width: 90%; /* Allow text to fit better */
-        font-size: 1em; /* Reduce text size for readability */
-        text-align: left;
-    }
-
-    .question-label {
-        font-size: 1.1em;
-        line-height: 1.4;
-        text-align: left;
-    }
-
-    .question-description {
-        font-size: 0.95em; /* Reduce text size */
-        line-height: 1.4;
-    }
-
-    .rating-components {
-        max-width: 100%; /* Changed to full width */
-        width: 100%;
-        padding: 0 2.5%; /* Matching padding with gradient bar */
-    }
-
-    /* Gradient Bar Adjustments */
-    .gradient-bar {
-        width: 95%; /* Match scale-buttons width */
-        margin: 10px 0; /* Remove auto margin for precise alignment */
-    }
-
-    /* Rating Scale Alignment Fix */
-    .rating-scale {
-        width: 100%;
-        padding: 0 2.5%; /* Match gradient bar padding */
-    }
-
-    .scale-buttons {
-        width: 95%; /* Exact same width as gradient bar */
-        gap: 0; /* Remove gap for perfect distribution */
-        justify-content: space-between; /* Evenly distribute circles */
-        margin: 0 auto; /* Center the buttons container */
-        padding: 0;
-    }
-
-    .scale-labels {
-        width: 95%; /* Match gradient bar width */
-        margin: 5px auto 0; /* Center align labels */
-        padding: 0;
-    }
-
-    /* Circle Button Fine-tuning */
-    .circle-btn {
-        transform: translateX(0); /* Remove any potential positioning offsets */
-    }
+.form-error {
+    margin-top: 1.25rem;
+    color: #d14343;
+    font-weight: 600;
+    text-align: left;
 }
+
+.form-error[hidden] {
+    display: none;
+}
+
 
 /* Health Gradient Question Styles */
 .health-question-container {
@@ -1008,7 +1930,7 @@ p {
     width: 100%;
     height: 14px;
     border-radius: 8px;
-    background: linear-gradient(90deg,  #d3d3d3, #000 100%);
+    background: linear-gradient(90deg, #d3d3d3, #000 100%);
     margin: 10px 0;
 }
 
@@ -1080,7 +2002,7 @@ p {
     color: white;
     border: none;
     padding: 12px 25px;
-    font-size: 1.2em;
+    font-size: medium;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -1094,16 +2016,35 @@ p {
     transform: scale(1.05);
 }
 
+
 .result-container {
-    overflow-x: auto;
+    position: relative;
+}
+
+.result-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+.result-top-bar .language-switcher {
+    margin-left: auto;
+    width: 80px;
+    height: 45px;
 }
 
 .result-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 720px;
 }
 
-.result-table th, .result-table td {
+.result-table th,
+.result-table td {
     padding: 8px;
     text-align: left;
     border: 1px solid #ddd;
@@ -1113,32 +2054,83 @@ p {
     background-color: #f2f2f2;
 }
 
+.results-heading {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+
 .download-container {
-    text-align: left;
-    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    width: auto;
+    margin-left: auto;
 }
 
 .download-button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background-color: #007bff;
     color: #fff;
     text-decoration: none;
-    font-size: 13px;
-    padding: 6px 6px;
-    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 999px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    line-height: 1;
+    justify-content: center;
+    white-space: nowrap;
+    border: none;
+    width: auto;
+    width: fit-content;
 }
 
 .download-button:hover {
     background-color: #0056b3;
-    transform: scale(1.05);
+    transform: translateY(-1px);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.results-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
 }
 
 .download-button i {
-    margin-right: 8px;
+    margin-right: 0;
     font-size: 18px;
     vertical-align: middle;
+}
+
+.result-table thead th {
+    position: sticky;
+    top: 0;
+    background: #f2f2f2;
+    z-index: 2;
+}
+
+.result-table tbody td {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Popup Styling */
@@ -1150,11 +2142,13 @@ p {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
-    display: none; /* Hidden by default */
+    display: none;
+    /* Hidden by default */
 }
 
 .popup-overlay.active {
-    display: flex; /* Make the popup visible */
+    display: flex;
+    /* Make the popup visible */
 }
 
 .popup-container {
@@ -1173,7 +2167,8 @@ p {
 }
 
 .popup-container h1 {
-    font-size: 1.8em; /* Slightly smaller heading */
+    font-size: 1.8em;
+    /* Slightly smaller heading */
     color: #333;
     margin-bottom: 15px;
 }
@@ -1207,7 +2202,8 @@ p {
     .popup-container {
         padding: 20px;
         font-size: 0.9em;
-        width: 90%; /* Wider on smaller screens */
+        width: 90%;
+        /* Wider on smaller screens */
     }
 
     .popup-container h1 {
@@ -1222,75 +2218,141 @@ p {
 /* Adjustments for Mobile */
 @media (max-width: 768px) {
     body {
-        transform: scale(0.85); /* Apply slightly larger scaling for mobile */
+        transform: scale(0.85);
+        /* Apply slightly larger scaling for mobile */
         transform-origin: top center;
-        padding: 10px; /* Add padding for better alignment */
+        padding: 10px;
+        /* Add padding for better alignment */
     }
+
     .top-space {
-        height: 50px; /* Adjusted space height for mobile */
-        justify-content: center; /* Center align on smaller screens */
+        height: 50px;
+        /* Adjusted space height for mobile */
+        justify-content: center;
+        /* Center align on smaller screens */
     }
 
     select {
-        font-size: 0.85em; /* Smaller font for dropdown */
-        padding: 6px; /* Reduced padding for compact size */
-        width: 90%; /* Make dropdown smaller */
-        margin: 10px auto; /* Center-align dropdown */
+        font-size: 0.85em;
+        /* Smaller font for dropdown */
+        padding: 6px;
+        /* Reduced padding for compact size */
+        width: 90%;
+        /* Make dropdown smaller */
+        margin: 10px auto;
+        /* Center-align dropdown */
     }
 
     select option {
-        font-size: 0.8em; /* Smaller font size for options */
-        padding: 8px; /* Compact padding for options */
+        font-size: 1.1rem;
+        /* Match trigger size for readability */
+        padding: 10px;
+        /* Comfortable tap target */
     }
 
 
     .language-switcher {
-        position: fixed; /* Keep the button fixed */
-        bottom: -50px; /* Position it near the bottom */
-        left: 50%; /* Align to the center horizontally */
-        transform: translateX(-50%); /* Center it horizontally */
-        width: 55px; /* Slightly smaller width for mobile */
-        height: 35px; /* Smaller height for mobile */
+        position: absolute;
+        /* Anchor inside each card so the native menu stays attached */
+        top: 16px;
+        inset-inline-end: 16px;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        min-width: 132px;
+        height: 46px;
         background-color: #007bff;
-        border-radius: 8px; /* Rounded corners */
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        z-index: 5;
+    }
+
+    .language-switcher::after {
+        content: none;
     }
 
     .language-switcher select {
-        font-size: 0.7em; /* Slightly smaller font size for mobile */
-        padding: 0; /* Remove unnecessary padding */
+        font-size: 1.10rem;
+        font-weight: 600;
+        line-height: 1.35;
+        padding: 0 0.85rem;
+        margin: 0;
         width: 100%;
         height: 100%;
         background: transparent;
         border: none;
-        color: white;
-        text-align: center;
+        color: #fff;
+        text-align: start;
+        -webkit-appearance: menulist;
+        appearance: menulist;
     }
 
     .language-switcher:hover {
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Enhance hover shadow */
-        transform: translateX(-50%) scale(1.05); /* Keep it centered while scaling */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        /* Enhance hover shadow */
+        transform: scale(1.05);
     }
 
-    h1, h2 {
+    h1,
+    h2 {
         font-size: 1.6em;
     }
 
-    .intro-container, .choice-container, .instruction-container, .thank-you-container, .login-container, .rating-container, .demography-container, .group-preferences-container, .result-container 
-    {
-        padding: 20px; /* Reduced padding for smaller screens */
-        max-width: 100%; /* Utilize full width of mobile */
-        margin: 0 auto; /* Center the container */
+    .intro-container,
+    .choice-container,
+    .instruction-container,
+    .thank-you-container,
+    .login-container,
+    .rating-container,
+    .demography-container,
+    .group-preferences-container,
+    .result-container {
+        padding: 20px;
+        /* Reduced padding for smaller screens */
+        max-width: 100%;
+        /* Utilize full width of mobile */
+        margin: 0 auto;
+        /* Center the container */
     }
 
-    label, p {
-        font-size: 0.9em; /* Adjust font size for readability */
-        line-height: 1.4; /* Ensure text spacing is comfortable */
+    .result-top-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .result-top-bar .download-container,
+    .result-top-bar .language-switcher {
+        width: 100%;
+        margin: 0;
+    }
+
+    .result-top-bar .language-switcher {
+        height: 40px;
+    }
+
+    .result-top-bar .download-container {
+        justify-content: center;
+    }
+
+    .result-top-bar .download-button {
+        justify-content: center;
+        width: 100%;
+    }
+
+    label,
+    p {
+        font-size: 0.9em;
+        /* Adjust font size for readability */
+        line-height: 1.4;
+        /* Ensure text spacing is comfortable */
     }
 
     .patients {
@@ -1302,10 +2364,1461 @@ p {
         flex: 1 1 100%;
     }
 
-    button, input[type="submit"], .submit-btn, .start-btn {
+    button,
+    input[type="submit"],
+    .submit-btn,
+    .start-btn {
         font-size: 1em;
         padding: 12px;
-        margin-top: 15px; /* Adjust spacing */
+        margin-top: 15px;
+        /* Adjust spacing */
     }
 
 }
+
+
+/* Make the form a normal block so margin auto works on the button */
+.intro-container .consent-section form {
+    display: block !important;
+}
+
+/* Center only the submit button */
+#start-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto 0 !important;
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+
+
+
+
+/* Make the card a positioning context */
+body[data-page="choice_experiment"] .choice-container {
+    position: relative;
+    padding-top: 64px;
+    /* keeps the pill from overlapping the heading */
+}
+
+/* Put the switcher inside the card, top-right (LTR/RTL safe) */
+body[data-page="choice_experiment"] .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+/* Keep hover scale without shifting */
+body[data-page="choice_experiment"] .language-switcher:hover {
+    transform: scale(1.05) !important;
+}
+
+@media (max-width: 768px) {
+    body[data-page="choice_experiment"] .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+/* Make the intro card a positioning context and leave space for the pill */
+body[data-page="intro"] .intro-container {
+    position: relative;
+    padding-top: 64px;
+    /* so it doesn't overlap the heading */
+}
+
+/* Place the switcher in the intro card’s top-right (LTR/RTL safe) */
+body[data-page="intro"] .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    /* cancel old translateX */
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+/* Keep hover scale without shifting */
+body[data-page="intro"] .language-switcher:hover {
+    transform: scale(1.05) !important;
+}
+
+@media (max-width: 768px) {
+    body[data-page="intro"] .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+
+/* no-consent page: put the switcher top-right inside the white card */
+body[data-page="no_consent"] .thank-you-container {
+    position: relative;
+    padding-top: 64px;
+    /* space so it doesn't overlap the title */
+}
+
+body[data-page="no_consent"] .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    /* cancel old translateX */
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+body[data-page="no_consent"] .language-switcher:hover {
+    transform: scale(1.05) !important;
+}
+
+/* (optional) smaller on mobile */
+@media (max-width: 768px) {
+    body[data-page="no_consent"] .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+
+/* Procedural ratings: keep the language pill inside the white card */
+body[data-page="procedural_ratings"] .rating-container {
+    position: relative;
+    /* make the card a positioning context */
+    padding-top: 64px;
+    /* space so the pill doesn't overlap the title */
+}
+
+body[data-page="procedural_ratings"] .rating-container .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    /* cancel any old translateX */
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+/* optional: smaller on mobile */
+@media (max-width: 768px) {
+    body[data-page="procedural_ratings"] .rating-container .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+
+/* Demography page: keep switcher inside the white card, top-right */
+body[data-page="demography"] .demography-container {
+    position: relative;
+    /* card becomes positioning context */
+    padding-top: 64px;
+    /* space so the pill doesn't overlap content */
+}
+
+body[data-page="demography"] .demography-container .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    /* cancel old translateX */
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+
+
+/* optional: smaller on mobile */
+@media (max-width: 768px) {
+    body[data-page="demography"] .demography-container .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+
+/* Admin page: keep language switcher inside the white card, top-right */
+body[data-page="admin_login"] .login-container {
+    position: relative;
+    /* make card a positioning context */
+    padding-top: 96px;
+    /* extra space for the language pill */
+}
+
+body[data-page="admin_login"] .login-container .language-switcher {
+    position: absolute !important;
+    top: 28px;
+    inset-inline-end: 16px;
+    /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    /* cancel any old translateX */
+    min-width: 132px;
+    height: 46px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+/* Optional: smaller on mobile */
+@media (max-width: 768px) {
+    body[data-page="admin_login"] .login-container .language-switcher {
+        top: 20px;
+        inset-inline-end: 12px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.95rem;
+    }
+
+    body[data-page="admin_login"] .login-container form {
+        margin-top: 1.4rem;
+    }
+
+    body[data-page="admin_login"] .login-container form input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+
+
+
+:root {
+    --bg: #f7fafc;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --brand: #2563eb;
+    --brand-weak: #dbeafe;
+    --ok: #059669;
+    --ring: rgba(37, 99, 235, .35);
+    --radius: 16px;
+}
+
+body {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    color: var(--ink);
+    background: #f5f6f8;
+}
+
+.intro-container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 20px;
+}
+
+.callout {
+    background: var(--brand-weak);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 20px 0 28px;
+}
+
+.callout-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.callout-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #0f172a;
+    line-height: 1.35;
+}
+
+.callout .ico {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    color: var(--brand);
+    margin-top: 1px;
+}
+
+
+
+.consent-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .06);
+    border: 1px solid #e5e7eb;
+}
+
+.option-grid {
+    margin: 16px 0 20px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width:720px) {
+    .option-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Default card */
+.option-card {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 15px;
+    display: block;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* On hover (grey shadow) */
+.option-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Remove any inner border from the option-visual when checked */
+.option-card input[type="radio"]:checked+.option-visual {
+    border: none;
+    outline: none;
+    /* prevent extra outline */
+}
+
+/* Highlight the entire card when checked */
+.option-card:has(input[type="radio"]:checked) {
+    border: 2px solid #007bff;
+    /* blue outline */
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    /* subtle glow */
+}
+
+
+.option-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    border-color: #d1d5db;
+}
+
+.option-card:active {
+    transform: scale(.998);
+}
+
+.option-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: auto;
+    /* ✅ allow clicks */
+    width: 0;
+    height: 0;
+}
+
+
+.option-visual {
+    padding: 18px;
+    display: grid;
+    gap: 6px;
+}
+
+.badge {
+    width: 32px;
+    height: 32px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.badge.yes {
+    background: var(--ok);
+}
+
+.badge.no {
+    background: #ef4444;
+}
+
+.option-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.option-desc {
+    color: var(--muted);
+    font-size: .95rem;
+}
+
+/* checked state */
+/* Remove the inner outline when checked */
+.option-card input[type="radio"]:checked+.option-visual {
+    outline: none !important;
+}
+
+.option-card input[type="radio"]:checked+.option-visual .option-title {
+    color: var(--brand);
+}
+
+/* primary button */
+.btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: filter .2s ease, transform .05s ease, background .2s ease;
+}
+
+.btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.btn:not(:disabled):hover {
+    filter: brightness(1.05);
+}
+
+.btn.outline {
+    background: #fff;
+    color: #111827;
+    border: 1.5px solid #e5e7eb;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Patient cards */
+.patient-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 260px;
+    margin: 0 auto;
+}
+
+.patient-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Patient label text */
+.patient-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+/* Patient images */
+.patient-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Hover description */
+.hover-description {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+
+.doctor-image {
+    width: 90px;
+    /* Adjust size as needed */
+    height: auto;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    z-index: 1000;
+    margin-bottom: 20px;
+    image-rendering: -webkit-optimize-contrast;
+    /* Crisp scaling */
+    image-rendering: crisp-edges;
+    /* Makes PNG sharper */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Optional: make it slightly transparent */
+.doctor-image.transparent {
+    opacity: 0.85;
+    /* Adjust transparency */
+}
+
+.doctor-image:active {
+    transform: scale(1.05);
+    /* Slight zoom when dragged */
+    opacity: 0.9;
+}
+
+.instruction-text p {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.5;
+}
+
+.instruction-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+}
+
+.principle-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #222;
+}
+
+.principle-description {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+
+.scale-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+
+
+
+/* Hide the native radio */
+.circle-btn input {
+    display: none;
+}
+
+/* The outer circle */
+.circle-btn .circle {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+/* Blue border + fill when checked */
+.circle-btn input:checked+.circle {
+    border-color: #1976d2;
+    background-color: #1976d2;
+}
+
+/* White dot inside instantly when checked */
+.circle-btn input:checked+.circle::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #fff;
+    display: block;
+    transform: scale(1);
+    transition: transform 0.15s ease-in-out;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.circle-btn .circle:hover {
+    transform: scale(1.1);
+    border-color: #0056b3;
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Use the same width for the bar and the circles row */
+:root {
+    --scale-width: clamp(420px, 55vw, 760px);
+}
+
+.rating-components {
+    width: var(--scale-width);
+}
+
+/* gradient bar uses full width of the rating-components box */
+.gradient-bar {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #d9d9d9, #000);
+    margin-bottom: 16px;
+}
+
+/* ============ NEW: grid for even spacing ============ */
+.rating-scale {
+    width: var(--scale-width);
+    /* matches .rating-components */
+}
+
+.scale-buttons {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* 6 equal columns */
+    width: 100%;
+    align-items: start;
+    /* no justify-content/gaps that could skew the ends */
+}
+
+.circle-btn {
+    display: grid;
+    justify-items: center;
+    /* center the circle horizontally */
+    align-content: start;
+    row-gap: 8px;
+    /* space between circle and (optional) label */
+}
+
+/* hide the native radio */
+.circle-btn input {
+    display: none;
+}
+
+/* the visible circle */
+.circle-btn .circle {
+    width: 19px;
+    /* adjust size to taste */
+    height: 19px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    transition: background-color .2s, border-color .2s, transform .15s;
+}
+
+/* selected state */
+.circle-btn input:checked+.circle {
+    background-color: #1976d2;
+    border-color: #1976d2;
+    transform: scale(1.02);
+}
+
+/* captions under only the 1st and 6th circles */
+.circle-label {
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+    min-height: 1.2em;
+    /* keeps row height stable even if translation changes */
+}
+
+
+/* Page title */
+.demography-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #222;
+}
+
+/* Question blocks */
+.question-block {
+    margin-bottom: 2rem;
+}
+
+.question-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Radio group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-radio {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #444;
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+}
+
+.custom-radio input {
+    display: none;
+}
+
+.radio-mark {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 18px;
+    width: 18px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.custom-radio input:checked+.radio-mark {
+    background: #1976d2;
+    border-color: #1976d2;
+}
+
+/* Inputs */
+.text-input,
+.number-input {
+    width: 250px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.text-input:focus,
+.number-input:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 4px rgba(25, 118, 210, 0.3);
+}
+
+p strong,
+p b {
+    font-weight: bold;
+    color: #000;
+    /* optional: make bold text darker */
+}
+
+.tick-icon {
+    font-size: 60px;
+    /* big tick */
+    color: #4CAF50;
+    /* light green */
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Keep this one */
+.instruction-container {
+    position: relative;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* NEW WIDTH SETTINGS */
+
+
+}
+
+/* Keep this block: positions inside instruction-container */
+.instruction-container .language-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+/* REMOVE or COMMENT OUT this block completely */
+.language-switcher {
+    background-color: #007bff;
+    border-radius: 999px;
+    min-width: 120px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 0 12px;
+}
+
+.language-switcher:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    /* Stronger shadow on hover */
+
+}
+
+/* Language switcher (push it down a bit) */
+.instruction-container .language-switcher {
+    position: absolute;
+    top: 1.5rem;
+    /* move it slightly lower */
+    right: 1.5rem;
+    /* add spacing from right */
+}
+
+/* Instruction text */
+#instructions-line {
+    font-size: 1.3rem;
+    /* a bit larger */
+    font-weight: 600;
+    /* bold for emphasis */
+    color: #333;
+    /* dark text */
+    text-align: center;
+    /* center horizontally */
+    line-height: 1.6;
+    /* spacing between lines */
+    max-width: 800px;
+    /* keep it readable */
+    margin: 3rem auto;
+    /* push text away from button */
+    padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+    /* center horizontally */
+    align-items: center;
+    /* center vertically */
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    #instructions-line {
+        font-size: 1.1rem;
+        max-width: 90%;
+        margin: 2rem auto;
+    }
+}
+
+@media (max-width: 480px) {
+    #instructions-line {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+    /* hidden by default */
+}
+
+.demography-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px; /* adjust depending on how tall your form should be */
+    padding: 20px;
+}
+
+.form-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.form-navigation button {
+    margin-top: 0;
+    min-width: 140px;
+}
+
+.error-message {
+    color: red;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.form-navigation button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Group Preferences page: keep switcher inside the white card */
+body[data-page="group_preferences"] .group-preferences-container {
+    position: relative;
+    padding-top: 64px; /* add space so switcher doesn’t overlap heading */
+}
+
+body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+    position: absolute !important;
+    top: 12px;
+    inset-inline-end: 12px; /* right in LTR, left in RTL */
+    left: auto;
+    bottom: auto;
+    transform: none !important;
+    width: 70px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border-radius: 999px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+    z-index: 10;
+}
+
+body[data-page="group_preferences"] .group-preferences-container .language-switcher:hover {
+    transform: scale(1.05) !important;
+}
+
+@media (max-width: 768px) {
+    body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+        top: 8px;
+        inset-inline-end: 8px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 0.85rem;
+    }
+}
+
+.form-navigation button:disabled { opacity: 0.5; cursor: not-allowed; }
+.error-message { color: red; margin-top: 5px; font-size: 0.9em; }
+
+
+/* Thank You Page Box */
+.thank-you-box {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Ensure input stays inside the white box */
+.demography-container .question-block {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 600px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* space between label and input */
+}
+
+.demography-intro {
+    background-color: #eef5ff;
+    color: #1f3b8c;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 10px auto 20px;
+    max-width: 600px;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(31, 65, 107, 0.08);
+}
+
+html[dir="rtl"] .demography-intro {
+    text-align: right;
+}
+
+html[dir="rtl"] .demography-container .question-block {
+    text-align: right;
+}
+
+html[dir="rtl"] .demography-container .question-block > label {
+    width: 100%;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    text-align: right;
+}
+
+/* Input field inside */
+.demography-container .question-block input[type="text"],
+.demography-container .question-block input[type="number"] {
+    width: 100%;       /* Full width of the white box */
+    box-sizing: border-box;
+    margin-top: 8px;
+}
+
+/* Progress container */
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #f1f1f1;
+  border-radius: 6px;
+  margin: 30px 0 40px 0;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progress-container--bottom {
+    margin: 40px 0 0 0;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 100%;
+  width: 0; /* set dynamically via inline style */
+  background: linear-gradient(90deg, #4facfe, #007bff);
+  border-radius: 6px;
+  transition: width 0.6s ease-in-out; /* smooth animation */
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+@media (max-width: 600px) {
+    body[data-page="choice_experiment"] .choice-container {
+        padding: 2.3rem 0.65rem 0.75rem;
+        gap: 0.45rem;
+    }
+
+    body[data-page="choice_experiment"] .instruction-header {
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    body[data-page="choice_experiment"] .choice-header {
+        position: relative;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        gap: 0.65rem;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 0.25rem;
+    }
+
+    body[data-page="choice_experiment"] .choice-header .language-switcher {
+        position: relative !important;
+        top: auto;
+        right: auto;
+        margin: 0;
+        margin-left: auto;
+        width: auto;
+        min-width: 122px;
+        max-width: 220px;
+        height: 44px;
+        padding: 0;
+        overflow: visible;
+        box-shadow: 0 8px 18px rgba(0, 123, 255, 0.25);
+        flex: 0 0 auto;
+        z-index: 5;
+        border-radius: 999px;
+    }
+
+    body[data-page="choice_experiment"] .choice-header .language-switcher::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 16px;
+        transform: translateY(-50%);
+        border-style: solid;
+        border-width: 6px 5px 0 5px;
+        border-color: #ffffff transparent transparent transparent;
+        pointer-events: none;
+    }
+
+    body[data-page="choice_experiment"] .choice-header .language-switcher select {
+        width: 100%;
+        height: 100%;
+        padding: 0 2.5rem 0 1.15rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: left;
+        background: transparent;
+        border: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    html[dir="rtl"] body[data-page="choice_experiment"] .choice-header .language-switcher select {
+        text-align: right;
+        padding: 0 1.15rem 0 2.5rem;
+    }
+
+    body[data-page="choice_experiment"] .instruction-text {
+        margin-top: 4px;
+        text-align: center;
+    }
+
+    body[data-page="choice_experiment"] .instruction-text p {
+        font-size: 0.9rem;
+        line-height: 1.32;
+        margin: 0;
+        text-align: center;
+    }
+
+    body[data-page="choice_experiment"] .patients-grid {
+        padding: 0.15rem 0 0.45rem;
+        gap: 0.55rem;
+    }
+
+    body[data-page="choice_experiment"] .patient-card {
+        width: calc(100% - 0.9rem);
+    }
+
+    body[data-page="choice_experiment"] .doctor-section {
+        width: calc(100% - 0.9rem);
+        gap: 0.3rem;
+    }
+
+    body[data-page="choice_experiment"] .doctor-image {
+        width: 60px;
+    }
+
+    body[data-page="choice_experiment"] .doctor-instruction {
+        font-size: 0.97rem;
+        max-width: 100%;
+        white-space: normal;
+        padding: 0 0.75rem;
+    }
+
+    body[data-page="choice_experiment"] .progress-container--bottom {
+        margin-top: 0.4rem;
+    }
+
+    body[data-page="choice_experiment"] .progress-container {
+        position: absolute;
+        top: 0;
+        inset-inline: 0;
+        height: 10px;
+        margin: 0;
+        background: rgba(0, 123, 255, 0.08);
+        border-radius: 15px 15px 0 0;
+        box-shadow: none;
+        overflow: hidden;
+        pointer-events: none;
+        transform: translateY(0);
+    }
+
+    body[data-page="choice_experiment"] .progress-container .progress-bar {
+        height: 100%;
+        border-radius: inherit;
+    }
+}
+
+@media (max-width: 600px) {
+    body[data-page="procedural_ratings"] .rating-container,
+    body[data-page="demography"] .demography-container,
+    body[data-page="group_preferences"] .group-preferences-container {
+        overflow: hidden;
+    }
+
+    body[data-page="procedural_ratings"] .progress-container,
+    body[data-page="demography"] .progress-container,
+    body[data-page="group_preferences"] .progress-container {
+        position: absolute;
+        top: 0;
+        inset-inline: 0;
+        height: 10px;
+        margin: 0;
+        background: rgba(0, 123, 255, 0.08);
+        border-radius: 15px 15px 0 0;
+        box-shadow: none;
+        overflow: hidden;
+        pointer-events: none;
+        transform: translateY(0);
+    }
+
+    body[data-page="procedural_ratings"] .progress-container .progress-bar,
+    body[data-page="demography"] .progress-container .progress-bar,
+    body[data-page="group_preferences"] .progress-container .progress-bar {
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    body[data-page="procedural_ratings"] .progress-container--bottom,
+    body[data-page="demography"] .progress-container--bottom,
+    body[data-page="group_preferences"] .progress-container--bottom {
+        margin-top: 0;
+    }
+
+    body[data-page="procedural_ratings"] .rating-container .language-switcher,
+    body[data-page="demography"] .demography-container .language-switcher,
+    body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+        top: 22px;
+        margin-bottom: 0.35rem;
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container {
+        padding-top: 96px;
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container .language-switcher {
+        inset-inline-end: 16px;
+        top: 28px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 1rem;
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
+    }
+
+    body[data-page="group_preferences"] .group-preferences-container .question-block,
+    body[data-page="group_preferences"] .group-preferences-container form {
+        margin-top: 1.6rem;
+    }
+
+    body[data-page="demography"] .demography-container {
+        padding-top: 96px;
+    }
+
+    body[data-page="demography"] .demography-container .language-switcher {
+        inset-inline-end: 16px;
+        top: 28px;
+        min-width: 132px;
+        height: 46px;
+        padding: 0 1rem;
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
+    }
+
+    body[data-page="demography"] .demography-container .question-block {
+        margin-top: 1.6rem;
+    }
+
+    body[data-page="procedural_ratings"] .rating-intro {
+        margin-top: 1.4rem;
+    }
+}
+
+.mobile-only {
+    display: none;
+}
+
+.mobile-accordion-trigger {
+    display: none;
+}
+
+.mobile-accordion-panel {
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+}
+
+@media (max-width: 600px) {
+    .mobile-accordion-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.85rem 1rem;
+        margin: 0.5rem 0 0;
+        background: #f3f5ff;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2352;
+        text-align: left;
+        cursor: pointer;
+        box-shadow: inset 0 0 0 1px rgba(31, 35, 82, 0.08);
+    }
+
+    .mobile-accordion-trigger:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    .mobile-accordion-icon {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        background: #2563eb;
+        color: #fff;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-accordion-icon::before {
+        content: '\25BC';
+    }
+
+    .mobile-accordion-trigger[aria-expanded="true"] .mobile-accordion-icon {
+        transform: rotate(180deg);
+    }
+
+    .mobile-accordion-panel {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        margin-top: 0;
+    }
+
+    .mobile-accordion-panel.is-open {
+        max-height: 2000px;
+        opacity: 1;
+        margin-top: 0.6rem;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+}
+
+@media (min-width: 601px) {
+    .mobile-accordion-trigger {
+        display: none !important;
+    }
+
+    .mobile-accordion-panel {
+        max-height: none !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+        margin-top: 0 !important;
+    }
+
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .intro-container {
+        padding: 20px 18px 28px;
+    }
+
+    .consent-section {
+        padding: 18px;
+    }
+}
+
+
+.procedural-carousel-nav {
+  display: grid;
+  grid-template-columns: min-content 1fr min-content; /* btn – indicator – btn */
+  align-items: center;
+  width: 100%;             /* ← important */
+  column-gap: .75rem;      /* space between items (instead of button margins) */
+}
+
+.procedural-carousel-nav button {
+  margin: 0;               /* kill asymmetric margins that shift the center */
+}
+
+.procedural-carousel-nav .carousel-indicator {
+  justify-self: center;    /* center within the 1fr column */
+  text-align: center;
+}
+
+
+/* 1) Make the captions row a 6-column grid that matches the options */
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale {
+  display: grid !important;                 /* override the existing flex */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  justify-items: center;                     /* center things in their column */
+}
+
+/* 2) Neutralize any left/right text-align coming from older rules */
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale .mobile-scale-caption {
+  text-align: center !important;
+}
+
+/* 3) Put each caption under the correct option */
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale .mobile-scale-caption-start {
+  grid-column: 1;
+}
+
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale .mobile-scale-caption-end {
+  grid-column: 6;
+}
+

@@ -9,14 +9,17 @@
     "instruction_text": "Not every patient can be treated in a medical emergency. A decision has to be made about which patient to treat. Which of the patients shown below should be treated?",
     "patient_label_1": "1st Patient",
     "patient_label_2": "2nd Patient",
+    "patient_toggle_label": "Toggle between patients",
     "doctor_instruction": "Move the physician to the patient to be treated!",
+    "doctor_lock_message": "Please wait for the both patients to show up!",
     "reconsider_message": "A data-driven computer model suggests treating the other patient!",
     "decision_text": "Would you like to change your decision?",
-    "originally_selected": "Originally Selected",
+    "originally_selected": "Your Choice",
     "recommendation": "Recommendation",
     "yes_button": "Yes",
     "no_button": "No",
-    "final_selection_instruction": "Now please make your final selection for which patient to treat."
+    "final_selection_instruction": "Now please make your final selection for which patient to treat.",
+    "question_counter_template": "Question {current} of {total}"
   },
   "demography": {
     "title": "Demographic Questions",
@@ -27,11 +30,14 @@
     "prefer_not_to_disclose_label": "Prefer not to disclose",
     "age_question": "What is your age?",
     "age_placeholder": "Enter your age",
+    "age_invalid": "⚠️ Invalid age. Please enter a value between 16 and 120.",
     "religion_question": "What is your religion?",
     "no_religion": "No, I do not",
     "christian_label": "Christian",
     "islam_label": "Islam",
     "hinduism_label": "Hinduism",
+    "previous_button": "Previous",
+    "next_button": "Next",
     "buddhism_label": "Buddhism",
     "other_label": "Other"
   },
@@ -51,7 +57,9 @@
     "children_question": "Do you have children or are you planning to have children?",
     "children_yes": "Yes",
     "children_no": "No",
-    "submit_button": "Submit"
+    "previous_button": "Previous",
+    "next_button": "Next",
+    "submit_button": "Submit Survey"
   },
   "instructions": {
     "title": "Thank you very much! In the following we would like to ask you a few more general questions.",
@@ -60,13 +68,20 @@
   "intro": {
     "intro_title": "How would you decide when confronted with critical life-and-death decisions?",
     "intro_paragraph_1": "Your view on this question is highly valuable. We greatly appreciate your willingness to participate in this survey on medical decision-making.",
-    "intro_paragraph_2": "Your participation is voluntary, and your information will be collected anonymously, in accordance with data protection regulations. Please read all instructions and questions carefully and answer honestly.",
+    "intro_paragraph_2": "Please read all instructions and questions carefully and answer honestly.",
     "signature": "Sincerely,<br>Dr. med. Anatol-Fiete Näher, M.A., Hasso Plattner Institute Potsdam<br>Anna Lena Fehlhaber, Leibniz University of Hannover<br>PD Dr. Ivar Krumpal, University of Leipzig",
     "consent_title": "Informed Consent",
     "consent_message": "Please decide now if you want to give your consent to the use of your answers for scientific purposes. If you do not agree, you will be redirected to the end of the survey.",
     "yes_label": "I consent to the use of my data submitted as part of this questionnaire for research purposes.",
     "no_label": "I do not consent to the use of my data submitted as part of this questionnaire for research purposes.",
-    "start_button": "Submit Consent"
+    "start_button": "Choose an option to continue",
+    "callout-1": "Participation is voluntary.",
+    "callout-2": "Answers are collected anonymously and handled under data protection rules.",
+    "callout-3": "You can stop at any time without any disadvantage.",
+    "yes-desc": "You allow us to use your anonymous answers for research.",
+    "no-desc": "Your decision will be respected and the survey will end.",
+    "agree_button": "Agree & Continue",
+    "disagree_button": "Do Not Consent, Finish Survey"
   },
   "no_consent": {
     "no_consent_title": "Thank you for your time!",
@@ -76,8 +91,8 @@
     "rating_title": "Procedural Fairness Ratings",
     "rating_intro": "Not every patient can be treated in a medical emergency. There are procedures that can be used to determine which patients should be treated in such situations. In the following, please indicate how morally fair you find these procedures.",
     "scale_indicator": "Please rate on a scale from 1 to 6:",
-    "not_fair": "Not fair at all",
-    "very_fair": "Very fair",
+    "not_fair": "Not Fair at All",
+    "very_fair": "Very Fair",
     "rating_save_life_years": "Treating patients who will gain the most life years",
     "rating_advantage_disadvantaged": "Giving priority to disadvantaged patients",
     "rating_benefit_future": "Treating patients who will benefit others in the future",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "Selecting patients for whom medication is most effective",
     "rating_random_selection": "Random selection of patients",
     "select_answer": "Select a rating",
+    "previous_button": "Previous",
+    "next_button": "Next",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "Rated {completed} of {total} procedures",
     "submit_button": "Submit"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "Your responses have been recorded. We appreciate your time and effort in helping us with this research."
   },
   "images": {
-    "child_simple.jpg": "Child",
-    "Disability.jpg": "Person with Disability",
-    "old_male_female_simpler.jpg": "Elderly Couple",
-    "Overweight_simpler.jpg": "Overweight Person",
-    "test_0_0_1_1_0.jpg": "Test Image 1",
-    "test_0_0_2_3_1.jpg": "Test Image 2",
-    "test_0_2_3_3_2.jpg": "Test Image 3",
-    "test_1_0_3_2_0.jpg": "Test Image 4",
-    "test_1_3_2_2_1.jpg": "Test Image 5",
+    "child_simple.png": "Child",
+    "Disability.png": "Person with Disability",
+    "old_male_female_simpler.png": "Elderly Couple",
+    "Overweight_simpler.png": "Overweight Person",
+    "test_0_0_1_1_0.png": "Test Image 1",
+    "test_0_0_2_3_1.png": "Test Image 2",
+    "test_0_2_3_3_2.png": "Test Image 3",
+    "test_1_0_3_2_0.png": "Test Image 4",
+    "test_1_3_2_2_1.png": "Test Image 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient at Laptop with Head Bandage",
     "Patient_on_a_Stretcher.png": "Patient on a Stretcher",
     "Patient_with_Arm_Sling.png": "Patient with Arm Sling",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient with IV and Arm Sling",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient with IV and Arm Sling",
     "Patient_with_IV_Drip.png": "Patient with IV Drip",
     "pregnant_woman_care.webp": "Pregnant Woman Care",
     "Pregnant_woman_lying_on_hospital_bed.png": "Pregnant Woman Lying on Hospital Bed",
-    "Walking_Patient_with_Crutches.jpg": "Walking Patient with Crutches"
+    "Walking_Patient_with_Crutches.png": "Walking Patient with Crutches"
   }
 }

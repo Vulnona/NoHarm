@@ -1,34 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
+    <title>{{ translations.admin_login.title | default('Admin Login') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="language-switcher">
-        <select id="language-switcher">
-            <option value="ar">العربية</option>
-            <option value="bn">বাংলা</option>
-            <option value="zh">中文</option>
-            <option value="en" >English</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="hi">हिन्दी</option>
-            <option value="ja">日本語</option>
-            <option value="ru">Русский</option>
-            <option value="es">Español</option>
-            <option value="ur">اردو</option>
-        </select>
-    </div>
+<body data-page="admin_login">
+
 
     <div class="login-container">
-        <h1>Admin Login</h1>
+        <div class="language-switcher">
+            <select id="language-switcher" class="language-dropdown">
+                <option value="ar">العربية</option>
+                <option value="bn">বাংলা</option>
+                <option value="zh">中文</option>
+                <option value="en" >English</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ja">日本語</option>
+                <option value="ru">Русский</option>
+                <option value="es">Español</option>
+                <option value="ur">اردو</option>
+            </select>
+        </div>
+
+        <h1>{{ translations.admin_login.title | default('Admin Login') }}</h1>
         <form method="POST" action="/admin">
-            <label for="password">Enter Admin Password:</label>
+            <label for="password">{{ translations.admin_login.password_label | default('Enter Admin Password:') }}</label>
             <input type="password" name="password" required>
-            <input type="submit" value="Login">
+            <input type="submit" value="{{ translations.admin_login.login_button | default('Login') }}" class="admin-login-btn">
         </form>
     </div>
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>

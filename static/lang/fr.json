@@ -9,14 +9,17 @@
     "instruction_text": "En cas d'urgence médicale, tous les patients ne peuvent pas être traités. Une décision doit être prise concernant quel patient traiter. Lequel des patients ci-dessous devrait être traité ?",
     "patient_label_1": "1er patient",
     "patient_label_2": "2ème patient",
+    "patient_toggle_label": "Basculer entre les patients",
     "doctor_instruction": "Déplacez le médecin vers le patient à traiter !",
+    "doctor_lock_message": "Veuillez attendre que les deux patients apparaissent !",
     "reconsider_message": "Un modèle informatique basé sur les données suggère de traiter l'autre patient !",
     "decision_text": "Souhaitez-vous changer votre décision ?",
-    "originally_selected": "Initialement sélectionné",
+    "originally_selected": "Votre choix",
     "recommendation": "Recommandation",
     "yes_button": "Oui",
     "no_button": "Non",
-    "final_selection_instruction": "Veuillez maintenant faire votre sélection finale pour quel patient traiter."
+    "final_selection_instruction": "Veuillez maintenant faire votre sélection finale pour quel patient traiter.",
+    "question_counter_template": "Question {current} sur {total}"
   },
   "demography": {
     "title": "Questions démographiques",
@@ -33,7 +36,10 @@
     "islam_label": "Islam",
     "hinduism_label": "Hindouisme",
     "buddhism_label": "Bouddhisme",
-    "other_label": "Autre"
+    "other_label": "Autre",
+    "age_invalid": "⚠️ Âge invalide. Veuillez entrer une valeur entre 16 et 120.",
+    "previous_button": "Précédent",
+    "next_button": "Suivant"
   },
   "group_preferences": {
     "group_preferences_title": "Préférences liées aux groupes",
@@ -44,14 +50,16 @@
     "fair": "Moyen",
     "good": "Bon",
     "very_good": "Très bon",
-    "excellent": "Excellent",
+    "excellent": "Exzellent",
     "illness_question": "Avez-vous été gravement malade au cours de l'année dernière ?",
     "illness_yes": "Oui",
     "illness_no": "Non",
     "children_question": "Avez-vous des enfants ou prévoyez-vous d'avoir des enfants ?",
     "children_yes": "Oui",
     "children_no": "Non",
-    "submit_button": "Soumettre"
+    "previous_button": "Précédent",
+    "next_button": "Suivant",
+    "submit_button": "Soumettre le questionnaire"
   },
   "instructions": {
     "title": "Merci beaucoup ! Dans ce qui suit, nous aimerions vous poser quelques questions générales supplémentaires.",
@@ -66,7 +74,14 @@
     "consent_message": "Veuillez décider maintenant si vous souhaitez donner votre consentement à l'utilisation de vos réponses à des fins scientifiques. Si vous n'êtes pas d'accord, vous serez redirigé vers la fin de l'enquête.",
     "yes_label": "Je consens à l'utilisation de mes données soumises dans le cadre de ce questionnaire à des fins de recherche.",
     "no_label": "Je ne consens pas à l'utilisation de mes données soumises dans le cadre de ce questionnaire à des fins de recherche.",
-    "start_button": "Soumettre le consentement"
+    "start_button": "Choisissez une option pour continuer",
+    "callout-1": "La participation est volontaire.",
+    "callout-2": "Les réponses sont collectées de manière anonyme et traitées conformément aux règles de protection des données.",
+    "callout-3": "Vous pouvez arrêter à tout moment sans aucun désavantage.",
+    "yes-desc": "Vous nous autorisez à utiliser vos réponses anonymes pour la recherche.",
+    "no-desc": "Votre décision sera respectée et l'enquête prendra fin.",
+    "agree_button": "Accepter et continuer",
+    "disagree_button": "Ne pas consentir, terminer l'enquête"
   },
   "no_consent": {
     "no_consent_title": "Merci pour votre temps !",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "Sélectionner les patients pour lesquels les médicaments sont les plus efficaces",
     "rating_random_selection": "Sélection aléatoire des patients",
     "select_answer": "Sélectionner une évaluation",
+    "previous_button": "Précédent",
+    "next_button": "Suivant",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "Évalué {completed} sur {total} procédures",
     "submit_button": "Soumettre"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "Vos réponses ont été enregistrées. Nous apprécions votre temps et vos efforts pour nous aider dans cette recherche."
   },
   "images": {
-    "child_simple.jpg": "Enfant",
-    "Disability.jpg": "Personne en situation de handicap",
-    "old_male_female_simpler.jpg": "Couple âgé",
-    "Overweight_simpler.jpg": "Personne en surpoids",
-    "test_0_0_1_1_0.jpg": "Image test 1",
-    "test_0_0_2_3_1.jpg": "Image test 2",
-    "test_0_2_3_3_2.jpg": "Image test 3",
-    "test_1_0_3_2_0.jpg": "Image test 4",
-    "test_1_3_2_2_1.jpg": "Image test 5",
+    "child_simple.png": "Enfant",
+    "Disability.png": "Personne en situation de handicap",
+    "old_male_female_simpler.png": "Couple âgé",
+    "Overweight_simpler.png": "Personne en surpoids",
+    "test_0_0_1_1_0.png": "Image test 1",
+    "test_0_0_2_3_1.png": "Image test 2",
+    "test_0_2_3_3_2.png": "Image test 3",
+    "test_1_0_3_2_0.png": "Image test 4",
+    "test_1_3_2_2_1.png": "Image test 5",
     "Patient_at_Laptop_with_Head_Bandage.png": "Patient à l'ordinateur portable avec bandage à la tête",
     "Patient_on_a_Stretcher.png": "Patient sur un brancard",
     "Patient_with_Arm_Sling.png": "Patient avec une écharpe pour le bras",
-    "Patient_with_IV_and_Arm_Sling.jpg": "Patient avec perfusion et écharpe pour le bras",
+    "Patient_with_IV_and_Arm_Sling.png": "Patient avec perfusion et écharpe pour le bras",
     "Patient_with_IV_Drip.png": "Patient avec perfusion",
     "pregnant_woman_care.webp": "Soins de femme enceinte",
     "Pregnant_woman_lying_on_hospital_bed.png": "Femme enceinte allongée sur un lit d'hôpital",
-    "Walking_Patient_with_Crutches.jpg": "Patient marchant avec des béquilles"
+    "Walking_Patient_with_Crutches.png": "Patient marchant avec des béquilles"
   }
 }

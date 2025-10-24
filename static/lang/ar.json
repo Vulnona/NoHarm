@@ -9,14 +9,17 @@
     "instruction_text": "لا يمكن علاج كل مريض في حالة الطوارئ الطبية. يجب اتخاذ قرار بشأن المريض الذي سيتم علاجه. أي من المرضى المعروضين أدناه ينبغي علاجه؟",
     "patient_label_1": "المريض الأول",
     "patient_label_2": "المريض الثاني",
+    "patient_toggle_label": "التبديل بين المرضى",
     "doctor_instruction": "انقل الطبيب إلى المريض الذي سيتم علاجه!",
+    "doctor_lock_message": "يرجى الانتظار حتى يظهر المريضان!",
     "reconsider_message": "يقترح نموذج كمبيوتر قائم على البيانات علاج المريض الآخر!",
     "decision_text": "هل ترغب في تغيير قرارك؟",
-    "originally_selected": "المحدد أصلاً",
+    "originally_selected": "اختيارك",
     "recommendation": "التوصية",
     "yes_button": "نعم",
     "no_button": "لا",
-    "final_selection_instruction": "الآن يرجى الاختيار النهائي للمريض الذي سيتم علاجه."
+    "final_selection_instruction": "الآن يرجى الاختيار النهائي للمريض الذي سيتم علاجه.",
+    "question_counter_template": "السؤال {current} من {total}"
   },
   "demography": {
     "title": "أسئلة ديموغرافية",
@@ -27,12 +30,15 @@
     "prefer_not_to_disclose_label": "أفضل عدم الإفصاح",
     "age_question": "كم عمرك؟",
     "age_placeholder": "أدخل عمرك",
+    "age_invalid": "⚠️ عمر غير صالح. يرجى إدخال قيمة بين 16 و120.",
     "religion_question": "ما هي ديانتك؟",
     "no_religion": "لا، ليس لدي",
     "christian_label": "مسيحية",
     "islam_label": "إسلام",
     "hinduism_label": "هندوسية",
     "buddhism_label": "بوذية",
+    "previous_button": "السابق",
+    "next_button": "التالي",
     "other_label": "أخرى"
   },
   "group_preferences": {
@@ -50,8 +56,10 @@
     "illness_no": "لا",
     "children_question": "هل لديك أطفال أو تخطط لإنجاب أطفال؟",
     "children_yes": "نعم",
+    "previous_button": "السابق",
+    "next_button": "التالي",
     "children_no": "لا",
-    "submit_button": "إرسال"
+    "submit_button": "إرسال الاستبيان"
   },
   "instructions": {
     "title": "شكرًا جزيلًا! فيما يلي نود أن نطرح عليك بعض الأسئلة العامة الإضافية.",
@@ -66,7 +74,14 @@
     "consent_message": "يرجى تحديد الآن ما إذا كنت تريد منح موافقتك على استخدام إجاباتك للأغراض العلمية. إذا لم توافق، ستتم إعادة توجيهك إلى نهاية الاستطلاع.",
     "yes_label": "أوافق على استخدام بياناتي المقدمة كجزء من هذا الاستبيان لأغراض البحث.",
     "no_label": "لا أوافق على استخدام بياناتي المقدمة كجزء من هذا الاستبيان لأغراض البحث.",
-    "start_button": "تقديم الموافقة"
+    "start_button": "اختر خيارًا للمتابعة",
+    "callout-1": "المشاركة طوعية.",
+    "callout-2": "تُجمع الإجابات بشكل مجهول ويتم التعامل معها وفقًا لقواعد حماية البيانات.",
+    "callout-3": "يمكنك التوقف في أي وقت دون أي عواقب.",
+    "yes-desc": "أنت تسمح لنا باستخدام إجاباتك المجهولة لأغراض البحث.",
+    "no-desc": "سيتم احترام قرارك وسيتم إنهاء الاستبيان.",
+    "agree_button": "أوافق وأتابع",
+    "disagree_button": "لا أوافق، إنهاء الاستبيان"
   },
   "no_consent": {
     "no_consent_title": "شكرًا على وقتك!",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "اختيار المرضى الذين تكون الأدوية أكثر فعالية لهم",
     "rating_random_selection": "الاختيار العشوائي للمرضى",
     "select_answer": "اختر تقييمًا",
+    "previous_button": "السابق",
+    "next_button": "التالي",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "١",
-      "2": "٢", 
+      "2": "٢",
       "3": "٣",
       "4": "٤",
       "5": "٥",
       "6": "٦"
     },
+    "progress_template": "تم تقييم {completed} من {total} إجراءات",
     "submit_button": "إرسال"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "تم تسجيل إجاباتك. نقدر وقتك وجهودك في مساعدتنا في هذا البحث."
   },
   "images": {
-    "child_simple.jpg": "طفل",
-    "Disability.jpg": "شخص ذو إعاقة",
-    "old_male_female_simpler.jpg": "زوجان مسنان",
-    "Overweight_simpler.jpg": "شخص يعاني من زيادة الوزن",
-    "test_0_0_1_1_0.jpg": "صورة اختبار ١",
-    "test_0_0_2_3_1.jpg": "صورة اختبار ٢",
-    "test_0_2_3_3_2.jpg": "صورة اختبار ٣",
-    "test_1_0_3_2_0.jpg": "صورة اختبار ٤",
-    "test_1_3_2_2_1.jpg": "صورة اختبار ٥",
+    "child_simple.png": "طفل",
+    "Disability.png": "شخص ذو إعاقة",
+    "old_male_female_simpler.png": "زوجان مسنان",
+    "Overweight_simpler.png": "شخص يعاني من زيادة الوزن",
+    "test_0_0_1_1_0.png": "صورة اختبار ١",
+    "test_0_0_2_3_1.png": "صورة اختبار ٢",
+    "test_0_2_3_3_2.png": "صورة اختبار ٣",
+    "test_1_0_3_2_0.png": "صورة اختبار ٤",
+    "test_1_3_2_2_1.png": "صورة اختبار ٥",
     "Patient_at_Laptop_with_Head_Bandage.png": "مريض على حاسوب محمول مع ضمادة رأس",
     "Patient_on_a_Stretcher.png": "مريض على نقالة",
     "Patient_with_Arm_Sling.png": "مريض بحمالة ذراع",
-    "Patient_with_IV_and_Arm_Sling.jpg": "مريض بتسريب وريدي وحمالة ذراع",
+    "Patient_with_IV_and_Arm_Sling.png": "مريض بتسريب وريدي وحمالة ذراع",
     "Patient_with_IV_Drip.png": "مريض بتسريب وريدي",
     "pregnant_woman_care.webp": "رعاية المرأة الحامل",
     "Pregnant_woman_lying_on_hospital_bed.png": "امرأة حامل مستلقية على سرير المستشفى",
-    "Walking_Patient_with_Crutches.jpg": "مريض يمشي بعكازات"
+    "Walking_Patient_with_Crutches.png": "مريض يمشي بعكازات"
   }
 }

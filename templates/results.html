@@ -4,134 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-dymfL5Qq7Yh6YFQki71R+xVQ1BM8DT6vKrrf5gYv7FpC18m0tHbdD+14Q6gttxyPjdvVSdGInxjea2aEIBKnwQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body data-page="result">
-
-<!-- Language switcher in the corner -->
-<div class="language-switcher">
-    <select id="language-switcher">
-        <option value="ar">العربية</option>
-        <option value="bn">বাংলা</option>
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option>
-        <option value="ru">Русский</option>
-        <option value="es">Español</option>
-        <option value="ur">اردو</option>
-    </select>
-</div>
+<body data-page="results">
 
 <div class="result-container">
 
-    <!-- Download button -->
-    <div class="download-container">
-        <a href="{{ url_for('download_csv') }}" class="download-button">
-            <i class="fas fa-file-csv"></i> Download Survey Results (CSV)
-        </a>
+    <div class="result-top-bar">
+        <h2 class="results-heading">User Responses</h2>
+        <div class="download-container">
+            <a href="{{ url_for('download_csv') }}" class="download-button">
+                <i class="fas fa-file-csv"></i> Download Survey Results (CSV)
+            </a>
+        </div>
     </div>
-
-    <!-- User Responses Data -->
-    <h2>User Responses</h2>
     <div class="table-responsive">
+        {% if user_responses %}
         <table border="1" class="result-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <!-- Choice Data -->
-                    <th>Choice 1</th>
-                    <th>Choice 2</th>
-                    <th>Choice 3</th>
-                    <th>Choice 1 Initial</th>
-                    <th>Choice 2 Initial</th>
-                    <th>Choice 3 Initial</th>
-                    <th>Choice 1 Final</th>
-                    <th>Choice 2 Final</th>
-                    <th>Choice 3 Final</th>
-                    <th>Reconsider Set</th>
-                    <th>AI Suggestion</th>
-                    <th>Changed Decision</th>
-                    
-                    <!-- Procedural Ratings -->
-                    <th>Save Life Years</th>
-                    <th>Advantage Disadvantaged</th>
-                    <th>Benefit Future</th>
-                    <th>First Come</th>
-                    <th>Treatment Success</th>
-                    <th>Treatment Effort</th>
-                    <th>Medication Effect</th>
-                    <th>Random Selection</th>
-                    
-                    <!-- Demographics -->
-                    <th>Gender</th>
-                    <th>Age</th>
-                    <th>Religion</th>
-                    <th>General Health</th>
-                    <th>Illness</th>
-                    <th>Children</th>
-                    
-                    <!-- Other Data -->
-                    <th>Language</th>
-                    <th>IP Address</th>
-                    <th>City</th>
-                    <th>Region</th>
-                    <th>Country</th>
-                    <th>Session Start</th>
-                    <th>Session End</th>
+                    {% for column in user_responses[0].keys() %}
+                    <th>{{ column|replace('_', ' ')|title }}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for response in user_responses %}
                 <tr>
-                    <td>{{ response['id'] }}</td>
-                    
-                    <!-- Choice Data -->
-                    <td>{{ response['choice1'] }}</td>
-                    <td>{{ response['choice2'] }}</td>
-                    <td>{{ response['choice3'] }}</td>
-                    <td>{{ response['choice1_initial'] }}</td>
-                    <td>{{ response['choice2_initial'] }}</td>
-                    <td>{{ response['choice3_initial'] }}</td>
-                    <td>{{ response['choice1_final'] }}</td>
-                    <td>{{ response['choice2_final'] }}</td>
-                    <td>{{ response['choice3_final'] }}</td>
-                    <td>{{ response['reconsider_set'] }}</td>
-                    <td>{{ response['data_driven_tool_suggestion'] }}</td>
-                    <td>{{ response['changed_decision'] }}</td>
-                    
-                    <!-- Procedural Ratings -->
-                    <td>{{ response['save_life_years'] }}</td>
-                    <td>{{ response['advantage_disadvantaged'] }}</td>
-                    <td>{{ response['benefit_future'] }}</td>
-                    <td>{{ response['first_come'] }}</td>
-                    <td>{{ response['treatment_success'] }}</td>
-                    <td>{{ response['treatment_effort'] }}</td>
-                    <td>{{ response['medication_effect'] }}</td>
-                    <td>{{ response['random_selection'] }}</td>
-                    
-                    <!-- Demographics -->
-                    <td>{{ response['gender'] }}</td>
-                    <td>{{ response['age'] }}</td>
-                    <td>{{ response['religion'] }}</td>
-                    <td>{{ response['general_health'] }}</td>
-                    <td>{{ response['illness'] }}</td>
-                    <td>{{ response['children'] }}</td>
-                    
-                    <!-- Other Data -->
-                    <td>{{ response['language'] }}</td>
-                    <td>{{ response['ip_address'] }}</td>
-                    <td>{{ response['city'] }}</td>
-                    <td>{{ response['region'] }}</td>
-                    <td>{{ response['country'] }}</td>
-                    <td>{{ response['session_start'] }}</td>
-                    <td>{{ response['session_end'] }}</td>
+                    {% for column in response.keys() %}
+                    <td>{{ response[column] | basename }}</td>
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="results-empty">No responses recorded yet.</div>
+        {% endif %}
     </div>
 </div>
 

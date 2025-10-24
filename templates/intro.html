@@ -1,62 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Decision-Making Survey</title>
+    <title>NoHarm Medical Decision-Making Survey</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body data-page="intro">
 
 <!-- Language switcher in the corner -->
-<div class="language-switcher">
-    <select id="language-switcher">
-        <option value="ar">العربية</option>
-        <option value="bn">বাংলা</option>
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option>
-        <option value="ru">Русский</option>
-        <option value="es">Español</option>
-        <option value="ur">اردو</option>
-    </select>
-</div>
 
 
 <div class="intro-container">
-    <h1 id="intro-title">How would you decide when confronted with critical life-and-death decisions?</h1>
+
+    <div class="language-switcher">
+        <select id="language-switcher">
+            <option value="ar">العربية</option>
+            <option value="bn">বাংলা</option>
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="hi">हिन्दी</option>
+            <option value="ja">日本語</option>
+            <option value="ru">Русский</option>
+            <option value="es">Español</option>
+            <option value="ur">اردو</option>
+        </select>
+    </div>
+    <h2 id="intro-title">{{ translations.intro.intro_title | default('How would you decide when confronted with critical life-and-death decisions?') }}</h2>
     <div class="intro-content">
-        <p id="intro-paragraph-1">Your view on this question is highly valuable. We greatly appreciate your willingness to participate in this survey on medical decision-making.</p>
-        <p id="intro-paragraph-2">Your participation is voluntary, and your information will be collected anonymously, in accordance with data protection regulations. Please read all instructions and questions carefully and answer honestly.</p>
-        <p class="signature">Sincerely,<br>
-            Dr. med. Anatol-Fiete Näher, M.A., Hasso Plattner Institute Potsdam<br>
-            Anna Lena Fehlhaber, Leibniz University of Hannover<br>
-            PD Dr. Ivar Krumpal, University of Leipzig
-        </p>
+        <p id="intro-paragraph-1">{{ translations.intro.intro_paragraph_1 | default('Your view on this question is <strong>highly valuable</strong>. We greatly appreciate your willingness to participate in this survey on medical decision-making.') | safe }}</p>
+        <p id="intro-paragraph-2">{{ translations.intro.intro_paragraph_2 | default('Please read all instructions and questions carefully and answer honestly.') }}</p>
+        <p class="signature">{{ translations.intro.signature | default('Sincerely,<br>Dr. med. Anatol-Fiete Näher, M.A., Hasso Plattner Institute Potsdam<br>Anna Lena Fehlhaber, Leibniz University of Hannover<br>PD Dr. Ivar Krumpal, University of Leipzig') | safe }}</p>
 
 
     </div>
+
+
+
+            <!-- Key facts callout -->
+        <section class="callout" aria-label="Key information about this study">
+        <ul class="callout-list">
+            <li>
+            <span class="ico" aria-hidden="true">
+                <!-- hand/heart icon -->
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 21s-7-4.35-9.33-8.1A5.5 5.5 0 0 1 12 5.67 5.5 5.5 0 0 1 21.33 13C19 16.65 12 21 12 21z"/>
+                </svg>
+            </span>
+            <span id="callout-1">{{ translations.intro['callout-1'] | default('Participation is voluntary.') }}</span>
+            </li>
+            <li>
+            <span class="ico" aria-hidden="true">
+                <!-- lock icon -->
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z"/>
+                </svg>
+            </span>
+            <span id="callout-2">{{ translations.intro['callout-2'] | default('Answers are collected anonymously and handled under data protection rules.') }}</span>
+            </li>
+            <li>
+            <span class="ico" aria-hidden="true">
+                <!-- shield icon -->
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 2l7 3v6c0 5-3.5 9.74-7 11-3.5-1.26-7-6-7-11V5l7-3z"/>
+                </svg>
+            </span>
+            <span id="callout-3">{{ translations.intro['callout-3'] | default('You can stop at any time without any disadvantage.') }}</span>
+            </li>
+        </ul>
+        </section>
+
 
     <!-- Informed Consent Section -->
     <div class="consent-section">
-        <h2 id="consent-title">Informed Consent</h2>
-        <p id="consent-message">Please decide now if you want to give your consent to the use of your answers for scientific purposes. If you do not agree, you will be redirected to the end of the survey.</p>
-        <form method="POST" action="/submit">
-            <label>
-                <input type="radio" name="consent" value="yes" id="yes-label"> <span id="yes-label-span">I consent to the use of my data submitted as part of this questionnaire for research purposes.</span>
-            </label><br>
-            <label>
-                <input type="radio" name="consent" value="no" id="no-label"> <span id="no-label-span">I do not consent to the use of my data submitted as part of this questionnaire for research purposes.</span>
-            </label><br>
-            <button type="submit" class="start-btn" id="start-btn">Submit Consent</button>
-        </form>
+    <h2 id="consent-title">{{ translations.intro.consent_title | default('Informed Consent') }}</h2>
+    <p id="consent-message">{{ translations.intro.consent_message | default('Please choose whether you consent to the use of your answers for scientific purposes. If you do not agree, we will take you to the end of the survey.') }}</p>
+
+    <form method="POST" action="/submit" class="consent-form">
+        <div class="option-grid" role="radiogroup" aria-labelledby="consent-title">
+        <!-- YES -->
+        <label class="option-card">
+            <input type="radio" name="consent" value="yes" aria-label="I consent">
+            <div class="option-visual">
+            <span class="badge yes">✔</span>
+            <div class="option-title" id="yes-label-span">{{ translations.intro.yes_label | default('I consent') }}</div>
+            <div class="option-desc" id="yes-desc">{{ translations.intro['yes-desc'] | default('You allow us to use your anonymous answers for research.') }}</div>
+            </div>
+        </label>
+
+        <!-- NO -->
+        <label class="option-card">
+            <input type="radio" name="consent" value="no" aria-label="I do not consent">
+            <div class="option-visual">
+            <span class="badge no">✖</span>
+            <div class="option-title" id="no-label-span">{{ translations.intro.no_label | default('I do not consent') }}</div>
+            <div class="option-desc" id="no-desc">{{ translations.intro['no-desc'] | default('Your decision will be respected and the survey will end.') }}</div>
+            </div>
+        </label>
+        </div>
+
+        <button type="submit" class="start-btn btn" id="start-btn" disabled>
+        {{ translations.intro.start_button | default('Choose an option to continue') }}
+        </button>
+
+        <!-- For screen readers: announces button text change -->
+        <div class="sr-only" aria-live="polite" id="consent-live"></div>
+    </form>
     </div>
+
+
+
+    
 </div>
 
 <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const prefixes = ['answer_', 'demography_', 'procedural_rating_'];
+        Object.keys(localStorage).forEach(function (key) {
+            if (prefixes.some(function (prefix) { return key.startsWith(prefix); }) || key === 'procedural_last_index') {
+                localStorage.removeItem(key);
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -9,14 +9,17 @@
     "instruction_text": "医療緊急時には、すべての患者を治療することはできません。どの患者を治療するかの決断を下さなければなりません。以下に示される患者のうち、どの患者が治療されるべきでしょうか？",
     "patient_label_1": "1人目の患者",
     "patient_label_2": "2人目の患者",
+    "patient_toggle_label": "患者を切り替える",
     "doctor_instruction": "治療する患者に医師を移動させてください！",
+    "doctor_lock_message": "両方の患者が表示されるまでお待ちください！",
     "reconsider_message": "データ駆動型コンピューターモデルは他の患者を治療することを提案しています！",
     "decision_text": "決定を変更しますか？",
-    "originally_selected": "当初選択",
+    "originally_selected": "あなたの選択",
     "recommendation": "推奨",
     "yes_button": "はい",
     "no_button": "いいえ",
-    "final_selection_instruction": "治療する患者について最終選択を行ってください。"
+    "final_selection_instruction": "治療する患者について最終選択を行ってください。",
+    "question_counter_template": "質問 {current} / {total}"
   },
   "demography": {
     "title": "人口統計学的質問",
@@ -27,9 +30,12 @@
     "prefer_not_to_disclose_label": "回答したくない",
     "age_question": "あなたの年齢は？",
     "age_placeholder": "年齢を入力してください",
+    "age_invalid": "⚠️ 無効な年齢です。16から120の値を入力してください。",
     "religion_question": "あなたの宗教は何ですか？",
     "no_religion": "いいえ、私は宗教を持っていません",
     "christian_label": "キリスト教",
+    "previous_button": "前へ",
+    "next_button": "次へ",
     "islam_label": "イスラム教",
     "hinduism_label": "ヒンドゥー教",
     "buddhism_label": "仏教",
@@ -47,11 +53,13 @@
     "excellent": "優れている",
     "illness_question": "この1年間で重病を患いましたか？",
     "illness_yes": "はい",
+    "previous_button": "前へ",
+    "next_button": "次へ",
     "illness_no": "いいえ",
     "children_question": "子供がいますか、または子供を持つ予定ですか？",
     "children_yes": "はい",
     "children_no": "いいえ",
-    "submit_button": "送信"
+    "submit_button": "アンケートを送信"
   },
   "instructions": {
     "title": "どうもありがとうございます！ 次に、いくつかの一般的な質問をさせていただきます。",
@@ -66,7 +74,14 @@
     "consent_message": "ここで、あなたの回答を科学的目的に使用することに同意するかどうかを決めてください。同意しない場合は、調査の終わりにリダイレクトされます。",
     "yes_label": "このアンケートの一部として提出したデータを研究目的で使用することに同意します。",
     "no_label": "このアンケートの一部として提出したデータを研究目的で使用することに同意しません。",
-    "start_button": "同意を提出"
+    "start_button": "続行するにはオプションを選択してください",
+    "callout-1": "参加は任意です。",
+    "callout-2": "回答は匿名で収集され、データ保護規則に従って取り扱われます。",
+    "callout-3": "不利益なく、いつでも中止できます。",
+    "yes-desc": "匿名の回答を研究のために使用することを許可します。",
+    "no-desc": "あなたの決定は尊重され、調査は終了します。",
+    "agree_button": "同意して続行",
+    "disagree_button": "同意しない、アンケートを終了"
   },
   "no_consent": {
     "no_consent_title": "お時間をいただきありがとうございます！",
@@ -87,6 +102,8 @@
     "rating_medication_effect": "薬が最も効果的な患者を選択する",
     "rating_random_selection": "患者のランダム選択",
     "select_answer": "評価を選択",
+    "previous_button": "前へ",
+    "next_button": "次へ",
     "questions": [
       {
         "id": "save_life_years",
@@ -131,12 +148,13 @@
     ],
     "numbers": {
       "1": "1",
-      "2": "2", 
+      "2": "2",
       "3": "3",
       "4": "4",
       "5": "5",
       "6": "6"
     },
+    "progress_template": "全{total}件中{completed}件の手順を評価しました",
     "submit_button": "送信"
   },
   "results": {
@@ -149,22 +167,22 @@
     "thank_you_message": "あなたの回答が記録されました。この研究にご協力いただき、お時間と努力に感謝いたします。"
   },
   "images": {
-    "child_simple.jpg": "子供",
-    "Disability.jpg": "障害を持つ人",
-    "old_male_female_simpler.jpg": "高齢夫婦",
-    "Overweight_simpler.jpg": "太り気味の人",
-    "test_0_0_1_1_0.jpg": "テスト画像1",
-    "test_0_0_2_3_1.jpg": "テスト画像2",
-    "test_0_2_3_3_2.jpg": "テスト画像3",
-    "test_1_0_3_2_0.jpg": "テスト画像4",
-    "test_1_3_2_2_1.jpg": "テスト画像5",
+    "child_simple.png": "子供",
+    "Disability.png": "障害を持つ人",
+    "old_male_female_simpler.png": "高齢夫婦",
+    "Overweight_simpler.png": "太り気味の人",
+    "test_0_0_1_1_0.png": "テスト画像1",
+    "test_0_0_2_3_1.png": "テスト画像2",
+    "test_0_2_3_3_2.png": "テスト画像3",
+    "test_1_0_3_2_0.png": "テスト画像4",
+    "test_1_3_2_2_1.png": "テスト画像5",
     "Patient_at_Laptop_with_Head_Bandage.png": "頭に包帯を巻いたラップトップ前の患者",
     "Patient_on_a_Stretcher.png": "ストレッチャーに乗った患者",
     "Patient_with_Arm_Sling.png": "腕つりバンドをつけた患者",
-    "Patient_with_IV_and_Arm_Sling.jpg": "点滴と腕つりバンドをつけた患者",
+    "Patient_with_IV_and_Arm_Sling.png": "点滴と腕つりバンドをつけた患者",
     "Patient_with_IV_Drip.png": "点滴をしている患者",
     "pregnant_woman_care.webp": "妊婦ケア",
     "Pregnant_woman_lying_on_hospital_bed.png": "病院のベッドに横たわる妊婦",
-    "Walking_Patient_with_Crutches.jpg": "松葉杖で歩く患者"
+    "Walking_Patient_with_Crutches.png": "松葉杖で歩く患者"
   }
 }
