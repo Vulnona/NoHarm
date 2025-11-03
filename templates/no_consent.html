@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.no_consent.no_consent_title | default('Survey Declined') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
 </head>
-<body data-page="no_consent" data-static-prefix="{{ static_prefix }}">
+<body data-page="no_consent" data-assets-prefix="{{ assets_prefix }}">
 
 <!-- Language switcher in the corner -->
 
@@ -34,6 +34,6 @@
         <p id="no-consent-message">{{ translations.no_consent.no_consent_message | default('Since you did not consent to participate in the survey, your responses were not recorded. We appreciate your time.') }}</p>
     </div>
 
-    <script src="{{ static_url('js/language.js') }}"></script>
+    <script src="{{ asset_url('js/language.js') }}"></script>
 </body>
 </html>

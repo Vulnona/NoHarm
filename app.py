@@ -11,7 +11,7 @@ import sqlite3
 from functools import lru_cache
 from pathlib import Path
 
-from flask import Flask, render_template, request, redirect, session, Response, jsonify, url_for
+from flask import Flask, render_template, request, redirect, session, Response, jsonify, url_for, send_from_directory, abort
 
 from api_call import send_post_request
 from init_db import create_database, add_columns_if_not_exist
@@ -22,7 +22,7 @@ import logging
 
 # create flask function for structural testing
 def create_app():
-    app = Flask(__name__, static_folder='static', static_url_path='/assets')
+    app = Flask(__name__)
     app.secret_key = 'secret_key'  # Secret key for session management
 
     # Set the logging level
@@ -165,28 +165,46 @@ def inject_translations():
     }
 
 
-def static_url(filename: str) -> str:
-    """Return a cache-busted URL for a static asset."""
-    values = {'filename': filename}
+def asset_url(rel_path: str) -> str:
+    """Return a cache-busted URL for a proxied static asset."""
+    rel_path = (rel_path or '').replace('\\', '/').lstrip('/')
+    if '..' in Path(rel_path).parts:
+        rel_path = '/'.join(part for part in Path(rel_path).parts if part not in ('..', '.'))
+    static_root = Path(app.static_folder or '')
+    asset_path = static_root / rel_path
 
     try:
-        static_root = Path(app.static_folder or '')
-        asset_path = static_root / filename
+        version = int(asset_path.stat().st_mtime)
+    except OSError:
+        version = 0
 
-        if asset_path.exists():
-            values['v'] = int(asset_path.stat().st_mtime)
-    except Exception as exc:
-        app.logger.debug('static asset versioning failed for %s: %s', filename, exc)
+    return url_for('assets', rel_path=rel_path, v=version)
 
-    return url_for('static', **values)
+
+app.jinja_env.globals['asset_url'] = asset_url
 
 
 @app.context_processor
-def inject_static_url():
+def inject_asset_url():
     return {
-        'static_url': static_url,
-        'static_prefix': url_for('static', filename='')
+        'asset_url': asset_url,
+        'assets_prefix': url_for('assets', rel_path='')
     }
+
+
+@app.route('/assets/<path:rel_path>')
+def assets(rel_path):
+    rel_path = rel_path.replace('\\', '/').lstrip('/')
+    if '..' in Path(rel_path).parts:
+        abort(404)
+
+    static_root = Path(app.static_folder or '')
+    asset_path = (static_root / rel_path).resolve()
+
+    if not asset_path.is_file() or static_root.resolve() not in asset_path.parents and static_root.resolve() != asset_path.parent:
+        abort(404)
+
+    return send_from_directory(static_root, rel_path, conditional=True)
 
 
 @app.route('/translations/<language_code>')
@@ -427,9 +445,9 @@ def choice_experiment():
             return jsonify({
                 'show_reconsider': True,
                 'original': selected_image,
-                'original_url': static_url(selected_image),
+                'original_url': asset_url(selected_image),
                 'suggestion': other_image,
-                'suggestion_url': static_url(other_image),
+                'suggestion_url': asset_url(other_image),
                 'original_desc': original_desc,
                 'suggestion_desc': suggestion_desc
             })

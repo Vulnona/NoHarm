@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ translations.instructions.title | default('Instructions') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
 </head>
-<body data-page="instructions" data-static-prefix="{{ static_prefix }}">
+<body data-page="instructions" data-assets-prefix="{{ assets_prefix }}">
 <div class="instruction-container">
     <div class="language-switcher">
         <select id="language-switcher">
@@ -30,6 +30,6 @@
 </div>
 
 
-    <script src="{{ static_url('js/language.js') }}"></script>
+    <script src="{{ asset_url('js/language.js') }}"></script>
 </body>
 </html>

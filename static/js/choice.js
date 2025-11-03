@@ -1,7 +1,7 @@
-const STATIC_PREFIX = (() => {
+const ASSET_PREFIX = (() => {
     if (typeof document !== 'undefined' && document.body) {
         const dataset = document.body.dataset || {};
-        const prefix = dataset.staticPrefix;
+        const prefix = dataset.assetsPrefix;
         if (prefix) {
             return prefix.endsWith('/') ? prefix : `${prefix}/`;
         }
@@ -9,7 +9,7 @@ const STATIC_PREFIX = (() => {
     return '/assets/';
 })();
 
-function buildStaticUrl(path) {
+function buildAssetUrl(path) {
     if (!path) {
         return path;
     }
@@ -18,7 +18,7 @@ function buildStaticUrl(path) {
         return path;
     }
 
-    return `${STATIC_PREFIX}${path}`;
+    return `${ASSET_PREFIX}${path}`;
 }
 
 function submitChoice(selectedImage) {
@@ -719,8 +719,8 @@ function showReconsiderModal(data) {
         : `resized_images/${data.original.split('/').pop()}`;
         
     // Set image paths with consistent format
-    const originalUrl = data.original_url || buildStaticUrl(originalPath);
-    const suggestionUrl = data.suggestion_url || buildStaticUrl(data.suggestion);
+    const originalUrl = data.original_url || buildAssetUrl(originalPath);
+    const suggestionUrl = data.suggestion_url || buildAssetUrl(data.suggestion);
 
     originalChoice.src = originalUrl;
     suggestedChoice.src = suggestionUrl;

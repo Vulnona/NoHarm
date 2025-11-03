@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.admin_login.title | default('Admin Login') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
 </head>
-<body data-page="admin_login" data-static-prefix="{{ static_prefix }}">
+<body data-page="admin_login" data-assets-prefix="{{ assets_prefix }}">
 
 
     <div class="login-container">
@@ -33,7 +33,7 @@
             <input type="submit" value="{{ translations.admin_login.login_button | default('Login') }}" class="admin-login-btn">
         </form>
     </div>
-<script src="{{ static_url('js/language.js') }}"></script>
+<script src="{{ asset_url('js/language.js') }}"></script>
 
 </body>
 </html>

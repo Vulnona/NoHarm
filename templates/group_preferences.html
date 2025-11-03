@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.group_preferences.group_preferences_title | default('Group-Related Preferences') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
 </head>
 
-<body data-page="group_preferences" data-static-prefix="{{ static_prefix }}">
+<body data-page="group_preferences" data-assets-prefix="{{ assets_prefix }}">
 
 
 
@@ -95,8 +95,8 @@
     </div>
 
 
-    <script src="{{ static_url('js/language.js') }}"></script>
-    <script src="{{ static_url('js/health.js') }}"></script>
+    <script src="{{ asset_url('js/language.js') }}"></script>
+    <script src="{{ asset_url('js/health.js') }}"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

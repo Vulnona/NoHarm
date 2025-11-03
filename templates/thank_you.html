@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.thank_you.thank_you_title | default('Survey Submission') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
 </head>
-<body data-page="thank_you" data-static-prefix="{{ static_prefix }}">
+<body data-page="thank_you" data-assets-prefix="{{ assets_prefix }}">
 
     <div class="thank-you-page-container">
         <!-- White card box -->
@@ -17,6 +17,6 @@
         </div>
     </div>
 
-    <script src="{{ static_url('js/language.js') }}"></script>
+    <script src="{{ asset_url('js/language.js') }}"></script>
 </body>
 </html>

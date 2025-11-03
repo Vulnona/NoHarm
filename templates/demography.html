@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.demography.title | default('Demographic Questions') }}</title>
-    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
     <style>
         .error-message {
             color: red;
@@ -15,7 +15,7 @@
     </style>
 </head>
 
-<body data-page="demography" data-static-prefix="{{ static_prefix }}">
+<body data-page="demography" data-assets-prefix="{{ assets_prefix }}">
 
     <div class="demography-container">
         <!-- Language Switcher -->
@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <script src="{{ static_url('js/language.js') }}"></script>
+    <script src="{{ asset_url('js/language.js') }}"></script>
 
     <script>
 
