@@ -22,7 +22,7 @@ import logging
 
 # create flask function for structural testing
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static', static_url_path='/assets')
     app.secret_key = 'secret_key'  # Secret key for session management
 
     # Set the logging level
@@ -183,7 +183,23 @@ def static_url(filename: str) -> str:
 
 @app.context_processor
 def inject_static_url():
-    return {'static_url': static_url}
+    return {
+        'static_url': static_url,
+        'static_prefix': url_for('static', filename='')
+    }
+
+
+@app.route('/translations/<language_code>')
+def translations_api(language_code):
+    language = (language_code or '').strip().lower() or 'en'
+    if not re.fullmatch(r'[a-z]{2}', language):
+        app.logger.warning('invalid language code requested: %s', language_code)
+        language = 'en'
+
+    data = load_translations(language)
+    response = jsonify(data)
+    response.headers['Cache-Control'] = 'no-store, max-age=0'
+    return response
 
 
 # Home route to display the intro page
@@ -411,7 +427,9 @@ def choice_experiment():
             return jsonify({
                 'show_reconsider': True,
                 'original': selected_image,
+                'original_url': static_url(selected_image),
                 'suggestion': other_image,
+                'suggestion_url': static_url(other_image),
                 'original_desc': original_desc,
                 'suggestion_desc': suggestion_desc
             })

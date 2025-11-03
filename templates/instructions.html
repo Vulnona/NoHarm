@@ -5,7 +5,7 @@
     <title>{{ translations.instructions.title | default('Instructions') }}</title>
     <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
-<body data-page="instructions">
+<body data-page="instructions" data-static-prefix="{{ static_prefix }}">
 <div class="instruction-container">
     <div class="language-switcher">
         <select id="language-switcher">

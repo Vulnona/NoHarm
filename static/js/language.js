@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function loadLanguageData(language) {
+        return fetch(`/translations/${language}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load translations for ${language}`);
+                }
+                return response.json();
+            });
+    }
+
+    function handleTranslationError(error) {
+        console.error('Failed to load translations', error);
+    }
+
     // Function to dynamically change language
     function changeLanguage(language) {
         // Set RTL for Arabic and Urdu
@@ -45,8 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         persistLanguage(language);
 
-        fetch(`/static/lang/${language}.json`)
-            .then(response => response.json())
+        loadLanguageData(language)
             .then(data => {
                 window.__i18n = data;
                 console.log("Current page is:", currentPage);
@@ -413,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('no-consent-message').textContent = data.no_consent.no_consent_message;
                 }
             })
-            .catch(error => console.error('Error loading language file:', error));
+            .catch(handleTranslationError);
     }
 
     // Function to update image descriptions based on filename
@@ -525,9 +538,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // Add this outside the DOMContentLoaded event handler
 window.updateModalTranslations = function () {
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
-    fetch(`/static/lang/${currentLanguage}.json`)
-        .then(response => response.json())
-        .then(data => {
+        loadLanguageData(currentLanguage)
+            .then(data => {
             // Update modal images
             const images = document.querySelectorAll('#reconsider-modal img[data-filename]');
             images.forEach(img => {
@@ -544,5 +556,5 @@ window.updateModalTranslations = function () {
                 }
             });
         })
-        .catch(error => console.error('Error loading modal translations:', error));
+        .catch(handleTranslationError);
 };

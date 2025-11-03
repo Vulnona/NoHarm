@@ -1,3 +1,25 @@
+const STATIC_PREFIX = (() => {
+    if (typeof document !== 'undefined' && document.body) {
+        const dataset = document.body.dataset || {};
+        const prefix = dataset.staticPrefix;
+        if (prefix) {
+            return prefix.endsWith('/') ? prefix : `${prefix}/`;
+        }
+    }
+    return '/assets/';
+})();
+
+function buildStaticUrl(path) {
+    if (!path) {
+        return path;
+    }
+
+    if (/^(https?:)?\/\//.test(path) || path.startsWith('/')) {
+        return path;
+    }
+
+    return `${STATIC_PREFIX}${path}`;
+}
 
 function submitChoice(selectedImage) {
     console.log("Submitting choice:", selectedImage);
@@ -697,15 +719,18 @@ function showReconsiderModal(data) {
         : `resized_images/${data.original.split('/').pop()}`;
         
     // Set image paths with consistent format
-    originalChoice.src = `/static/${originalPath}`;
-    suggestedChoice.src = `/static/${data.suggestion}`;
+    const originalUrl = data.original_url || buildStaticUrl(originalPath);
+    const suggestionUrl = data.suggestion_url || buildStaticUrl(data.suggestion);
+
+    originalChoice.src = originalUrl;
+    suggestedChoice.src = suggestionUrl;
 
     if (dragOriginalChoice) {
-        dragOriginalChoice.src = `/static/${originalPath}`;
+        dragOriginalChoice.src = originalUrl;
     }
 
     if (dragSuggestedChoice) {
-        dragSuggestedChoice.src = `/static/${data.suggestion}`;
+        dragSuggestedChoice.src = suggestionUrl;
     }
 
     
