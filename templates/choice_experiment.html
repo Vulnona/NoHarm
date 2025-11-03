@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{{ translations.choice_experiment.title | default('Choice Experiment') }}</title>
-<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+<link href="{{ static_url('css/style.css') }}" rel="stylesheet"/>
 </head>
 <body data-page="choice_experiment">
 <div class="choice-container">
@@ -36,7 +36,7 @@
 <div aria-hidden="false" class="patient-card mobile-active" data-desktop-visible="true" data-patient-index="0">
 <div class="patient-label">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</div>
 <div class="image-container">
-<img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ url_for('static', filename=images[0]['filename']) }}"/>
+<img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ static_url(images[0]['filename']) }}"/>
 <div class="hover-description">{{ images[0]['description'] }}</div>
 </div>
 </div>
@@ -51,14 +51,14 @@
 <!-- Doctor Section -->
 <div class="doctor-section">
 <div aria-hidden="true" class="doctor-resting-area"></div>
-<img alt="Physician" class="doctor-image" id="draggableDoctor" src="{{ url_for('static', filename='images/doctor_image.png') }}" style="cursor: grab;"/>
+<img alt="Physician" class="doctor-image" id="draggableDoctor" src="{{ static_url('images/doctor_image.png') }}" style="cursor: grab;"/>
 <div class="doctor-instruction">{{ translations.choice_experiment.doctor_instruction | default('Move the physician to the patient to be treated!') }}</div>
 </div>
 <!-- Second Patient -->
 <div aria-hidden="true" class="patient-card" data-desktop-visible="true" data-patient-index="1">
 <div class="patient-label">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</div>
 <div class="image-container">
-<img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ url_for('static', filename=images[1]['filename']) }}"/>
+<img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ static_url(images[1]['filename']) }}"/>
 <div class="hover-description">{{ images[1]['description'] }}</div>
 </div>
 </div>
@@ -124,7 +124,7 @@
                             </button>
                             <div class="doctor-drag-column">
                                 <div class="doctor-drop-zone">
-                                    <img src="{{ url_for('static', filename='images/doctor_image.png') }}" alt="Physician"
+                                    <img src="{{ static_url('images/doctor_image.png') }}" alt="Physician"
                                         class="doctor-image" id="modal-draggable-doctor" draggable="false">
                                     <div class="doctor-drop-hint">{{ translations.choice_experiment.reconsider_drag_doctor_hint | default('Drag me to choose') }}</div>
                                 </div>
@@ -154,8 +154,8 @@
 <div class="progress-container progress-container--bottom">
 <div class="progress-bar" id="progress-bar"></div>
 </div>
-<script src="{{ url_for('static', filename='js/choice.js') }}"></script>
-<script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script src="{{ static_url('js/choice.js') }}"></script>
+<script src="{{ static_url('js/language.js') }}"></script>
 <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const progressBar = document.getElementById("progress-bar");

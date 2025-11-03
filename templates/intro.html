@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NoHarm Medical Decision-Making Survey</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
 <body data-page="intro">
 
@@ -116,7 +116,7 @@
     
 </div>
 
-<script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script src="{{ static_url('js/language.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const prefixes = ['answer_', 'demography_', 'procedural_rating_'];

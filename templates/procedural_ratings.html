@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.procedural_ratings.rating_title | default('Procedural Ratings') }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
 
 <body data-page="procedural_ratings">
@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+    <script src="{{ static_url('js/language.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('procedural-form');

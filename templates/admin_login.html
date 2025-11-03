@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ translations.admin_login.title | default('Admin Login') }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
 <body data-page="admin_login">
 
@@ -33,7 +33,7 @@
             <input type="submit" value="{{ translations.admin_login.login_button | default('Login') }}" class="admin-login-btn">
         </form>
     </div>
-<script src="{{ url_for('static', filename='js/language.js') }}"></script>
+<script src="{{ static_url('js/language.js') }}"></script>
 
 </body>
 </html>

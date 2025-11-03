@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ translations.instructions.title | default('Instructions') }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
 <body data-page="instructions">
 <div class="instruction-container">
@@ -30,6 +30,6 @@
 </div>
 
 
-    <script src="{{ url_for('static', filename='js/language.js') }}"></script>
+    <script src="{{ static_url('js/language.js') }}"></script>
 </body>
 </html>

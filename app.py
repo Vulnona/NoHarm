@@ -11,7 +11,7 @@ import sqlite3
 from functools import lru_cache
 from pathlib import Path
 
-from flask import Flask, render_template, request, redirect, session, Response, jsonify
+from flask import Flask, render_template, request, redirect, session, Response, jsonify, url_for
 
 from api_call import send_post_request
 from init_db import create_database, add_columns_if_not_exist
@@ -163,6 +163,27 @@ def inject_translations():
         'translations': translations,
         'current_language': language
     }
+
+
+def static_url(filename: str) -> str:
+    """Return a cache-busted URL for a static asset."""
+    values = {'filename': filename}
+
+    try:
+        static_root = Path(app.static_folder or '')
+        asset_path = static_root / filename
+
+        if asset_path.exists():
+            values['v'] = int(asset_path.stat().st_mtime)
+    except Exception as exc:
+        app.logger.debug('static asset versioning failed for %s: %s', filename, exc)
+
+    return url_for('static', **values)
+
+
+@app.context_processor
+def inject_static_url():
+    return {'static_url': static_url}
 
 
 # Home route to display the intro page
