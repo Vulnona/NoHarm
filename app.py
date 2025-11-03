@@ -204,7 +204,9 @@ def assets(rel_path):
     if not asset_path.is_file() or static_root.resolve() not in asset_path.parents and static_root.resolve() != asset_path.parent:
         abort(404)
 
-    return send_from_directory(static_root, rel_path, conditional=True)
+    response = send_from_directory(static_root, rel_path, conditional=True)
+    response.headers['X-Served-By'] = 'flask-assets'
+    return response
 
 
 @app.route('/translations/<language_code>')
