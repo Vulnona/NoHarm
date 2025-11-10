@@ -4,7 +4,7 @@ NoHarm is a web-based survey application designed to collect and analyze user re
 
 ## 🔗 Live Version
 The NoHarm survey is accessible online at:  
-➡️ **[NoHarm Survey Live](https://noharm.dhc-lab.hpi.de/)**
+➡️ **[NoHarm Survey Live](https://noharm.sc.hpi.de/)**
 
 ---
 
