@@ -9,13 +9,14 @@
 </head>
 <body data-page="intro" data-assets-prefix="{{ assets_prefix }}">
 
-<!-- Language switcher in the corner -->
+<!-- Language switcher & data-protection trigger -->
 
 
 <div class="intro-container">
 
-    <div class="language-switcher">
-        <select id="language-switcher">
+    <div class="intro-toolbar">
+        <div class="language-switcher">
+        <select id="language-switcher" aria-label="Select language">
             <option value="ar">العربية</option>
             <option value="bn">বাংলা</option>
             <option value="zh">中文</option>
@@ -28,6 +29,24 @@
             <option value="es">Español</option>
             <option value="ur">اردو</option>
         </select>
+        </div>
+        <button
+            type="button"
+            class="data-protection-trigger"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="data-protection-panel"
+            title="Data protection information"
+        >
+            <span class="sr-only">Show data protection information</span>
+            <span class="data-protection-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                    <circle cx="12" cy="12" r="11" fill="rgba(16, 185, 129, 0.15)"></circle>
+                    <path d="M12 4.2l6 2.35v6.35c0 4.37-2.93 8.39-6 9.4-3.07-1.01-6-5.03-6-9.4V6.55L12 4.2z" fill="#10b981" stroke="#0f9d72" stroke-width="1.2" stroke-linejoin="round"></path>
+                    <path d="M10.2 12.8l1.4 1.45 3.2-3.3" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </span>
+        </button>
     </div>
     <h2 id="intro-title">{{ translations.intro.intro_title | default('How would you decide when confronted with critical life-and-death decisions?') }}</h2>
     <div class="intro-content">
@@ -116,6 +135,107 @@
     
 </div>
 
+<div class="data-protection-modal" id="data-protection-modal" hidden>
+    <div class="data-protection-backdrop" data-dismiss="data-protection"></div>
+    <section class="data-protection-panel" id="data-protection-panel" role="dialog" aria-modal="true" aria-labelledby="data-protection-title" tabindex="-1">
+        <header class="data-protection-header">
+            <div>
+                <p class="data-protection-eyebrow">Study NoHarm</p>
+                <h2 id="data-protection-title">Information on data protection</h2>
+            </div>
+            <button type="button" class="data-protection-close" id="data-protection-close" aria-label="Close data protection information">
+                <span class="data-protection-close-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false" role="presentation">
+                        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                    </svg>
+                </span>
+            </button>
+        </header>
+        <div class="data-protection-content">
+            <p>We process your personal data in compliance with the applicable data protection regulations, in particular the EU General Data Protection Regulation (GDPR), the German Federal Data Protection Act (BDSG), the Brandenburg Data Protection Act (BbgDSG) and the Saxonian Data Protection Act (SächsDSG).</p>
+
+            <section class="data-protection-section">
+                <h3>Data controllers</h3>
+                <div class="data-protection-orgs">
+                    <div>
+                        <h4>University of Potsdam</h4>
+                        <p>Represented by the president, Prof. Oliver Günther, Ph.D.<br>
+                        Am Neuen Palais 10<br>
+                        14469 Potsdam, Germany<br>
+                        Phone: +49&nbsp;331&nbsp;977-0<br>
+                        <a href="https://www.uni-potsdam.de" target="_blank" rel="noopener noreferrer">www.uni-potsdam.de</a></p>
+                    </div>
+                    <div>
+                        <h4>Hasso Plattner Institute for Digital Engineering gGmbH</h4>
+                        <p>Represented by the managing directors, Prof. Dr. Tobias Friedrich, Prof. Dr. Ralf Herbrich, and Dr. Marcus Kölling<br>
+                        Prof.-Dr.-Helmert-Str. 2-3<br>
+                        14482 Potsdam, Germany<br>
+                        Phone: +49&nbsp;(0)331&nbsp;5509&nbsp;&ndash;&nbsp;236<br>
+                        Telefax: +49&nbsp;(0)331&nbsp;5509-129<br>
+                        <a href="https://www.hpi.de" target="_blank" rel="noopener noreferrer">www.hpi.de</a></p>
+                    </div>
+                </div>
+                <p>The University of Potsdam and the Hasso Plattner Institute are jointly responsible for data processing. In accordance with Art. 26 GDPR they have concluded an agreement determining their respective responsibilities for compliance with GDPR obligations.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Purpose of the processing</h3>
+                <p>Data are processed to conduct the study &ldquo;Ethical Preferences in the use of Machine Learning (ML) for Medical Triage Decisions&rdquo;. Canvas fingerprints are recorded and stored for the duration of the data collection to prevent participants from answering more than once. IP addresses are recorded and stored for the duration of the survey to determine the current country of residence.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Lawfulness of processing</h3>
+                <p>The legal basis for data processing is your consent to the processing of special categories of personal data (health data and data revealing religious or philosophical beliefs) according to Art. 6 para. 1 sentence 1 lit. a GDPR in conjunction with Art. 9 para. 2 lit. a GDPR.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Withdrawal of consent</h3>
+                <p>You have the right to withdraw your consent at any time and without reason. The withdrawal does not affect the lawfulness of processing based on consent before its withdrawal.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Type of data</h3>
+                <p>All data containing information about your responses to the survey will be stored, including your chosen patients to treat, fairness ratings, and information about gender, age, religion, health, and family planning. Additional health information, canvas fingerprints (screen resolution, timezone, operating system and device type, browser version, installed plugins and fonts, cookies, user agent string, hardware properties, mouse and keyboard input), and IP addresses are temporarily stored until data collection is complete.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Recipients of your data</h3>
+                <p>Digital Global Public Health<br>
+                    Hasso Plattner Institute, University of Potsdam<br>
+                    Rudolf-Breitscheid-Strasse 187 Campus III, Bldg&nbsp;G2<br>
+                    14482 Potsdam, Germany<br>
+                    Phone: +49&nbsp;331&nbsp;5509176</p>
+                <p>The data are stored on a server at the Hasso Plattner Institute.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Duration of data processing</h3>
+                <p>Canvas fingerprints and IP addresses are deleted after the last survey has been completed. Upon deletion, the link between device identifiers and participants will no longer be available. Your data will not be shared with third parties or other recipients within the Hasso Plattner Institute or the University of Potsdam.</p>
+            </section>
+
+            <section class="data-protection-section">
+                <h3>Your rights</h3>
+                <p>You have the right to obtain confirmation whether your personal data is being processed and to access the data and related information (Art. 15 GDPR). You may obtain rectification of inaccurate personal data without undue delay (Art. 16 GDPR). Where the legal requirements of Art. 17 or 18 GDPR are met, you may request erasure or restriction of processing. Please note that restricted processing may not be possible in every instance.</p>
+                <p>You have the right to receive your personal data in a structured, standard, machine-readable format or to request the transfer to another controller (Art. 20 GDPR). Furthermore, you may object to the processing of your personal data under the conditions of Art. 21 GDPR.</p>
+                <p>To exercise your rights, please contact:<br>
+                    Dr. med. Anatol-Fiete Näher, MA, MD<br>
+                    Digital Global Public Health, Hasso Plattner Institute, University of Potsdam<br>
+                    Rudolf-Breitscheid-Strasse 187 Campus III, Bldg&nbsp;G2<br>
+                    14482 Potsdam, Germany<br>
+                    Phone: +49&nbsp;331&nbsp;5509176<br>
+                    Email: <a href="mailto:anatolfiete.naeher@hpi.de">anatolfiete.naeher@hpi.de</a>
+                </p>
+                <p>Access to your personal data can be requested from the Chief Information Officer (University of Potsdam, Karl-Liebknecht-Str. 24-25, 14476 Potsdam). The request form is available at <a href="https://www.uni-potsdam.de/de/praesidialbereich/praesident-vizepraesidenten/cio.html" target="_blank" rel="noopener noreferrer">https://www.uni-potsdam.de/de/praesidialbereich/praesident-vizepraesidenten/cio.html</a>.</p>
+                <p>You can contact the data protection officers if you have questions regarding data protection:<br>
+                    Dr. Marek Kneis, Am Neuen Palais 10, 14469 Potsdam, Phone: +49&nbsp;331&nbsp;977124409, Email: <a href="mailto:datenschutz@uni-potsdam.de">datenschutz@uni-potsdam.de</a><br>
+                    Bernhard Rabe, Am Neuen Palais 10, 14469 Potsdam, Phone: +49&nbsp;331&nbsp;5509236, Email: <a href="mailto:datenschutz@hpi.de">datenschutz@hpi.de</a>
+                </p>
+                <p>If you believe that the processing of your personal data infringes the GDPR, you have the right to lodge a complaint with the supervisory authority for data protection.</p>
+            </section>
+        </div>
+    </section>
+</div>
+
 <script src="{{ asset_url('js/language.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -125,6 +245,58 @@
                 localStorage.removeItem(key);
             }
         });
+
+        const trigger = document.querySelector('.data-protection-trigger');
+        const modal = document.getElementById('data-protection-modal');
+        const panel = document.getElementById('data-protection-panel');
+        const closeBtn = document.getElementById('data-protection-close');
+        let lastFocusedElement = null;
+
+        if (trigger && modal && panel) {
+            const openModal = () => {
+                lastFocusedElement = document.activeElement;
+                modal.hidden = false;
+                trigger.setAttribute('aria-expanded', 'true');
+                document.body.classList.add('modal-open');
+                requestAnimationFrame(() => panel.focus());
+            };
+
+            const closeModal = () => {
+                modal.hidden = true;
+                trigger.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('modal-open');
+                if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                    lastFocusedElement.focus();
+                } else {
+                    trigger.focus();
+                }
+            };
+
+            trigger.addEventListener('click', () => {
+                if (modal.hidden) {
+                    openModal();
+                } else {
+                    closeModal();
+                }
+            });
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeModal);
+            }
+
+            modal.addEventListener('click', (event) => {
+                const dismissTarget = event.target instanceof HTMLElement && event.target.closest('[data-dismiss="data-protection"]');
+                if (dismissTarget) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !modal.hidden) {
+                    closeModal();
+                }
+            });
+        }
     });
 </script>
 </body>
