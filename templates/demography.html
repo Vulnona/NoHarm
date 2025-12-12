@@ -65,6 +65,9 @@
                 <div class="form-group">
                     <input type="number" name="answer" id="age-input" placeholder="Enter your age" min="16" max="120" step="1" inputmode="numeric" pattern="\\d*" autocomplete="off">
                     <div id="age-error-msg" class="error-message" style="color:red; display:none;"></div>
+                    <button type="button" id="age-next-btn" class="btn" style="margin-top:12px;" disabled>
+                        {{ translations.demography.next | default('Next') }}
+                    </button>
                 </div>
                 {% else %}
                 <input type="number" name="answer" class="number-input" id="{{ question.id }}"
@@ -73,10 +76,6 @@
                 {% endif %}
             </div>
 
-            <div class="form-navigation">
-                <button type="button" class="prev-btn">{{ translations.demography.previous_button | default('Previous') }}</button>
-                <button type="submit" class="next-btn" disabled>{{ translations.demography.next_button | default('Next') }}</button>
-            </div>
         </form>
 
         <div class="progress-container progress-container--bottom">
@@ -87,27 +86,17 @@
     <script src="{{ asset_url('js/language.js') }}"></script>
 
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("demography-form");
             const ageInput = document.getElementById("age-input");
+            const ageNextBtn = document.getElementById("age-next-btn");
             const questionIdField = form ? form.querySelector("input[name='question_id']") : null;
             const questionId = questionIdField ? questionIdField.value : null;
 
-            if (!ageInput) {
-                return;
-            }
-
-            if (questionId) {
-                const savedAge = localStorage.getItem('demography_' + questionId);
-                if (savedAge !== null) {
-                    ageInput.value = savedAge;
-                } else if (ageInput.value) {
-                    localStorage.setItem('demography_' + questionId, ageInput.value);
-                }
-            }
+            if (!form) return;
 
             function showError(message) {
+                if (!ageInput) return;
                 let errorMsg = document.getElementById("age-error-msg");
                 if (!errorMsg) {
                     errorMsg = document.createElement("div");
@@ -117,11 +106,9 @@
                     errorMsg.style.marginTop = "5px";
                     ageInput.parentNode.insertBefore(errorMsg, ageInput.nextSibling);
                 }
-
                 if (window.__i18n?.ageInvalid) {
                     errorMsg.dataset.errorText = window.__i18n.ageInvalid;
                 }
-
                 errorMsg.textContent = message;
                 errorMsg.style.display = "block";
             }
@@ -134,67 +121,84 @@
                 }
             }
 
-            // 🔴 Validate on form submit
-            form.addEventListener("submit", function (event) {
-                const age = parseInt(ageInput.value, 10);
-
-                if (isNaN(age) || age < 16 || age > 120) {
-                    event.preventDefault(); // stop sending to Flask
-                    const ageErrorElement = document.getElementById("age-error-msg");
-                    const langErrorMsg = ageErrorElement?.dataset.errorText
-                        || window.__i18n?.ageInvalid
-                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
-
-                    showError(langErrorMsg);
-                    ageInput.focus();
-                    return;
-                }
-
-                clearError();
-                if (questionId) {
+            if (ageInput && questionId) {
+                const savedAge = localStorage.getItem('demography_' + questionId);
+                if (savedAge !== null) {
+                    ageInput.value = savedAge;
+                } else if (ageInput.value) {
                     localStorage.setItem('demography_' + questionId, ageInput.value);
                 }
-            });
+            }
 
-            ageInput.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter') {
+            if (ageInput) {
+                form.addEventListener("submit", function (event) {
+                    const age = parseInt(ageInput.value, 10);
+                    if (isNaN(age) || age < 16 || age > 120) {
+                        event.preventDefault();
+                        const langErrorMsg = window.__i18n?.ageInvalid || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+                        showError(langErrorMsg);
+                        ageInput.focus();
+                        return;
+                    }
+                    clearError();
+                    if (questionId) {
+                        localStorage.setItem('demography_' + questionId, ageInput.value);
+                    }
+                });
+
+                function toggleAgeNext() {
+                    const age = parseInt(ageInput.value, 10);
+                    const valid = !isNaN(age) && age >= 16 && age <= 120;
+                    if (ageNextBtn) {
+                        ageNextBtn.disabled = !valid;
+                    }
+                    return valid;
+                }
+
+                // initialize state based on any prefilled value
+                toggleAgeNext();
+
+                if (ageNextBtn) {
+                    ageNextBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (toggleAgeNext()) {
+                            form.submit();
+                        }
+                    });
+                }
+
+                ageInput.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                    }
+                });
+
+                ageInput.addEventListener('wheel', function (event) {
                     event.preventDefault();
-                }
-            });
+                }, { passive: false });
 
-            ageInput.addEventListener('wheel', function (event) {
-                event.preventDefault();
-            }, { passive: false });
-
-            // 🟢 Live validation while typing
-            ageInput.addEventListener("input", function () {
-                const age = parseInt(ageInput.value, 10);
-
-                if (ageInput.value === "") {
-                    clearError(); // nothing typed → clear error
-                } else if (!isNaN(age) && age >= 16 && age <= 120) {
-                    clearError(); // valid → clear error
-                } else {
-                    const ageErrorElement = document.getElementById("age-error-msg");
-                    const langErrorMsg = ageErrorElement?.dataset.errorText
-                        || window.__i18n?.ageInvalid
-                        || "⚠️ Invalid age. Please enter a value between 16 and 120.";
-
-                    showError(langErrorMsg);
-                }
-
-                if (questionId) {
-                    localStorage.setItem('demography_' + questionId, ageInput.value);
-                }
-            });
+                ageInput.addEventListener("input", function () {
+                    const age = parseInt(ageInput.value, 10);
+                    if (ageInput.value === "") {
+                        clearError();
+                    } else if (!isNaN(age) && age >= 16 && age <= 120) {
+                        clearError();
+                    } else {
+                        const langErrorMsg = window.__i18n?.ageInvalid || "⚠️ Invalid age. Please enter a value between 16 and 120.";
+                        showError(langErrorMsg);
+                    }
+                    toggleAgeNext();
+                    if (questionId) {
+                        localStorage.setItem('demography_' + questionId, ageInput.value);
+                    }
+                });
+            }
         });
     </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("demography-form");
-            const nextBtn = document.querySelector(".next-btn");
-            const prevBtn = document.querySelector(".prev-btn");
             // Disable Previous on the very first question
             const currentIndex = parseInt(form.querySelector("input[name='current_index']").value, 10);
             const questionId = form.querySelector("input[name='question_id']").value;
@@ -216,7 +220,13 @@
             const savedAnswer = prefillParam !== null
                 ? prefillParam
                 : localStorage.getItem('demography_' + questionId);
-            prevBtn.disabled = false;
+            // if no more questions, go to next page
+            function goToNext() {
+                const nextIndex = currentIndex + 1;
+                const demographyUrl = new URL('/demography', window.location.origin);
+                demographyUrl.searchParams.set('index', nextIndex);
+                window.location.href = demographyUrl.toString();
+            }
 
             if (savedAnswer !== null) {
                 if (radios.length > 0) {
@@ -243,38 +253,31 @@
                 }
             }
 
-            // Enable/disable Next based on input
-            function toggleNextButton() {
-                const radioValid = radios.length > 0 ? Array.from(radios).some(r => r.checked) : false;
-                const textValid = textInput ? textInput.value.trim().length > 0 : false;
-                let numberValid = false;
-                if (ageField) {
-                    const age = parseInt(ageField.value, 10);
-                    numberValid = !isNaN(age) && age >= 16 && age <= 120;
-                } else if (otherNumberInput) {
-                    numberValid = otherNumberInput.value.trim().length > 0;
-                }
-
-                const valid = radioValid || textValid || numberValid;
-
-                if (nextBtn) {
-                    nextBtn.disabled = !valid;
-                }
+            function goToNext() {
+                const nextIndex = currentIndex + 1;
+                const demographyUrl = new URL('/demography', window.location.origin);
+                demographyUrl.searchParams.set('index', nextIndex);
+                window.location.href = demographyUrl.toString();
             }
 
-            // Listen for input changes
-            form.addEventListener("input", toggleNextButton);
-
-            radios.forEach(r => {
-                r.addEventListener("change", () => {
-                    localStorage.setItem('demography_' + questionId, r.value);
-                    toggleNextButton();
+            // Auto-advance on selection/entry
+            if (radios.length > 0) {
+                radios.forEach(r => {
+                    r.addEventListener("change", () => {
+                        localStorage.setItem('demography_' + questionId, r.value);
+                        goToNext();
+                    });
                 });
-            });
+            }
 
             if (textInput) {
                 textInput.addEventListener("input", () => {
                     localStorage.setItem('demography_' + questionId, textInput.value);
+                });
+                textInput.addEventListener("change", () => {
+                    if (textInput.value.trim().length > 0) {
+                        goToNext();
+                    }
                 });
             }
 
@@ -282,35 +285,13 @@
                 otherNumberInput.addEventListener("input", () => {
                     localStorage.setItem('demography_' + questionId, otherNumberInput.value);
                 });
+                otherNumberInput.addEventListener("change", () => {
+                    if (otherNumberInput.value.trim().length > 0) {
+                        goToNext();
+                    }
+                });
             }
 
-            // 🔙 Previous button just goes back in browser history
-            prevBtn.addEventListener("click", function (event) {
-                event.preventDefault();
-                const proceduralVisited = localStorage.getItem('procedural_completed');
-
-                if (currentIndex === 0 && proceduralVisited) {
-                    window.location.href = '/procedural-ratings';
-                    return;
-                }
-
-                const prevIndex = Math.max(0, currentIndex - 1);
-                const demographyUrl = new URL('/demography', window.location.origin);
-                demographyUrl.searchParams.set('index', prevIndex);
-
-                const prevQuestionId = localStorage.getItem('demography_index_' + prevIndex);
-                if (prevQuestionId) {
-                    const storedPrevAnswer = localStorage.getItem('demography_' + prevQuestionId);
-                    if (storedPrevAnswer !== null) {
-                        demographyUrl.searchParams.set('prefill', storedPrevAnswer);
-                    }
-                }
-
-                window.location.href = demographyUrl.toString();
-            });
-
-            // 🟢 Run once at start
-            toggleNextButton();
         });
     </script>
 

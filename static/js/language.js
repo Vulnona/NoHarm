@@ -84,7 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('consent-message').textContent = data.intro.consent_message;
                     document.getElementById('yes-label-span').textContent = data.intro.yes_label;
                     document.getElementById('no-label-span').textContent = data.intro.no_label;
-                    document.getElementById('start-btn').textContent = data.intro.start_button;
+                    const startBtn = document.getElementById('start-btn');
+                    if (startBtn) {
+                        startBtn.textContent = data.intro.start_button;
+                    }
                     document.getElementById('callout-1').textContent = data.intro["callout-1"];
                     document.getElementById('callout-2').textContent = data.intro["callout-2"];
                     document.getElementById('callout-3').textContent = data.intro["callout-3"];
@@ -503,11 +506,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function initConsentLogic(texts) {
         const radios = document.querySelectorAll('input[name="consent"]');
         const btn = document.getElementById('start-btn');
+        const form = document.querySelector('.consent-form');
         const live = document.getElementById('consent-live');
         console.log("Found radios:", radios.length);
 
 
         function updateConsentButton() {
+            // Button might not exist anymore (auto-submit mode)
+            if (!btn) return;
             const chosen = document.querySelector('input[name="consent"]:checked');
             if (!chosen) {
                 btn.disabled = true;
@@ -525,7 +531,23 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        radios.forEach(r => r.addEventListener('change', updateConsentButton));
+        function autoSubmit(evt) {
+            const input = evt.target;
+            if (!input || !form) return;
+            // small timeout to allow label click animation (if any)
+            setTimeout(() => {
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit();
+                } else {
+                    form.submit();
+                }
+            }, 25);
+        }
+
+        radios.forEach(r => {
+            r.addEventListener('change', updateConsentButton);
+            r.addEventListener('change', autoSubmit);
+        });
         updateConsentButton();
     }
 

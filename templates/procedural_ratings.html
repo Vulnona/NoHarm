@@ -88,12 +88,6 @@
             <div class="form-error" role="alert" data-default-message="{{ default_error }}"
                 {% if not error_message %}hidden{% endif %}>{{ error_message or '' }}</div>
 
-            <div class="matrix-progress" data-template="{{ translations.procedural_ratings.progress_template | default('Rated {completed} of {total} procedures') }}" aria-live="polite"></div>
-
-            <div class="form-navigation">
-                <button type="button" class="prev-btn" disabled>{{ translations.procedural_ratings.previous_button | default('Previous') }}</button>
-                <button type="button" class="next-btn" disabled>{{ translations.procedural_ratings.next_button | default('Next') }}</button>
-            </div>
         </form>
 
         <div class="progress-container progress-container--bottom">
@@ -105,8 +99,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('procedural-form');
-            const prevBtn = form.querySelector('.prev-btn');
-            const nextBtn = form.querySelector('.next-btn');
             const errorBanner = form.querySelector('.form-error');
             const progressIndicator = document.querySelector('.matrix-progress');
             const matrixScroll = document.querySelector('.matrix-scroll');
@@ -160,18 +152,7 @@
             window.updateProceduralProgress = updateProgress;
 
             function updateCarouselControls() {
-                if (!carouselNav || !matrixRows.length) {
-                    return;
-                }
-                if (carouselIndicator) {
-                    carouselIndicator.textContent = `${activeCardIndex + 1} / ${matrixRows.length}`;
-                }
-                if (carouselPrevBtn) {
-                    carouselPrevBtn.disabled = activeCardIndex === 0;
-                }
-                if (carouselNextBtn) {
-                    carouselNextBtn.disabled = activeCardIndex === matrixRows.length - 1;
-                }
+                return;
             }
 
             function setActiveCard(index) {
@@ -199,6 +180,13 @@
                     radio.addEventListener('change', () => {
                         if (activeCardIndex === idx && idx < matrixRows.length - 1) {
                             window.setTimeout(() => setActiveCard(idx + 1), 220);
+                        } else if (activeCardIndex === idx && idx === matrixRows.length - 1) {
+                            // last question answered, auto submit if all answered
+                            window.setTimeout(() => {
+                                if (allAnswered()) {
+                                    form.requestSubmit();
+                                }
+                            }, 150);
                         }
                     });
                     radio.dataset.carouselBound = '1';
@@ -220,40 +208,12 @@
                     attachAutoAdvance(row, idx);
                 });
 
-                carouselNav = document.createElement('div');
-                carouselNav.className = 'procedural-carousel-nav';
-
-                carouselPrevBtn = document.createElement('button');
-                carouselPrevBtn.type = 'button';
-                carouselPrevBtn.className = 'carousel-nav-btn carousel-nav-btn--prev';
-                carouselPrevBtn.textContent = '‹';
-                carouselPrevBtn.setAttribute('aria-label', 'Previous procedure');
-
-                carouselIndicator = document.createElement('div');
-                carouselIndicator.className = 'carousel-indicator';
-
-                carouselNextBtn = document.createElement('button');
-                carouselNextBtn.type = 'button';
-                carouselNextBtn.className = 'carousel-nav-btn carousel-nav-btn--next';
-                carouselNextBtn.textContent = '›';
-                carouselNextBtn.setAttribute('aria-label', 'Next procedure');
-
-                carouselNav.append(carouselPrevBtn, carouselIndicator, carouselNextBtn);
-
-                if (matrixScroll) {
-                    matrixScroll.appendChild(carouselNav);
-                }
-
-                carouselPrevBtn.addEventListener('click', () => setActiveCard(activeCardIndex - 1));
-                carouselNextBtn.addEventListener('click', () => setActiveCard(activeCardIndex + 1));
-
                 const firstUnansweredIndex = questionIds.findIndex(id => !form.querySelector(`input[name="${id}"]:checked`));
                 setActiveCard(firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0);
             }
 
             function updateState() {
                 const ready = allAnswered();
-                nextBtn.disabled = !ready;
                 if (ready && errorBanner) {
                     errorBanner.hidden = true;
                     errorBanner.textContent = '';
@@ -291,21 +251,6 @@
                     localStorage.setItem('procedural_completed', '1');
                 }
             });
-
-            nextBtn.addEventListener('click', () => {
-                if (allAnswered()) {
-                    form.requestSubmit();
-                } else if (errorBanner) {
-                    errorBanner.hidden = false;
-                    if (!errorBanner.textContent) {
-                        errorBanner.textContent = errorBanner.dataset.defaultMessage || 'Please select a rating for each procedure.';
-                    }
-                }
-            });
-
-            if (prevBtn) {
-                prevBtn.disabled = true;
-            }
         });
     </script>
     <script>

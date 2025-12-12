@@ -21,35 +21,36 @@ function buildAssetUrl(path) {
     return `${ASSET_PREFIX}${path}`;
 }
 
+
+
 function submitChoice(selectedImage) {
     console.log("Submitting choice:", selectedImage);
-    
+
     const selectedInput = document.getElementById('selected-image');
     const choiceForm = document.getElementById('choice-form');
-    
+
     if (!selectedInput || !choiceForm) {
         console.error("Form elements not found");
         return;
     }
-    
+
     // Set the selected image value
     selectedInput.value = selectedImage;
-    
+
     // Visual feedback - fade other patient
     const patientCards = document.querySelectorAll('.patient-card');
     patientCards.forEach(card => {
         const cardImage = card.querySelector('img');
-        if (cardImage.src.includes(selectedImage)) {
+        if (cardImage && cardImage.src.includes(selectedImage)) {
             card.classList.add('selected');
             cardImage.style.opacity = '1';
-        } else {
+        } else if (cardImage) {
             cardImage.style.opacity = '0.5';
         }
     });
-    
-    // Create form data and submit
+
     const formData = new FormData(choiceForm);
-    
+
     fetch(choiceForm.action, {
         method: 'POST',
         body: formData,
@@ -57,28 +58,46 @@ function submitChoice(selectedImage) {
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => {
+    .then(async (response) => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Response received:", data);
-        
-        if (data.show_reconsider) {
-            showReconsiderModal(data);
-        } else {
-            console.log("Reloading page...");
-            window.location.reload();
+
+        const contentType = response.headers.get('Content-Type') || '';
+
+        // 👉 CASE 1: backend returns JSON (what we expect for normal flow)
+        if (contentType.includes('application/json')) {
+            const data = await response.json();
+            console.log("JSON response:", data);
+
+            if (data.show_reconsider) {
+                // Open the AI reconsider modal
+                showReconsiderModal(data);
+            } else {
+                // Go to the next choice or next page
+                window.location.reload();
+            }
+            return;
         }
+
+        // 👉 CASE 2: backend returned HTML (e.g. rendered AI page or redirect)
+        const html = await response.text();
+        console.log("Non-JSON response, rendering HTML page");
+        document.open();
+        document.write(html);
+        document.close();
     })
     .catch(error => {
-        console.error('Error:', error);
-        // Fallback - direct form submission if fetch fails
-        choiceForm.submit();
+        console.error('Error in submitChoice:', error);
+        // Last-resort fallback: normal form submit
+        // choiceForm.submit();
     });
 }
+
+
+
+
+
 
 function initDraggableDoctor() {
     const doctor = document.getElementById('draggableDoctor');
@@ -751,11 +770,19 @@ function showReconsiderModal(data) {
 
     originalDesc.textContent = data.original_desc;
     suggestedDesc.textContent = data.suggestion_desc;
+    originalChoice.dataset.description = data.original_desc || '';
+    suggestedChoice.dataset.description = data.suggestion_desc || '';
     if (dragOriginalDesc) {
         dragOriginalDesc.textContent = data.original_desc;
     }
     if (dragSuggestedDesc) {
         dragSuggestedDesc.textContent = data.suggestion_desc;
+    }
+    if (dragOriginalChoice) {
+        dragOriginalChoice.dataset.description = data.original_desc || '';
+    }
+    if (dragSuggestedChoice) {
+        dragSuggestedChoice.dataset.description = data.suggestion_desc || '';
     }
     modal.dataset.originalChoice = data.original;
     modal.dataset.suggestedChoice = data.suggestion;
@@ -771,6 +798,9 @@ function showReconsiderModal(data) {
         card.classList.remove('decision-card--selected');
         card.onclick = () => finalizeReconsider(card.dataset.decision);
     });
+
+    // Ensure patient tabs are wired up before showing the modal
+    initModalPatientSwitchers(modal);
 
     if (!modal._setReconsiderView) {
         modal._setReconsiderView = createReconsiderViewManager(modal);
@@ -789,6 +819,7 @@ function showReconsiderModal(data) {
         window.updateModalTranslations();
     }
 
+    attachPatientTooltips(modal);
     initModalDoctorDrag(modal);
 }
 
@@ -898,6 +929,8 @@ function createReconsiderViewManager(modal) {
         });
 
         if (targetView === 'interactive') {
+            // Ensure the drag controller is initialized when switching views
+            initModalDoctorDrag(modal);
             const doctor = modal.querySelector('#modal-draggable-doctor');
             if (doctor && doctor._modalDragController) {
                 doctor._modalDragController.reset();
@@ -916,13 +949,80 @@ function createReconsiderViewManager(modal) {
     return setView;
 }
 
+function buildInfoDot(container, description) {
+    if (!container || !description) {
+        return;
+    }
+
+    const label = window.__i18n?.choice_experiment?.image_info_label || 'Show patient description';
+    const existingWrapper = container.querySelector('.info-dot-wrapper');
+    if (existingWrapper) {
+        const tooltip = existingWrapper.querySelector('.hover-description');
+        const button = existingWrapper.querySelector('.info-dot');
+        if (tooltip) {
+            tooltip.textContent = description;
+        }
+        if (button) {
+            button.setAttribute('aria-label', label);
+        }
+        return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'info-dot-wrapper';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'info-dot';
+    button.setAttribute('aria-label', label);
+    button.textContent = '?';
+
+    const tooltip = document.createElement('span');
+    tooltip.className = 'hover-description';
+    tooltip.textContent = description;
+
+    wrapper.appendChild(button);
+    wrapper.appendChild(tooltip);
+    container.appendChild(wrapper);
+
+    const show = () => wrapper.classList.add('is-open');
+    const hide = () => wrapper.classList.remove('is-open');
+
+    button.addEventListener('mouseenter', show);
+    button.addEventListener('mouseleave', hide);
+    button.addEventListener('focus', show);
+    button.addEventListener('blur', hide);
+    wrapper.addEventListener('mouseleave', hide);
+}
+
+function attachPatientTooltips(root = document) {
+    const containers = root.querySelectorAll('.image-container, .decision-visual');
+    containers.forEach(container => {
+        const img = container.querySelector('img.patient-image');
+        if (!img) {
+            return;
+        }
+        if (container.closest('#reconsider-modal')) {
+            return;
+        }
+        const description = img.dataset.description || img.alt || '';
+        if (!description) {
+            return;
+        }
+        buildInfoDot(container, description);
+    });
+}
+
 
 function initModalDoctorDrag(modal) {
+    // Always initialize the tab switchers even if dragging cannot be set up
+    initModalPatientSwitchers(modal);
+
     const doctor = modal.querySelector('#modal-draggable-doctor');
     const dropZone = modal.querySelector('.doctor-drop-zone');
     const dropTargets = modal.querySelectorAll('.reconsider-panel[data-view="interactive"] .drag-target');
 
-    if (!doctor || !dropZone || dropTargets.length === 0) {
+    if (!doctor || !dropZone) {
         return;
     }
 
@@ -933,8 +1033,6 @@ function initModalDoctorDrag(modal) {
     }
 
     doctor._modalDragController.reset();
-
-    initModalPatientSwitchers(modal);
 }
 
 
@@ -1256,6 +1354,9 @@ function initModalPatientSwitchers(modal) {
         updateDoctorTargets();
     };
 
+    // Allow other initializers to reuse the setter without duplicating listeners
+    modal._setActivePatient = setActivePatient;
+
     if (modal._patientSwitcherInitialized) {
         setActivePatient('recommendation');
         return;
@@ -1277,10 +1378,30 @@ function initModalPatientSwitchers(modal) {
 }
 
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Initializing doctor movement");
     initDraggableDoctor();
     initMobilePatientSwitcher();
+    attachPatientTooltips();
+
+    // 🔹 Prevent normal form submit (which causes the 302 document/Redirect)
+    const choiceForm = document.getElementById('choice-form');
+    if (choiceForm) {
+        choiceForm.addEventListener('submit', function (e) {
+            e.preventDefault();  // stop browser navigation
+
+            const selectedInput = document.getElementById('selected-image');
+            if (!selectedInput || !selectedInput.value) {
+                console.warn('Form submitted but no image selected');
+                return;
+            }
+
+            // Use AJAX flow instead of normal POST
+            submitChoice(selectedInput.value);
+        });
+    }
     
     // Animate in the elements
     const patients = document.querySelectorAll('.patient-card');

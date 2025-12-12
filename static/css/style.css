@@ -685,6 +685,123 @@ input[type="submit"]:hover,
     color: #555;
 }
 
+.image-container,
+.decision-visual {
+    position: relative;
+    display: inline-block;
+}
+
+.image-container > .hover-description,
+.decision-visual > .hover-description {
+    display: none;
+}
+
+#reconsider-modal .info-dot-wrapper {
+    display: none !important;
+}
+
+.info-dot-wrapper {
+    position: absolute;
+    z-index: 8;
+}
+
+.patient-card {
+    position: relative;
+}
+
+.patient-card .image-container {
+    position: static;
+    display: block;
+}
+
+.patient-card .info-dot-wrapper {
+    position: relative;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.35rem;
+}
+
+.patient-info-slot {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.patient-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+    padding: 0 12px 4px 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.info-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid #c9d4ff;
+    background: #f2f6ff;
+    color: #1f3b8c;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(31, 59, 140, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.info-dot:focus-visible {
+    outline: 2px solid #1f3b8c;
+    outline-offset: 2px;
+}
+
+.info-dot:hover,
+.info-dot:focus-visible,
+.info-dot-wrapper.is-open .info-dot {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(31, 59, 140, 0.2);
+}
+
+.info-dot + .hover-description {
+    display: none !important;
+    position: absolute;
+    top: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    color: #2d3748;
+    border: 1px solid #d7dff4;
+    border-radius: 10px;
+    padding: 0.65rem 0.75rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    width: min(260px, 75vw);
+    text-align: center;
+    line-height: 1.4;
+    font-size: 0.9rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.info-dot-wrapper .hover-description {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s ease;
+}
+
+.info-dot-wrapper.is-open .hover-description {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Enhanced Patient Card Animations */
 .patient-card {
     position: relative;
@@ -721,17 +838,15 @@ input[type="submit"]:hover,
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(0, 123, 255, 0.18) 0%, rgba(0, 123, 255, 0.05) 55%, rgba(0, 123, 255, 0) 75%);
-    border: 2px dashed rgba(0, 123, 255, 0.35);
-    transition: transform 0.35s ease, opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    background: transparent;
+    border: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
     pointer-events: none;
     z-index: 0;
 }
 
 .doctor-section.drag-active .doctor-resting-area {
     transform: translateX(-50%) scale(1.08);
-    border-color: rgba(0, 123, 255, 0.6);
-    box-shadow: 0 0 24px rgba(0, 123, 255, 0.25);
 }
 
 .instruction-text {
@@ -899,6 +1014,7 @@ input[type="submit"]:hover,
 .doctor-image {
     width: 90px;
     height: auto;
+    display: block;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
     cursor: grab;
@@ -911,6 +1027,7 @@ input[type="submit"]:hover,
     animation-delay: 0.45s;
     -webkit-user-drag: none;
     touch-action: none;
+    background: transparent !important;
 }
 
 body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
@@ -935,7 +1052,8 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     cursor: grabbing;
     opacity: 0.95;
     z-index: 1001;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    box-shadow: none !important;
+    filter: none !important;
 }
 
 .patient-card:hover .patient-image {
@@ -1210,7 +1328,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     border-radius: 22px;
     min-width: 180px;
     min-height: 220px;
-    background: radial-gradient(circle at center, rgba(13, 110, 253, 0.18) 0%, rgba(13, 110, 253, 0.08) 55%, rgba(13, 110, 253, 0.0) 100%);
+    background: transparent;
     transition: box-shadow 0.2s ease, background 0.2s ease;
     z-index: 4;
 }
@@ -1223,11 +1341,14 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     touch-action: none;
     transition: transform 0.18s ease, filter 0.18s ease;
     z-index: 6;
+    background: transparent !important;
+    -webkit-user-drag: none;
 }
 
 #modal-draggable-doctor.dragging {
     cursor: grabbing;
     filter: drop-shadow(0 12px 22px rgba(13, 110, 253, 0.35));
+    background: transparent !important;
 }
 
 .doctor-drop-hint {
@@ -2136,15 +2257,15 @@ body[data-page="procedural_ratings"] .form-navigation {
     width: 100%;
     height: 14px;
     border-radius: 8px;
-    background: linear-gradient(90deg, #d3d3d3, #000 100%);
-    margin: 10px 0;
+    background: linear-gradient(90deg, #e53935 0%, #f6c343 50%, #16a34a 100%);
+    margin: 2px 0 0;
 }
 
 .health-scale-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-top: 5px;
+    margin-top: 0;
 }
 
 .health-circle-btn {
@@ -2176,6 +2297,24 @@ body[data-page="procedural_ratings"] .form-navigation {
     margin-top: 8px;
     font-size: 0.85em;
     color: #666;
+}
+
+/* Demography age "Next" button */
+#age-next-btn {
+    width: 220px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    align-self: center;
+    margin-top: 12px !important;
+}
+
+@media (max-width: 600px) {
+    #age-next-btn {
+        width: 100%;
+        align-self: stretch;
+    }
 }
 
 /* Mobile Adjustments */
@@ -2978,17 +3117,22 @@ body {
 
 /* Default card */
 .option-card {
-    border: 2px solid transparent;
+    border: 2px solid #d6def4;
     border-radius: 10px;
     padding: 15px;
     display: block;
     cursor: pointer;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.18s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    transform: translateY(0);
 }
 
 /* On hover (grey shadow) */
 .option-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #b9c9f1;
 }
 
 /* Remove any inner border from the option-visual when checked */
@@ -3180,7 +3324,7 @@ body {
 }
 
 .instruction-text p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #444;
     line-height: 1.5;
 }
@@ -3288,8 +3432,8 @@ body {
     width: 100%;
     height: 12px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #d9d9d9, #000);
-    margin-bottom: 16px;
+    background: linear-gradient(90deg, #d64747 0%, #e6c14c 50%, #2fa451 100%);
+    margin-bottom: 8px;
 }
 
 /* ============ NEW: grid for even spacing ============ */
@@ -3675,6 +3819,17 @@ html[dir="rtl"] .demography-container .question-block > label {
     width: 100%;       /* Full width of the white box */
     box-sizing: border-box;
     margin-top: 8px;
+}
+
+.form-group:has(#age-input) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.form-group:has(#age-input) #age-input {
+    width: 100%;
 }
 
 /* Progress container */

@@ -77,16 +77,6 @@
                 {% endif %}
             </div>
 
-            <div class="form-navigation">
-                <button type="button" class="prev-btn" {% if index==0 %}disabled{% endif %}>{{ translations.group_preferences.previous_button | default('Previous') }}</button>
-                <button type="submit" class="next-btn" disabled>
-                    {% if question.id == 'children' %}
-                        {{ translations.group_preferences.submit_button | default('Submit Survey') }}
-                    {% else %}
-                        {{ translations.group_preferences.next_button | default('Next') }}
-                    {% endif %}
-                </button>
-            </div>
         </form>
 
         <div class="progress-container progress-container--bottom">
@@ -101,8 +91,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("group-form");
-            const prevBtn = form.querySelector(".prev-btn");
-            const nextBtn = form.querySelector(".next-btn");
             const dir = document.getElementById("nav-direction");
 
             const radios = form.querySelectorAll('input[type="radio"][name="answer"]');
@@ -127,27 +115,6 @@
                 }
             }
 
-            radios.forEach(r => r.addEventListener("change", () => {
-                localStorage.setItem("answer_" + questionId, r.value);
-                updateNext();
-            }));
-
-            if (healthBtns.length) {
-                healthBtns.forEach(btn => {
-                    btn.addEventListener("click", e => {
-                        e.preventDefault();
-                        healthBtns.forEach(b => b.classList.remove("selected"));
-                        btn.classList.add("selected");
-                        healthValue.value = btn.dataset.value || "";
-                        localStorage.setItem("answer_" + questionId, healthValue.value);
-                        updateNext();
-                    });
-                });
-            }
-            // ---- END save & restore ----
-
-            prevBtn.disabled = false;
-
             function isValid() {
                 if (healthValue) return healthValue.value.trim() !== "";
                 if (radios.length) return Array.from(radios).some(r => r.checked);
@@ -160,40 +127,38 @@
                 radioError.style.display = msg ? "" : "none";
             }
 
-            function updateNext() {
-                const ok = isValid();
-                if (nextBtn) nextBtn.disabled = !ok;
-                if (ok) showRadioError("");
+            function handleAdvance(direction = 'next') {
+                if (!isValid()) {
+                    const errMsg = window.__i18n?.group_preferences?.select_answer || "⚠️ Please select an option.";
+                    showRadioError(errMsg);
+                    return;
+                }
+                form.submit();
             }
 
-            if (prevBtn && currentIndex > 0) {
-                prevBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const prevIndex = currentIndex - 1;
-                    const prevUrl = new URL('/group-preferences', window.location.origin);
-                    prevUrl.searchParams.set('index', prevIndex);
-                    window.location.href = prevUrl.toString();
-                });
-            } else if (prevBtn && currentIndex === 0) {
-                prevBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    window.location.href = '/demography?index=2';
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener("click", (e) => {
-                    if (!isValid()) {
+            if (healthBtns.length) {
+                healthBtns.forEach(btn => {
+                    btn.addEventListener("click", e => {
                         e.preventDefault();
-                        const errMsg = window.__i18n?.group_preferences?.select_answer || "⚠️ Please select an option.";
-                        showRadioError(errMsg);
-                        return;
-                    }
-                    dir.value = "next";
+                        healthBtns.forEach(b => b.classList.remove("selected"));
+                        btn.classList.add("selected");
+                        healthValue.value = btn.dataset.value || "";
+                        localStorage.setItem("answer_" + questionId, healthValue.value);
+                        showRadioError("");
+                        handleAdvance('next');
+                    });
                 });
             }
 
-            updateNext();
+            if (radios.length) {
+                radios.forEach(r => {
+                    r.addEventListener("change", () => {
+                        localStorage.setItem("answer_" + questionId, r.value);
+                        showRadioError("");
+                        handleAdvance('next');
+                    });
+                });
+            }
         });
     </script>
     <script>

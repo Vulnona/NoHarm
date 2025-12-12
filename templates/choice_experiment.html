@@ -36,7 +36,7 @@
 <div aria-hidden="false" class="patient-card mobile-active" data-desktop-visible="true" data-patient-index="0">
 <div class="patient-label">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</div>
 <div class="image-container">
-<img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ asset_url(images[0]['filename']) }}"/>
+<img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-description="{{ images[0]['tooltip'] or images[0]['description'] }}" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ asset_url(images[0]['filename']) }}"/>
 <div class="hover-description">{{ images[0]['description'] }}</div>
 </div>
 </div>
@@ -58,7 +58,7 @@
 <div aria-hidden="true" class="patient-card" data-desktop-visible="true" data-patient-index="1">
 <div class="patient-label">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</div>
 <div class="image-container">
-<img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ asset_url(images[1]['filename']) }}"/>
+<img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-description="{{ images[1]['tooltip'] or images[1]['description'] }}" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ asset_url(images[1]['filename']) }}"/>
 <div class="hover-description">{{ images[1]['description'] }}</div>
 </div>
 </div>

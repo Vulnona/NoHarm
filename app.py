@@ -11,7 +11,7 @@ import sqlite3
 from functools import lru_cache
 from pathlib import Path
 
-from flask import Flask, render_template, request, redirect, session, Response, jsonify, url_for, send_from_directory, abort
+from flask import Flask, render_template, request, redirect, session, Response, jsonify, url_for, send_from_directory, abort, make_response
 
 from api_call import send_post_request
 from init_db import create_database, add_columns_if_not_exist
@@ -40,6 +40,20 @@ RESIZED_IMAGE_DIR = BASE_DIR / 'static' / 'resized_images'
 ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp'}
 IMAGE_EXTENSION_PRIORITY = {'.png': 0, '.webp': 1, '.jpg': 2, '.jpeg': 3}
 EXCLUDED_IMAGE_STEMS = {'doctor_image'}
+MAX_CHOICE_SETS = 3
+POSSIBLE_RECONSIDER_SETS = (2, 3)
+
+
+def pick_reconsider_set():
+    """
+    Choose which choice index should trigger the reconsider modal.
+    We currently allow only choices 2 or 3 (1-based indexing).
+    Falls back to MAX_CHOICE_SETS if misconfigured.
+    """
+    valid = [idx for idx in POSSIBLE_RECONSIDER_SETS if 1 <= idx <= MAX_CHOICE_SETS]
+    if not valid:
+        return MAX_CHOICE_SETS
+    return random.choice(valid)
 
 
 @app.template_filter('basename')
@@ -108,6 +122,24 @@ def load_translations(language_code: str):
 
     app.logger.warning('no translation file found for language %s; defaulting to empty dict', language)
     return {}
+
+
+@lru_cache(maxsize=1)
+def load_image_descriptions():
+    """Load precomputed image descriptions if available."""
+    path = TRANSLATIONS_DIR / 'image_descriptions.json'
+    if not path.exists():
+        app.logger.warning('image descriptions file not found: %s', path)
+        return {}
+    try:
+        with path.open('r', encoding='utf-8') as handle:
+            data = json.load(handle)
+            if not isinstance(data, dict):
+                raise ValueError('image descriptions must be a dict')
+            return data
+    except Exception as exc:
+        app.logger.error('failed to load image descriptions: %s', exc)
+        return {}
 
 
 # Function to get client IP, accounting for reverse proxies
@@ -363,12 +395,16 @@ def _gather_image_files():
 
 def load_available_images():
     image_files = _gather_image_files()
+    tooltip_map = load_image_descriptions()
     images = []
     for idx, path in enumerate(image_files, start=1):
+        display_text = _humanize_image_name(path.name)
+        tooltip_text = tooltip_map.get(path.name, display_text)
         images.append({
             "id": idx,
             "filename": f"resized_images/{path.name}",
-            "description": _humanize_image_name(path.name)
+            "description": display_text,
+            "tooltip": tooltip_text
         })
 
     if len(images) < 2:
@@ -392,15 +428,31 @@ def choice_experiment():
     language = session.get('language', 'en')
     image_translations = load_translations(language).get('images', {})
 
+    reconsider_set = session.get('reconsider_set')
+    selected_images = session.get('selected_images', [])
+
+    # If this is a fresh run (no selections yet), re-pick a reconsider set
+    if reconsider_set is not None and not selected_images:
+        reconsider_set = pick_reconsider_set()
+        session['reconsider_set'] = reconsider_set
+        session['popup_shown'] = False
+        session.pop('data_driven_tool_suggestion', None)
+        session['initial_choices'] = []
+        session['final_choices'] = []
+        session.modified = True
+
     # Initialize session variables only once
-    if 'reconsider_set' not in session:
-        session['reconsider_set'] = random.randint(1, 3)
+    if reconsider_set is None:
+        reconsider_set = pick_reconsider_set()
+        session['reconsider_set'] = reconsider_set
         session['selected_images'] = []
         session['initial_choices'] = []
         session['final_choices'] = []
         session['stored_images'] = None
         session['current_images'] = None
         session['popup_shown'] = False
+        session.pop('data_driven_tool_suggestion', None)
+        session.pop('changed_decision', None)
         if 'user_id' in session:
             conn = get_db_connection()
             conn.execute('''
@@ -414,7 +466,7 @@ def choice_experiment():
         app.logger.info('session: reconsider_set set to ' + str(session['reconsider_set']))
 
     # Check if we've already completed 3 choices
-    if len(session.get('selected_images', [])) >= 3:
+    if len(selected_images) >= MAX_CHOICE_SETS:
         app.logger.info('image selection tests concluded')
         return redirect('/procedural-ratings')
     else:
@@ -423,7 +475,20 @@ def choice_experiment():
     if request.method == 'POST':
         selected_image = request.form.get('selected_image')
         current_set = len(session.get('selected_images', [])) + 1
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        reconsider_set = session.get('reconsider_set')
         app.logger.info('POST request initiated')
+
+        # If popup was marked shown but no suggestion stored (e.g., refresh), allow it again
+        if session.get('popup_shown') and current_set <= (reconsider_set or MAX_CHOICE_SETS) and not session.get('data_driven_tool_suggestion'):
+            session['popup_shown'] = False
+            session.modified = True
+
+        # Keep reconsider_set reachable even if session drifted
+        if reconsider_set is None or reconsider_set < current_set or reconsider_set > MAX_CHOICE_SETS or reconsider_set not in POSSIBLE_RECONSIDER_SETS:
+            reconsider_set = pick_reconsider_set()
+            session['reconsider_set'] = reconsider_set
+            session.modified = True
         
         # Handle initial selection
         # Store the initial choice
@@ -431,7 +496,7 @@ def choice_experiment():
         session.modified = True  # Mark session as modified
 
         # Check if current set is the reconsider set and popup hasn't been shown
-        if current_set == session['reconsider_set'] and not session.get('popup_shown', False):
+        if current_set == reconsider_set and not session.get('popup_shown', False):
             session['popup_shown'] = True
             session.modified = True  # Mark session as modified
             
@@ -444,7 +509,7 @@ def choice_experiment():
             original_desc = image_translations.get(original_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == original_key), "Unknown"))
             suggestion_desc = image_translations.get(suggestion_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == suggestion_key), "Unknown"))
             app.logger.info('initial image selection recorded')
-            return jsonify({
+            response_payload = {
                 'show_reconsider': True,
                 'original': selected_image,
                 'original_url': asset_url(selected_image),
@@ -452,7 +517,8 @@ def choice_experiment():
                 'suggestion_url': asset_url(other_image),
                 'original_desc': original_desc,
                 'suggestion_desc': suggestion_desc
-            })
+            }
+            return jsonify(response_payload) if is_ajax else redirect(url_for('choice_experiment'))
         
         # Normal selection (not the reconsider set)
         # Update selected images list and move to next set
@@ -473,7 +539,7 @@ def choice_experiment():
         conn.commit()
         conn.close()
         app.logger.info('db initialised with both initial and final choices')
-        return jsonify({'show_reconsider': False})
+        return jsonify({'show_reconsider': False}) if is_ajax else redirect(url_for('choice_experiment'))
     elif request.method == 'GET':
         # Handle GET request
         available_images = [img for img in IMAGES if img["filename"] not in session.get('selected_images', [])]
@@ -834,7 +900,18 @@ def demography():
         return redirect(f'/demography?index={next_index}')
     elif request.method == 'GET':
         # Get the current question based on the index in the query parameter
-        current_index = int(request.args.get('index', 0))
+        try:
+            current_index = int(request.args.get('index', 0))
+        except (TypeError, ValueError):
+            current_index = 0
+
+        if current_index < 0:
+            current_index = 0
+
+        if current_index >= len(questions):
+            app.logger.info('demography index out of range, redirecting to group preferences')
+            return redirect('/group-preferences')
+
         question = questions[current_index]
         app.logger.info('demography page successfully rendered')
         show_intro = (current_index == 0)

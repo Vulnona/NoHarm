@@ -52,7 +52,7 @@
     <div class="intro-content">
         <p id="intro-paragraph-1">{{ translations.intro.intro_paragraph_1 | default('Your view on this question is <strong>highly valuable</strong>. We greatly appreciate your willingness to participate in this survey on medical decision-making.') | safe }}</p>
         <p id="intro-paragraph-2">{{ translations.intro.intro_paragraph_2 | default('Please read all instructions and questions carefully and answer honestly.') }}</p>
-        <p class="signature">{{ translations.intro.signature | default('Sincerely,<br>Dr. med. Anatol-Fiete Näher, M.A., Hasso Plattner Institute Potsdam<br>Anna Lena Fehlhaber, Leibniz University of Hannover<br>PD Dr. Ivar Krumpal, University of Leipzig') | safe }}</p>
+        <p class="signature">{{ translations.intro.signature | default('Sincerely,<br>Dr. med. Anatol-Fiete Näher, M.A., Hasso Plattner Institute, Potsdam, Germany<br>Anna Lena Fehlhaber, Leibniz University of Hannover, Germany<br>PD Dr. Ivar Krumpal, University of Leipzig, Germany<br>Prof. Niclas Böhmer, PhD, Hasso Plattner Institute, Potsdam, Germany') | safe }}</p>
 
 
     </div>
@@ -121,12 +121,6 @@
         </label>
         </div>
 
-        <button type="submit" class="start-btn btn" id="start-btn" disabled>
-        {{ translations.intro.start_button | default('Choose an option to continue') }}
-        </button>
-
-        <!-- For screen readers: announces button text change -->
-        <div class="sr-only" aria-live="polite" id="consent-live"></div>
     </form>
     </div>
 
