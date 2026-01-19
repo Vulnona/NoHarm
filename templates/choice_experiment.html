@@ -27,17 +27,16 @@
 </select>
 </div>
 </div>
-<div class="instruction-text" data-lock-message="{{ translations.choice_experiment.doctor_lock_message | default('please wait for the both patients to show up!') }}">
+<div class="instruction-text" data-lock-message="{{ translations.choice_experiment.doctor_lock_message | default('Please take your time to inspect both patients carefully!') }}">
 <p>{{ translations.choice_experiment.instruction_text | default('Not every patient can be treated in a medical emergency. A decision has to be made about which patient to treat. Which of the patients shown below should be treated?') }}</p>
 </div>
 </div>
-<div class="patients-grid">
+<div class="patients-grid{% if swap_patient_order %} swap-order{% endif %}">
 <!-- First Patient -->
 <div aria-hidden="false" class="patient-card mobile-active" data-desktop-visible="true" data-patient-index="0">
 <div class="patient-label">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</div>
 <div class="image-container">
 <img alt="{{ images[0]['description'] }}" class="patient-image fade-element" data-description="{{ images[0]['tooltip'] or images[0]['description'] }}" data-filename="{{ images[0]['filename'].split('/')[-1] }}" data-fullpath="{{ images[0]['filename'] }}" src="{{ asset_url(images[0]['filename']) }}"/>
-<div class="hover-description">{{ images[0]['description'] }}</div>
 </div>
 </div>
 <div aria-label="{{ translations.choice_experiment.patient_toggle_label | default('Toggle between patients') }}" class="mobile-patient-switcher" id="mobile-patient-switcher">
@@ -59,7 +58,6 @@
 <div class="patient-label">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</div>
 <div class="image-container">
 <img alt="{{ images[1]['description'] }}" class="patient-image fade-element" data-description="{{ images[1]['tooltip'] or images[1]['description'] }}" data-filename="{{ images[1]['filename'].split('/')[-1] }}" data-fullpath="{{ images[1]['filename'] }}" src="{{ asset_url(images[1]['filename']) }}"/>
-<div class="hover-description">{{ images[1]['description'] }}</div>
 </div>
 </div>
 </div>
@@ -69,77 +67,33 @@
 <header class="reconsider-header">
 <h2 class="highlight-text" id="reconsider-title">{{ translations.choice_experiment.reconsider_message | default('A data-driven computer model suggests treating the other patient!') }}</h2>
 <p class="decision-text" id="reconsider-subtitle">{{ translations.choice_experiment.decision_text | default('Would you like to change your decision? Choose the patient you want to treat now. Your decision will be saved immediately.') }}</p>
-                <div class="reconsider-view-toggle" role="tablist">
-                    <button aria-selected="true" class="reconsider-view-btn active" data-view="overview" role="tab" type="button">{{ translations.choice_experiment.reconsider_overview_toggle | default('Comparison View') }}</button>
-                    <button aria-selected="false" class="reconsider-view-btn" data-view="interactive" role="tab" type="button">{{ translations.choice_experiment.reconsider_interactive_toggle | default('Interactive View') }}</button>
-                </div>
             </header>
             <div class="reconsider-panels">
                 <div class="reconsider-panel active" data-view="overview">
                     <div class="reconsider-patient-switcher" role="tablist">
-                        <button type="button" class="reconsider-switch-btn active" data-patient="recommendation" aria-pressed="true">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</button>
-                        <button type="button" class="reconsider-switch-btn" data-patient="original" aria-pressed="false">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</button>
+                        <button type="button" class="reconsider-switch-btn active" data-patient="recommendation" aria-pressed="true">{{ translations.choice_experiment.recommendation_toggle | default('Recommendation') }}</button>
+                        <button type="button" class="reconsider-switch-btn" data-patient="original" aria-pressed="false">{{ translations.choice_experiment.your_choice_toggle | default('Your Choice') }}</button>
                     </div>
                     <div class="reconsider-cards" role="group" aria-label="{{ translations.choice_experiment.reconsider_group_label | default('Choose which patient to treat') }}">
                         <button type="button" class="decision-card decision-card--recommendation is-active" data-decision="switch" data-patient-role="recommendation"
                             aria-label="{{ translations.choice_experiment.switch_recommendation_accessible | default('Switch to the recommended patient') }}">
-                            <span class="choice-badge choice-badge--highlight">{{ translations.choice_experiment.recommendation | default('Model recommendation') }}</span>
                             <div class="decision-visual">
+                                <span class="choice-badge choice-badge--highlight">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</span>
                                 <img src="" alt="{{ translations.choice_experiment.recommended_image_alt | default('Recommended patient from the model') }}"
                                     class="patient-image" id="suggested-choice" data-filename="">
                             </div>
-                            <span class="choice-label" id="suggested-choice-description"></span>
-                            <span class="choice-action">{{ translations.choice_experiment.switch_recommendation_button | default('Treat this patient instead') }}</span>
+                            <span class="choice-action">{{ translations.choice_experiment.switch_recommendation_button | default('Treat this patient instead!') }}</span>
                         </button>
 
                         <button type="button" class="decision-card" data-decision="keep" data-patient-role="original"
                             aria-label="{{ translations.choice_experiment.keep_original_accessible | default('Keep treating your original patient') }}">
-                            <span class="choice-badge">{{ translations.choice_experiment.originally_selected | default('Your Choice') }}</span>
                             <div class="decision-visual">
+                                <span class="choice-badge">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</span>
                                 <img src="" alt="{{ translations.choice_experiment.original_image_alt | default('Your original patient choice') }}"
                                     class="patient-image" id="original-choice" data-filename="">
                             </div>
-                            <span class="choice-label" id="original-choice-description"></span>
-                            <span class="choice-action choice-action--secondary">{{ translations.choice_experiment.keep_original_button | default('What was my choice?') }}</span>
+                            <span class="choice-action choice-action--secondary">{{ translations.choice_experiment.keep_original_button | default('Stick with my choice!') }}</span>
                         </button>
-                    </div>
-                </div>
-                <div class="reconsider-panel" data-view="interactive" hidden>
-                    <div class="reconsider-interactive" aria-label="{{ translations.choice_experiment.reconsider_group_label | default('Choose which patient to treat') }}">
-                        <div class="reconsider-patient-switcher" role="tablist">
-                            <button type="button" class="reconsider-switch-btn active" data-patient="recommendation" aria-pressed="true">{{ translations.choice_experiment.patient_label_1 | default('1st Patient') }}</button>
-                            <button type="button" class="reconsider-switch-btn" data-patient="original" aria-pressed="false">{{ translations.choice_experiment.patient_label_2 | default('2nd Patient') }}</button>
-                        </div>
-                        <p class="interactive-hint">{{ translations.choice_experiment.reconsider_drag_hint | default('Drag the doctor to the patient you want to treat now.') }}</p>
-                        <div class="interactive-stage">
-                            <button type="button" class="decision-card decision-card--recommendation drag-target drag-target--target is-active" data-decision="switch" data-patient-role="recommendation"
-                                aria-label="{{ translations.choice_experiment.switch_recommendation_accessible | default('Switch to the recommended patient') }}">
-                                <span class="choice-badge choice-badge--highlight">{{ translations.choice_experiment.recommendation | default('Model recommendation') }}</span>
-                                <div class="decision-visual">
-                                    <img src="" alt="{{ translations.choice_experiment.recommended_image_alt | default('Recommended patient from the model') }}"
-                                        class="patient-image" id="drag-suggested-choice" data-filename="">
-                                </div>
-                                <span class="choice-label" id="drag-suggested-choice-description"></span>
-                                <span class="choice-action">{{ translations.choice_experiment.switch_recommendation_button | default('Treat this patient instead') }}</span>
-                            </button>
-                            <div class="doctor-drag-column">
-                                <div class="doctor-drop-zone">
-                                    <img src="{{ asset_url('images/doctor_image.png') }}" alt="Physician"
-                                        class="doctor-image" id="modal-draggable-doctor" draggable="false">
-                                    <div class="doctor-drop-hint">{{ translations.choice_experiment.reconsider_drag_doctor_hint | default('Drag me to choose') }}</div>
-                                </div>
-                            </div>
-                            <button type="button" class="decision-card drag-target drag-target--target" data-decision="keep" data-patient-role="original"
-                                aria-label="{{ translations.choice_experiment.keep_original_accessible | default('Keep treating your original patient') }}">
-                                <span class="choice-badge">{{ translations.choice_experiment.originally_selected | default('Your Choice') }}</span>
-                                <div class="decision-visual">
-                                    <img src="" alt="{{ translations.choice_experiment.original_image_alt | default('Your original patient choice') }}"
-                                        class="patient-image" id="drag-original-choice" data-filename="">
-                                </div>
-                                <span class="choice-label" id="drag-original-choice-description"></span>
-                                <span class="choice-action choice-action--secondary">{{ translations.choice_experiment.keep_original_button | default('What was my choice?') }}</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
 </div>

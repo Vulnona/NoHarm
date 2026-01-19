@@ -251,11 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (prevBtn) prevBtn.textContent = data.demography.previous_button || "Previous";
                     if (nextBtn) nextBtn.textContent = data.demography.next_button || "Next";
 
-                    const introBanner = document.getElementById('demography-intro');
-                    if (introBanner && data.instructions?.title) {
-                        introBanner.textContent = data.instructions.title;
-                    }
-
                     const ageErrorElement = document.getElementById("age-error-msg");
                     if (ageErrorElement && data.demography.age_invalid) {
                         // ✅ Attach translation to data-error-text attribute
@@ -299,9 +294,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
                 else if (currentPage === "instructions") {
-                    // For instructions.html
-                    document.querySelector('h1').textContent = data.instructions.title;
-                    document.querySelector('.submit-btn').textContent = data.instructions.continue_button;
+                    // For instructions.html (only the instructions title + continue button)
+                    const introTitle = document.getElementById('intro-title');
+                    if (introTitle && data.instructions?.title) {
+                        introTitle.textContent = data.instructions.title;
+                    }
+                    const continueBtn = document.querySelector('.submit-btn');
+                    if (continueBtn && data.instructions?.continue_button) {
+                        continueBtn.textContent = data.instructions.continue_button;
+                    }
                 } else if (currentPage === "group_preferences") {
                     // For group_preference.html
                     const questionId = document.querySelector('input[name="question_id"]').value;

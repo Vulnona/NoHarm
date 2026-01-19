@@ -24,6 +24,8 @@ import logging
 def create_app():
     app = Flask(__name__)
     app.secret_key = 'secret_key'  # Secret key for session management
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.jinja_env.auto_reload = True
 
     # Set the logging level
     app.logger.setLevel(logging.INFO)
@@ -190,6 +192,8 @@ def get_user_location():
 @app.context_processor
 def inject_translations():
     language = session.get('language', 'en') if session else 'en'
+    if app.debug:
+        load_translations.cache_clear()
     translations = load_translations(language)
     return {
         'translations': translations,
@@ -248,6 +252,8 @@ def translations_api(language_code):
         app.logger.warning('invalid language code requested: %s', language_code)
         language = 'en'
 
+    if app.debug:
+        load_translations.cache_clear()
     data = load_translations(language)
     response = jsonify(data)
     response.headers['Cache-Control'] = 'no-store, max-age=0'
@@ -415,10 +421,17 @@ def load_available_images():
 
 IMAGES = load_available_images()
 
+def refresh_images():
+    """Reload images from disk so updates are picked up without restarting."""
+    global IMAGES
+    IMAGES = load_available_images()
+    return IMAGES
+
 
 
 @app.route('/choice-experiment', methods=['GET', 'POST'])
 def choice_experiment():
+    refresh_images()
     if 'user_id' not in session:
         app.logger.info('session: user id not set')
         return redirect('/')
@@ -427,9 +440,14 @@ def choice_experiment():
 
     language = session.get('language', 'en')
     image_translations = load_translations(language).get('images', {})
+    choice_copy = load_translations(language).get('choice_experiment', {})
 
     reconsider_set = session.get('reconsider_set')
     selected_images = session.get('selected_images', [])
+    available_filenames = {img["filename"] for img in IMAGES}
+    # Drop any stale selections that no longer exist on disk
+    selected_images = [img for img in selected_images if img in available_filenames]
+    session['selected_images'] = selected_images
 
     # If this is a fresh run (no selections yet), re-pick a reconsider set
     if reconsider_set is not None and not selected_images:
@@ -508,6 +526,21 @@ def choice_experiment():
             suggestion_key = other_image.split('/')[-1]
             original_desc = image_translations.get(original_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == original_key), "Unknown"))
             suggestion_desc = image_translations.get(suggestion_key, next((img['description'] for img in IMAGES if img['filename'].split('/')[-1] == suggestion_key), "Unknown"))
+
+            # Map which image was first/second to surface 1st/2nd labels in the reconsider UI
+            order_labels = {
+                1: choice_copy.get('patient_label_1', '1st Patient'),
+                2: choice_copy.get('patient_label_2', '2nd Patient')
+            }
+            lookup = {}
+            try:
+                lookup[session['current_images'][0]] = 1
+                lookup[session['current_images'][1]] = 2
+            except Exception:
+                app.logger.warning('unable to map current_images order for reconsider modal')
+
+            original_order = lookup.get(selected_image)
+            suggestion_order = lookup.get(other_image)
             app.logger.info('initial image selection recorded')
             response_payload = {
                 'show_reconsider': True,
@@ -516,7 +549,11 @@ def choice_experiment():
                 'suggestion': other_image,
                 'suggestion_url': asset_url(other_image),
                 'original_desc': original_desc,
-                'suggestion_desc': suggestion_desc
+                'suggestion_desc': suggestion_desc,
+                'original_order': original_order,
+                'suggestion_order': suggestion_order,
+                'order_labels': order_labels,
+                'swap_recommendation_order': random.random() < 0.5
             }
             return jsonify(response_payload) if is_ajax else redirect(url_for('choice_experiment'))
         
@@ -555,9 +592,11 @@ def choice_experiment():
         session['current_images'] = [img["filename"] for img in images]
         app.logger.info('GET request initiated')
         app.logger.info('rendered choice experiment successfully with selected images')
+        swap_patient_order = random.random() < 0.5
         return render_template('choice_experiment.html',
                              images=images,
-                             current_set=len(session.get('selected_images', [])) + 1)
+                             current_set=len(session.get('selected_images', [])) + 1,
+                             swap_patient_order=swap_patient_order)
     else:
         app.logger.error('POST/GET request not found')
         app.logger.error(str(request.method) + ' request initiated')
@@ -740,8 +779,8 @@ def procedural_ratings():
 
         conn.commit()
         conn.close()
-        app.logger.info('all procedural ratings stored; redirecting to demographics')
-        return redirect('/demography')
+        app.logger.info('all procedural ratings stored; redirecting to instructions')
+        return redirect('/instructions')
 
     existing_answers = {}
     if 'user_id' in session:
@@ -771,10 +810,13 @@ def procedural_ratings():
 
 
 
-@app.route('/instructions')
+@app.route('/instructions', methods=['GET', 'POST'])
 def instructions():
-    app.logger.info('instructions shortcut: redirecting straight to demographics')
-    return redirect('/demography')
+    if request.method == 'POST':
+        app.logger.info('instructions completed; redirecting to demographics')
+        return redirect('/demography')
+    app.logger.info('instructions page successfully rendered')
+    return render_template('instructions.html')
 
 
 
@@ -914,8 +956,7 @@ def demography():
 
         question = questions[current_index]
         app.logger.info('demography page successfully rendered')
-        show_intro = (current_index == 0)
-        return render_template('demography.html', question=question, index=current_index, show_intro=show_intro)
+        return render_template('demography.html', question=question, index=current_index)
     else:
         app.logger.error('POST/GET request not found')
         app.logger.error(str(request.method) + ' request initiated')

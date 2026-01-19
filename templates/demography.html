@@ -40,12 +40,6 @@
             <input type="hidden" name="question_id" value="{{ question.id }}">
             <input type="hidden" name="current_index" value="{{ index }}">
 
-            {% if show_intro %}
-            <div class="demography-intro" id="demography-intro">
-                {{ translations.instructions.title | default('Thank you very much! In the following we would like to ask you a few more general questions.') }}
-            </div>
-            {% endif %}
-
             <div class="question-block">
                 <label>{{ question.label }}</label>
 

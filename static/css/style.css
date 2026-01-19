@@ -149,7 +149,7 @@ body {
     /* Take full height of parent */
     color: white;
     /* Text color */
-    font-size: 1em;
+    font-size: var(--lang-switcher-font-size);
     /* Adjust font size */
     padding: 0;
     /* Add some padding for better spacing */
@@ -209,9 +209,9 @@ body {
     }
 
     .language-switcher select {
-        padding-inline-end: 2.25rem;
-        padding-inline-start: 1.25rem;
-        padding-top: 4px;
+        padding-inline-end: calc(var(--lang-switcher-padding-x) + 1.25rem);
+        padding-inline-start: var(--lang-switcher-padding-x);
+        padding-top: 2px;
     }
 }
 
@@ -585,14 +585,39 @@ input[type="submit"]:hover,
     justify-items: center;
     margin: 2rem auto;
     max-width: 1000px;
+    position: relative;
+}
+
+@media (min-width: 901px) {
+    .patients-grid.swap-order > .patient-card[data-patient-index="0"] {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .patients-grid.swap-order > .patient-card[data-patient-index="1"] {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .patients-grid.swap-order > .doctor-section {
+        grid-column: 2;
+        grid-row: 1;
+    }
 }
 
 /* Patient label styling */
 .patient-label {
-    font-style: italic;
-    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2a64f6 0%, #1c3fb8 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     margin-bottom: 1rem;
-    color: #333;
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards;
 }
@@ -600,26 +625,23 @@ input[type="submit"]:hover,
 
 /* First patient label - appears second */
 .patient-card:nth-child(1) .patient-label {
-    font-style: italic;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #333;
+    font-size: 1.1rem;
     opacity: 0;
-    animation: fadeIn 0.2s ease-in-out forwards;
-    animation-delay: 0.2s;
+    animation: fadeIn 0.3s ease-in-out forwards;
+    animation-delay: 0.35s;
 }
 
 /* First patient reveal */
 .patient-card[data-patient-index="0"] .patient-image {
     opacity: 0;
-    animation: fadeIn 0.45s ease-in-out forwards;
-    animation-delay: 0.45s;
+    animation: fadeIn 0.8s ease-in-out forwards;
+    animation-delay: 0.5s;
 }
 
 .patient-card[data-patient-index="0"] .hover-description {
     opacity: 0;
-    animation: fadeIn 0.45s ease-in-out forwards;
-    animation-delay: 0.9s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 1.35s;
     display: block;
     text-align: center;
     margin-top: 0.5rem;
@@ -629,25 +651,22 @@ input[type="submit"]:hover,
 
 /* Second patient reveal */
 .patient-card[data-patient-index="1"] .patient-label {
-    font-style: italic;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #333;
+    font-size: 1.1rem;
     opacity: 0;
-    animation: fadeIn 0.45s ease-in-out forwards;
-    animation-delay: 0.45s;
+    animation: fadeIn 0.3s ease-in-out forwards;
+    animation-delay: 1.55s;
 }
 
 .patient-card[data-patient-index="1"] .patient-image {
     opacity: 0;
-    animation: fadeIn 0.45s ease-in-out forwards;
-    animation-delay: 0.8s;
+    animation: fadeIn 0.8s ease-in-out forwards;
+    animation-delay: 1.6s;
 }
 
 .patient-card[data-patient-index="1"] .hover-description {
     opacity: 0;
-    animation: fadeIn 0.45s ease-in-out forwards;
-    animation-delay: 1.2s;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 2.45s;
     display: block;
     text-align: center;
     margin-top: 0.5rem;
@@ -694,10 +713,6 @@ input[type="submit"]:hover,
 .image-container > .hover-description,
 .decision-visual > .hover-description {
     display: none;
-}
-
-#reconsider-modal .info-dot-wrapper {
-    display: none !important;
 }
 
 .info-dot-wrapper {
@@ -890,18 +905,22 @@ input[type="submit"]:hover,
 
 .doctor-lock-message {
     position: absolute;
-    top: calc(100% + 12px);
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -6px);
-    background: rgba(13, 110, 253, 0.95);
-    color: #ffffff;
-    padding: 0.5rem 0.95rem;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    line-height: 1.3;
+    right: auto;
+    transform: translate(-50%, -60%);
+    background: #ffffff;
+    color: #b42318;
+    padding: 0.6rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #e06666;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.35;
     text-align: center;
-    white-space: nowrap;
-    box-shadow: 0 18px 36px rgba(13, 110, 253, 0.18);
+    max-width: min(360px, 70%);
+    white-space: normal;
+    box-shadow: 0 16px 32px rgba(196, 36, 36, 0.16);
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -912,11 +931,18 @@ input[type="submit"]:hover,
 .doctor-lock-message.visible {
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -50%);
 }
 
 .doctor-lock-message::after {
     content: none;
+}
+
+#reconsider-modal .doctor-lock-message {
+    left: 50%;
+    right: auto;
+    top: 50%;
+    max-width: min(320px, 75%);
 }
 
 @media (max-width: 768px) {
@@ -938,6 +964,14 @@ input[type="submit"]:hover,
     .mobile-switch-btn {
         flex: 1 1 48%;
         text-align: center;
+    }
+
+    .patients-grid.swap-order .mobile-switch-btn[data-patient-index="0"] {
+        order: 2;
+    }
+
+    .patients-grid.swap-order .mobile-switch-btn[data-patient-index="1"] {
+        order: 1;
     }
 
     .patients-grid {
@@ -991,18 +1025,18 @@ input[type="submit"]:hover,
     }
 
     .doctor-lock-message {
-        position: static;
-        transform: none;
-        margin: 0.6rem auto 0;
-        font-size: 0.82rem;
-        max-width: 90%;
-        white-space: normal;
-        text-align: center;
-        align-self: center;
+        position: absolute;
+        top: 58%;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -60%);
+        margin: 0;
+        font-size: 0.85rem;
+        max-width: 92%;
     }
 
     .doctor-lock-message.visible {
-        transform: none;
+        transform: translate(-50%, -50%);
     }
 
     .progress-container--bottom {
@@ -1166,6 +1200,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    position: relative;
 }
 
 .reconsider-panel {
@@ -1173,7 +1208,9 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 }
 
 .reconsider-panel.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .highlight-text {
@@ -1197,6 +1234,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     align-items: center;
     gap: 0.85rem;
     width: 100%;
+    order: 1;
 }
 
 .reconsider-interactive {
@@ -1214,6 +1252,16 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     background: rgba(79, 120, 225, 0.12);
     border-radius: 999px;
     padding: 0.25rem;
+    margin: 1rem auto 0;
+    order: 2;
+}
+
+.reconsider-patient-switcher.swap-order .reconsider-switch-btn[data-patient="recommendation"] {
+    order: 2;
+}
+
+.reconsider-patient-switcher.swap-order .reconsider-switch-btn[data-patient="original"] {
+    order: 1;
 }
 
 .reconsider-switch-btn {
@@ -1366,7 +1414,7 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 }
 
 .decision-card:disabled {
-    cursor: wait;
+    cursor: default;
     opacity: 0.72;
     transform: none;
     box-shadow: none;
@@ -1385,19 +1433,18 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 }
 
 .choice-badge {
-    font-size: 0.82rem;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    color: #4c5a6f;
-    background: rgba(79, 120, 225, 0.12);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #fff;
+    background: linear-gradient(135deg, #2a64f6 0%, #1c3fb8 100%);
     border-radius: 999px;
-    padding: 0.35rem 0.85rem;
+    padding: 0.45rem 1rem;
 }
 
 .choice-badge--highlight {
-    color: #0f4db6;
-    background: rgba(13, 110, 253, 0.18);
+    color: #fff;
+    background: linear-gradient(135deg, #2a64f6 0%, #1c3fb8 100%);
 }
 
 .decision-visual {
@@ -1409,6 +1456,36 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
     background: #ffffff;
     border-radius: 14px;
     box-shadow: inset 0 0 0 1px rgba(31, 59, 140, 0.08);
+}
+
+#reconsider-modal .decision-visual {
+    flex-direction: column;
+    gap: 0.55rem;
+    justify-content: flex-start;
+    margin-top: 0;
+    padding-top: 1.35rem;
+    padding-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: none;
+    border: 0;
+    border-bottom: 1px solid rgba(31, 59, 140, 0.08);
+}
+
+#reconsider-modal .decision-card {
+    gap: 0.6rem;
+}
+
+#reconsider-modal .choice-badge {
+    position: relative;
+    z-index: 2;
+}
+
+#reconsider-modal .decision-visual .info-dot-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-self: center;
+    margin-top: 0.1rem;
 }
 
 .decision-visual img {
@@ -1655,6 +1732,31 @@ body[data-page="choice_experiment"] .doctor-drop-zone .doctor-image {
 
         .patient-image {
             max-width: 200px;
+        }
+
+        body[data-page="choice_experiment"] .patient-card .image-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        body[data-page="choice_experiment"] .patient-card .info-dot-wrapper {
+            position: relative;
+            margin: 0.2rem 0 0;
+            align-self: center;
+        }
+
+        body[data-page="choice_experiment"] .patient-card .info-dot {
+            width: 30px;
+            height: 30px;
+            font-size: 0.95rem;
+        }
+
+        body[data-page="choice_experiment"] .patient-card .info-dot + .hover-description {
+            top: auto;
+            bottom: 120%;
         }
 
         .reconsider-options {
@@ -1909,7 +2011,8 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body {
     gap: 0.85rem;
     border-radius: 18px;
     background: #ffffff;
-    box-shadow: 0 20px 45px rgba(15, 35, 95, 0.12);
+    border: 1px solid rgba(15, 35, 95, 0.08);
+    box-shadow: none;
     padding: 1.18rem 0.0rem 1.42rem;
     min-height: 0;
     width: 100%;
@@ -1954,9 +2057,11 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matr
 }
 
 body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-title {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #0f235f;
+    text-align: center;
+    width: 100%;
 }
 
 body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-question-desc {
@@ -1982,22 +2087,16 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-options-row
     box-shadow: inset 0 0 0 1px rgba(15, 35, 95, 0.08);
     transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
     margin-top: 0.65rem;
+    position: relative;
 }
 
-body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option input[type="radio"] {
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    border: 2px solid rgba(15, 35, 95, 0.35);
-    background: #ffffff;
-    appearance: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-cell.matrix-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
-body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matrix-cell.matrix-option .matrix-dot {
+body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-cell.matrix-option .matrix-dot {
     display: none;
 }
 
@@ -2040,7 +2139,8 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card .matr
 }
 
 body[data-page="procedural_ratings"] .matrix-row.matrix-body.carousel-card.answered {
-    box-shadow: 0 24px 50px rgba(15, 35, 95, 0.18);
+    border-color: rgba(15, 75, 255, 0.3);
+    box-shadow: none;
 }
 
 body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale {
@@ -2251,6 +2351,8 @@ body[data-page="procedural_ratings"] .form-navigation {
 .health-gradient-container {
     width: 95%;
     margin: 0 auto;
+    position: relative;
+    padding: 14px 0 18px;
 }
 
 .health-gradient-bar {
@@ -2258,7 +2360,11 @@ body[data-page="procedural_ratings"] .form-navigation {
     height: 14px;
     border-radius: 8px;
     background: linear-gradient(90deg, #e53935 0%, #f6c343 50%, #16a34a 100%);
-    margin: 2px 0 0;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 0;
 }
 
 .health-scale-buttons {
@@ -2266,6 +2372,9 @@ body[data-page="procedural_ratings"] .form-navigation {
     justify-content: space-between;
     width: 100%;
     margin-top: 0;
+    align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 .health-circle-btn {
@@ -2273,6 +2382,11 @@ body[data-page="procedural_ratings"] .form-navigation {
     background: none;
     border: none;
     cursor: pointer;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
 }
 
 .health-circle {
@@ -2324,17 +2438,104 @@ body[data-page="procedural_ratings"] .form-navigation {
         margin-bottom: 25px;
     }
 
+    .health-gradient-container {
+        --health-hitbox: 32px;
+        --health-dot-size: 12px;
+        --health-dot-border: 2px;
+        --health-dot-total: calc(var(--health-dot-size) + (var(--health-dot-border) * 2));
+        padding: 12px 0 16px;
+        display: grid;
+        grid-template-rows: var(--health-hitbox) auto;
+        align-items: center;
+    }
+
     .health-gradient-bar {
         height: 12px;
+        width: calc(100% - var(--health-hitbox));
+        margin: 0 auto;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        grid-row: 1;
+        grid-column: 1 / -1;
+        align-self: center;
+    }
+
+    .health-scale-buttons {
+        grid-row: 1;
+        grid-column: 1 / -1;
+        transform: none;
+        align-self: center;
+    }
+
+    .health-circle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        width: var(--health-hitbox);
+        height: var(--health-hitbox);
+        line-height: 0;
     }
 
     .health-circle {
-        width: 12px;
-        height: 12px;
+        width: var(--health-dot-size);
+        height: var(--health-dot-size);
+        border-width: var(--health-dot-border);
     }
 
     .health-scale-labels {
         font-size: 0.8em;
+        grid-row: 2;
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 769px) {
+    .health-gradient-container {
+        --health-hitbox: 34px;
+        --health-dot-size: 14px;
+        --health-dot-border: 2px;
+        --health-dot-total: calc(var(--health-dot-size) + (var(--health-dot-border) * 2));
+        display: grid;
+        grid-template-rows: var(--health-hitbox) auto;
+        align-items: center;
+    }
+
+    .health-gradient-bar {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        grid-row: 1;
+        grid-column: 1 / -1;
+        align-self: center;
+        width: calc(100% - var(--health-hitbox));
+        margin: 0 auto;
+    }
+
+    .health-scale-buttons {
+        grid-row: 1;
+        grid-column: 1 / -1;
+        align-self: center;
+    }
+
+    .health-circle-btn {
+        padding: 0;
+        width: var(--health-hitbox);
+        height: var(--health-hitbox);
+    }
+
+    .health-circle {
+        width: var(--health-dot-size);
+        height: var(--health-dot-size);
+        border-width: var(--health-dot-border);
+    }
+
+    .health-scale-labels {
+        grid-row: 2;
+        grid-column: 1 / -1;
     }
 }
 
@@ -2378,8 +2579,9 @@ body[data-page="procedural_ratings"] .form-navigation {
 
 .result-top-bar .language-switcher {
     margin-left: auto;
-    width: 80px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
 }
 
 .result-table {
@@ -2604,8 +2806,8 @@ body[data-page="procedural_ratings"] .form-navigation {
         left: auto;
         bottom: auto;
         transform: none;
-        min-width: 132px;
-        height: 46px;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
         background-color: #007bff;
         border-radius: 10px;
         display: flex;
@@ -2622,17 +2824,19 @@ body[data-page="procedural_ratings"] .form-navigation {
     }
 
     .language-switcher select {
-        font-size: 1.10rem;
+        font-size: var(--lang-switcher-font-size);
         font-weight: 600;
-        line-height: 1.35;
-        padding: 0 0.85rem;
+        line-height: 1.3;
+        padding-inline-start: var(--lang-switcher-padding-x);
+        padding-inline-end: calc(var(--lang-switcher-padding-x) + var(--lang-switcher-arrow-space));
         margin: 0;
         width: 100%;
         height: 100%;
         background: transparent;
         border: none;
         color: #fff;
-        text-align: start;
+        text-align: center;
+        text-align-last: center;
         -webkit-appearance: menulist;
         appearance: menulist;
     }
@@ -2680,7 +2884,7 @@ body[data-page="procedural_ratings"] .form-navigation {
     }
 
     .result-top-bar .language-switcher {
-        height: 40px;
+        height: var(--lang-switcher-height);
     }
 
     .result-top-bar .download-container {
@@ -2758,8 +2962,9 @@ body[data-page="choice_experiment"] .language-switcher {
     left: auto;
     bottom: auto;
     transform: none !important;
-    width: 70px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2778,9 +2983,9 @@ body[data-page="choice_experiment"] .language-switcher:hover {
     body[data-page="choice_experiment"] .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.85rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 }
 
@@ -2816,9 +3021,10 @@ body[data-page="intro"] .intro-toolbar > * {
 }
 
 body[data-page="intro"] .language-switcher {
-    width: 150px;
-    min-width: 150px;
-    height: 100%;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
+    min-height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2844,17 +3050,40 @@ body[data-page="intro"] .data-protection-trigger {
 
 @media (max-width: 768px) {
     body[data-page="intro"] .intro-toolbar {
-        top: 8px;
-        inset-inline-end: 8px;
-        width: calc(100% - 16px);
+        top: 14px;
+        inset-inline: 16px;
+        width: auto;
         justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        flex-direction: row;
     }
 
     body[data-page="intro"] .language-switcher {
-        flex: 1;
-        min-width: auto;
-        height: 44px;
-        padding: 0 0.85rem;
+        position: relative !important;
+        order: 2;
+        flex: 0 0 auto;
+        min-width: 136px;
+        height: 42px;
+        min-height: 42px;
+        padding: 0 0.7rem;
+    }
+
+    body[data-page="intro"] .language-switcher select {
+        font-size: 0.95rem;
+        padding-inline-start: 0.7rem;
+        padding-inline-end: 1.55rem;
+    }
+
+    body[data-page="intro"] .data-protection-trigger {
+        order: 1;
+        width: 42px;
+        height: 42px;
+    }
+
+    body[data-page="intro"] .intro-toolbar > * {
+        height: 42px;
+        min-height: 42px;
     }
 }
 
@@ -2875,8 +3104,9 @@ body[data-page="no_consent"] .language-switcher {
     bottom: auto;
     transform: none !important;
     /* cancel old translateX */
-    width: 70px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2895,9 +3125,9 @@ body[data-page="no_consent"] .language-switcher:hover {
     body[data-page="no_consent"] .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.85rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 }
 
@@ -2919,8 +3149,9 @@ body[data-page="procedural_ratings"] .rating-container .language-switcher {
     bottom: auto;
     transform: none !important;
     /* cancel any old translateX */
-    width: 70px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2935,9 +3166,9 @@ body[data-page="procedural_ratings"] .rating-container .language-switcher {
     body[data-page="procedural_ratings"] .rating-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.85rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 }
 
@@ -2959,8 +3190,9 @@ body[data-page="demography"] .demography-container .language-switcher {
     bottom: auto;
     transform: none !important;
     /* cancel old translateX */
-    width: 70px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2977,9 +3209,9 @@ body[data-page="demography"] .demography-container .language-switcher {
     body[data-page="demography"] .demography-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.85rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 }
 
@@ -3001,9 +3233,9 @@ body[data-page="admin_login"] .login-container .language-switcher {
     bottom: auto;
     transform: none !important;
     /* cancel any old translateX */
-    min-width: 132px;
-    height: 46px;
-    padding: 0 1rem;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
+    padding: 0 var(--lang-switcher-padding-x);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3018,9 +3250,9 @@ body[data-page="admin_login"] .login-container .language-switcher {
     body[data-page="admin_login"] .login-container .language-switcher {
         top: 20px;
         inset-inline-end: 12px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.95rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 
     body[data-page="admin_login"] .login-container form {
@@ -3046,6 +3278,11 @@ body[data-page="admin_login"] .login-container .language-switcher {
     --ok: #059669;
     --ring: rgba(37, 99, 235, .35);
     --radius: 16px;
+    --lang-switcher-height: 40px;
+    --lang-switcher-min-width: 120px;
+    --lang-switcher-padding-x: 0.75rem;
+    --lang-switcher-font-size: 0.95rem;
+    --lang-switcher-arrow-space: 1.25rem;
 }
 
 body {
@@ -3275,9 +3512,17 @@ body {
 
 /* Patient label text */
 .patient-label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    font-style: italic;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2a64f6 0%, #1c3fb8 100%);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.01em;
 }
 
 /* Patient images */
@@ -3612,8 +3857,8 @@ p b {
 .language-switcher {
     background-color: #007bff;
     border-radius: 999px;
-    min-width: 120px;
-    height: 45px;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3621,7 +3866,7 @@ p b {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    padding: 0 12px;
+    padding: 0 var(--lang-switcher-padding-x);
 }
 
 .language-switcher:hover {
@@ -3663,19 +3908,58 @@ p b {
     /* center vertically */
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
-    #instructions-line {
-        font-size: 1.1rem;
-        max-width: 90%;
-        margin: 2rem auto;
-    }
-}
 
-@media (max-width: 480px) {
-    #instructions-line {
-        font-size: 1rem;
-        line-height: 1.4;
+
+
+
+@media (max-width: 768px) {
+    body[data-page="instructions"] {
+        display: block;
+        justify-content: flex-start;
+        align-items: stretch;
+        min-height: auto;
+        padding: 24px 16px 36px;
+        transform: none !important;
+        transform-origin: initial;
+        font-size: 19px;
+    }
+
+    body[data-page="instructions"] .instruction-container {
+        width: min(100%, 560px);
+        margin: 0 auto;
+        padding: 3.2rem 1.6rem 2.1rem;
+        border-radius: 18px;
+    }
+
+    body[data-page="instructions"] .language-switcher {
+        top: 0.9rem;
+        right: 0.9rem;
+        min-width: 112px;
+        height: 36px;
+        padding: 0 0.6rem;
+        border-radius: 999px;
+    }
+
+    body[data-page="instructions"] .language-switcher select {
+        font-size: 0.92rem;
+        padding-inline-start: 0.6rem;
+        padding-inline-end: 1.45rem;
+    }
+
+    body[data-page="instructions"] #instructions-line {
+        margin: 2.1rem auto 1.4rem;
+        font-size: 1.35rem;
+        line-height: 1.7;
+        max-width: 100%;
+        padding: 0 0.35rem;
+    }
+
+    body[data-page="instructions"] .instruction-container .submit-btn {
+        margin-top: 0.75rem;
+        width: min(260px, 92%);
+        font-size: 1.15rem;
+        padding: 0.85rem 2rem;
+        border-radius: 12px;
     }
 }
 
@@ -3732,8 +4016,9 @@ body[data-page="group_preferences"] .group-preferences-container .language-switc
     left: auto;
     bottom: auto;
     transform: none !important;
-    width: 70px;
-    height: 45px;
+    width: auto;
+    min-width: var(--lang-switcher-min-width);
+    height: var(--lang-switcher-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3751,9 +4036,9 @@ body[data-page="group_preferences"] .group-preferences-container .language-switc
     body[data-page="group_preferences"] .group-preferences-container .language-switcher {
         top: 8px;
         inset-inline-end: 8px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 0.85rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
     }
 }
 
@@ -3857,6 +4142,41 @@ html[dir="rtl"] .demography-container .question-block > label {
   box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
+body[data-page="choice_experiment"] {
+    --choice-figure-bg: var(--brand-weak);
+    --choice-figure-text: var(--brand);
+    --choice-figure-border: #bfdbfe;
+}
+
+body[data-page="choice_experiment"] .patient-label,
+body[data-page="choice_experiment"] .choice-badge,
+body[data-page="choice_experiment"] .choice-badge--highlight {
+    background: var(--choice-figure-bg);
+    color: var(--choice-figure-text);
+    box-shadow: inset 0 0 0 1px var(--choice-figure-border);
+}
+
+body[data-page="choice_experiment"] .info-dot {
+    background: var(--choice-figure-bg);
+    border-color: var(--choice-figure-border);
+    color: var(--choice-figure-text);
+}
+
+body[data-page="choice_experiment"] .info-dot:focus-visible {
+    outline-color: var(--choice-figure-text);
+}
+
+body[data-page="choice_experiment"] .info-dot:hover,
+body[data-page="choice_experiment"] .info-dot:focus-visible,
+body[data-page="choice_experiment"] .info-dot-wrapper.is-open .info-dot {
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
+}
+
+body[data-page="choice_experiment"] #reconsider-modal .decision-card,
+body[data-page="choice_experiment"] #reconsider-modal .decision-card--recommendation {
+    background: #ffffff;
+}
+
 @media (max-width: 600px) {
     body[data-page="choice_experiment"] .choice-container {
         padding: 2.3rem 0.65rem 0.75rem;
@@ -3887,9 +4207,9 @@ html[dir="rtl"] .demography-container .question-block > label {
         margin: 0;
         margin-left: auto;
         width: auto;
-        min-width: 122px;
+        min-width: var(--lang-switcher-min-width);
         max-width: 220px;
-        height: 44px;
+        height: var(--lang-switcher-height);
         padding: 0;
         overflow: visible;
         box-shadow: 0 8px 18px rgba(0, 123, 255, 0.25);
@@ -3913,10 +4233,12 @@ html[dir="rtl"] .demography-container .question-block > label {
     body[data-page="choice_experiment"] .choice-header .language-switcher select {
         width: 100%;
         height: 100%;
-        padding: 0 2.5rem 0 1.15rem;
-        font-size: 1rem;
+        padding-inline-start: var(--lang-switcher-padding-x);
+        padding-inline-end: calc(var(--lang-switcher-padding-x) + var(--lang-switcher-arrow-space));
+        font-size: var(--lang-switcher-font-size);
         font-weight: 600;
-        text-align: left;
+        text-align: center;
+        text-align-last: center;
         background: transparent;
         border: none;
         -webkit-appearance: none;
@@ -3924,8 +4246,10 @@ html[dir="rtl"] .demography-container .question-block > label {
     }
 
     html[dir="rtl"] body[data-page="choice_experiment"] .choice-header .language-switcher select {
-        text-align: right;
-        padding: 0 1.15rem 0 2.5rem;
+        text-align: center;
+        text-align-last: center;
+        padding-inline-start: var(--lang-switcher-padding-x);
+        padding-inline-end: calc(var(--lang-switcher-padding-x) + var(--lang-switcher-arrow-space));
     }
 
     body[data-page="choice_experiment"] .instruction-text {
@@ -4039,9 +4363,9 @@ html[dir="rtl"] .demography-container .question-block > label {
     body[data-page="group_preferences"] .group-preferences-container .language-switcher {
         inset-inline-end: 16px;
         top: 28px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 1rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
         box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
     }
 
@@ -4057,9 +4381,9 @@ html[dir="rtl"] .demography-container .question-block > label {
     body[data-page="demography"] .demography-container .language-switcher {
         inset-inline-end: 16px;
         top: 28px;
-        min-width: 132px;
-        height: 46px;
-        padding: 0 1rem;
+        min-width: var(--lang-switcher-min-width);
+        height: var(--lang-switcher-height);
+        padding: 0 var(--lang-switcher-padding-x);
         box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
     }
 
@@ -4212,4 +4536,82 @@ body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scal
 
 body[data-page="procedural_ratings"] .matrix-row.matrix-body .matrix-mobile-scale .mobile-scale-caption-end {
   grid-column: 6;
+}
+
+/* Instructions page mobile redesign (override all earlier mobile tweaks) */
+@media (max-width: 768px) {
+  body[data-page="instructions"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px 16px 32px;
+    transform: none !important;
+    transform-origin: initial;
+    background: #f5f6f8;
+  }
+
+  body[data-page="instructions"] .instruction-container {
+    width: 100%;
+    max-width: 560px;
+    min-height: 60vh;
+    padding: 3.2rem 1.7rem 2.4rem;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.15rem;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+  }
+
+  body[data-page="instructions"] .language-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    min-width: 118px;
+    height: 38px;
+    padding: 0 0.65rem;
+    border-radius: 999px;
+    box-shadow: 0 10px 22px rgba(0, 123, 255, 0.22);
+  }
+
+  body[data-page="instructions"] .language-switcher select {
+    font-size: 0.95rem;
+    padding-inline-start: 0.65rem;
+    padding-inline-end: 1.5rem;
+  }
+
+  body[data-page="instructions"] #instructions-line {
+    margin: 0;
+    font-size: 1.38rem;
+    line-height: 1.7;
+    max-width: 100%;
+    padding: 0 0.4rem;
+    display: block;
+  }
+
+  body[data-page="instructions"] .instruction-container form {
+    margin-top: 0.25rem;
+  }
+
+  body[data-page="instructions"] .instruction-container .submit-btn {
+    margin-top: 0;
+    width: min(260px, 92%);
+    font-size: 1.15rem;
+    padding: 0.85rem 2.1rem;
+    border-radius: 12px;
+  }
+}
+
+
+
+@media (min-width: 480px)  { /* slight bumps */ }
+  
+
+
+
+
+
 }

@@ -21,6 +21,36 @@ function buildAssetUrl(path) {
     return `${ASSET_PREFIX}${path}`;
 }
 
+const DEFAULT_DOCTOR_LOCK_MESSAGE = 'Please take your time to inspect both patients carefully!';
+
+function getDoctorLockMessageText() {
+    const translated = window.__i18n?.choice_experiment?.doctor_lock_message;
+    if (typeof translated === 'string' && translated.trim().length > 0) {
+        return translated.trim();
+    }
+
+    const datasetMessage = document.querySelector('.instruction-text')?.dataset?.lockMessage;
+    if (typeof datasetMessage === 'string' && datasetMessage.trim().length > 0) {
+        return datasetMessage.trim();
+    }
+
+    return DEFAULT_DOCTOR_LOCK_MESSAGE;
+}
+
+function syncDoctorLockMessages(newText) {
+    const message = typeof newText === 'string' && newText.trim().length > 0
+        ? newText.trim()
+        : getDoctorLockMessageText();
+    const instructionText = document.querySelector('.instruction-text');
+    if (instructionText) {
+        instructionText.dataset.lockMessage = message;
+    }
+    document.querySelectorAll('.doctor-lock-message').forEach(element => {
+        element.textContent = message;
+    });
+    return message;
+}
+
 
 
 function submitChoice(selectedImage) {
@@ -107,10 +137,10 @@ function initDraggableDoctor() {
         .map(card => card.querySelector('.patient-image'))
         .filter(Boolean);
     const instructionText = document.querySelector('.instruction-text');
-    const lockMessageContainer = instructionText || doctorSection;
+    const patientsGrid = document.querySelector('.patients-grid');
+    const lockMessageContainer = patientsGrid || doctorSection || instructionText;
     const lockMessageId = 'doctor-lock-message';
     let lockMessage = lockMessageContainer ? lockMessageContainer.querySelector(`#${lockMessageId}`) : null;
-    const fallbackLockCopy = instructionText?.dataset?.lockMessage || 'please wait for the both patients to show up!';
     const UNLOCK_DELAY_MS = 5000;
     const mobileViewportQuery = window.matchMedia('(max-width: 768px)');
 
@@ -137,28 +167,8 @@ function initDraggableDoctor() {
     let unlockScheduled = false;
     const seenPatients = new Set();
 
-    const getLockMessageText = () => {
-        const translated = window.__i18n?.choice_experiment?.doctor_lock_message;
-        if (typeof translated === 'string' && translated.trim().length > 0) {
-            return translated;
-        }
-
-        if (instructionText?.dataset?.lockMessage) {
-            return instructionText.dataset.lockMessage;
-        }
-
-        return fallbackLockCopy;
-    };
-
     const syncLockMessageCopy = newText => {
-        const message = typeof newText === 'string' && newText.trim().length > 0 ? newText : getLockMessageText();
-        if (instructionText) {
-            instructionText.dataset.lockMessage = message;
-        }
-        if (lockMessage) {
-            lockMessage.textContent = message;
-        }
-        return message;
+        return syncDoctorLockMessages(newText);
     };
 
     window.updateDoctorLockMessageText = function updateDoctorLockMessageText(newText) {
@@ -171,7 +181,7 @@ function initDraggableDoctor() {
         lockMessage.className = 'doctor-lock-message';
         lockMessage.setAttribute('role', 'status');
         lockMessage.setAttribute('aria-live', 'polite');
-        lockMessage.textContent = getLockMessageText();
+        lockMessage.textContent = getDoctorLockMessageText();
         lockMessageContainer.appendChild(lockMessage);
         syncLockMessageCopy(lockMessage.textContent);
     } else {
@@ -179,7 +189,7 @@ function initDraggableDoctor() {
     }
 
     if (!doctorUnlocked) {
-        doctor.style.cursor = 'not-allowed';
+        doctor.style.cursor = 'default';
     }
 
     function hideDoctorLockMessage() {
@@ -200,7 +210,7 @@ function initDraggableDoctor() {
             return;
         }
 
-        lockMessage.textContent = getLockMessageText();
+        lockMessage.textContent = getDoctorLockMessageText();
         lockMessage.classList.add('visible');
 
         if (lockMessageTimeout) {
@@ -351,7 +361,9 @@ function initDraggableDoctor() {
 
         const allVisible = patientImages.every(image => {
             const style = window.getComputedStyle(image);
-            return parseFloat(style.opacity) > 0 && style.visibility !== 'hidden';
+            const card = image.closest('.patient-card');
+            const hiddenByCard = card?.getAttribute('aria-hidden') === 'true';
+            return !hiddenByCard && parseFloat(style.opacity) > 0 && style.visibility !== 'hidden';
         });
 
         if (allVisible) {
@@ -367,13 +379,6 @@ function initDraggableDoctor() {
         }
 
         visibilityPoll = setInterval(evaluatePatientVisibility, 300);
-
-        setTimeout(() => {
-            evaluatePatientVisibility();
-            if (!doctorUnlocked && !mobileViewportQuery.matches) {
-                patientImages.forEach(markPatientRevealed);
-            }
-        }, 3600);
     }
 
     // Unlock time for the doctor to be moveable. 
@@ -596,7 +601,6 @@ function initMobilePatientSwitcher() {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
     let activeIndex = 0;
     let lastAnnouncedIndex = -1;
-    let mobilePrefetched = false;
 
     const isMobile = () => mediaQuery.matches;
 
@@ -656,20 +660,6 @@ function initMobilePatientSwitcher() {
             });
         }
 
-        if (mobileMode && patientCards.length > 1 && !mobilePrefetched) {
-            mobilePrefetched = true;
-            const originalIndex = targetIndex;
-            const nextIndex = (targetIndex + 1) % patientCards.length;
-
-            if (nextIndex !== originalIndex) {
-                requestAnimationFrame(() => {
-                    applyState(nextIndex, true);
-                    requestAnimationFrame(() => {
-                        applyState(originalIndex, true);
-                    });
-                });
-            }
-        }
     };
 
     buttons.forEach(button => {
@@ -683,11 +673,9 @@ function initMobilePatientSwitcher() {
 
     const handleViewportChange = event => {
         if (event.matches) {
-            mobilePrefetched = false;
             applyState(activeIndex, true);
         } else {
             applyState(activeIndex, false);
-            mobilePrefetched = false;
         }
     };
 
@@ -731,6 +719,192 @@ function showReconsiderModal(data) {
     const dragOriginalDesc = document.getElementById('drag-original-choice-description');
     const dragSuggestedDesc = document.getElementById('drag-suggested-choice-description');
     const modalDoctor = document.getElementById('modal-draggable-doctor');
+    const recommendationToggle = modal.querySelector('.reconsider-switch-btn[data-patient="recommendation"]');
+    const choiceToggle = modal.querySelector('.reconsider-switch-btn[data-patient="original"]');
+    const recommendationBadge = modal.querySelector('.decision-card--recommendation .choice-badge');
+    const choiceBadge = modal.querySelector('.decision-card[data-decision="keep"] .choice-badge');
+    const i18nChoice = window.__i18n?.choice_experiment || {};
+    const recommendationToggleText = i18nChoice.recommendation_toggle || i18nChoice.recommendation || 'Recommendation';
+    const yourChoiceToggleText = i18nChoice.your_choice_toggle || i18nChoice.originally_selected || 'Your Choice';
+
+    if (modal) {
+        modal._seenPatientRoles = new Set();
+    }
+
+    if (recommendationToggle) {
+        recommendationToggle.textContent = recommendationToggleText;
+    }
+    if (choiceToggle) {
+        choiceToggle.textContent = yourChoiceToggleText;
+    }
+
+    const switcher = modal ? modal.querySelector('.reconsider-patient-switcher') : null;
+    const swapRecommendationOrder = typeof data.swap_recommendation_order === 'boolean'
+        ? data.swap_recommendation_order
+        : Math.random() < 0.5;
+    if (switcher) {
+        switcher.classList.toggle('swap-order', swapRecommendationOrder);
+    }
+
+    const orderLabels = data.order_labels || {};
+    const getOrderLabel = order => {
+        if (order === 1 || order === '1') {
+            return orderLabels[1] || orderLabels['1'] || '1st Patient';
+        }
+        if (order === 2 || order === '2') {
+            return orderLabels[2] || orderLabels['2'] || '2nd Patient';
+        }
+        return '';
+    };
+    const getOrderWord = order => {
+        if (order === 1 || order === '1') {
+            return 'first';
+        }
+        if (order === 2 || order === '2') {
+            return 'second';
+        }
+        return '';
+    };
+
+    const normalizePath = value => {
+        if (!value) {
+            return '';
+        }
+        const raw = value.split('?')[0];
+        let clean = raw;
+        try {
+            clean = decodeURIComponent(raw);
+        } catch (error) {
+            clean = raw;
+        }
+        const resizedIndex = clean.indexOf('resized_images/');
+        if (resizedIndex !== -1) {
+            return clean.slice(resizedIndex);
+        }
+        return clean;
+    };
+
+    const getFilename = value => {
+        if (!value) {
+            return '';
+        }
+        const clean = value.split('?')[0];
+        const parts = clean.split('/');
+        return parts[parts.length - 1] || '';
+    };
+
+    const buildMatchKey = value => {
+        if (!value) {
+            return '';
+        }
+        const normalized = normalizePath(value).toLowerCase();
+        return normalized.replace(/[^a-z0-9]/g, '');
+    };
+
+    const findChoiceCardByImage = imagePath => {
+        const targetKey = buildMatchKey(imagePath);
+        const targetFilenameKey = buildMatchKey(getFilename(imagePath));
+        const cards = Array.from(document.querySelectorAll('.patients-grid > .patient-card'));
+
+        for (const card of cards) {
+            const img = card.querySelector('img.patient-image');
+            if (!img) {
+                continue;
+            }
+
+            const fullpath = img.dataset.fullpath || img.getAttribute('data-fullpath') || '';
+            const filename = img.dataset.filename || img.getAttribute('data-filename') || img.getAttribute('src') || '';
+            const fullpathKey = buildMatchKey(fullpath);
+            const filenameKey = buildMatchKey(filename);
+
+            if ((targetKey && fullpathKey && targetKey === fullpathKey)
+                || (targetKey && filenameKey && targetKey === filenameKey)
+                || (targetFilenameKey && filenameKey && targetFilenameKey === filenameKey)) {
+                return { card, img };
+            }
+        }
+
+        return null;
+    };
+
+    const computeTooltipFromFilename = (imagePath, orderWord) => {
+        if (!imagePath || !orderWord) {
+            return '';
+        }
+        const filename = getFilename(imagePath);
+        if (!filename) {
+            return '';
+        }
+        const stub = { dataset: { filename } };
+        return buildHoverDescription(stub, orderWord);
+    };
+
+    const getTooltipFromChoiceCard = imagePath => {
+        const match = findChoiceCardByImage(imagePath);
+        if (!match) {
+            return '';
+        }
+        const orderWord = match.card.dataset.patientIndex === '0' ? 'first' : 'second';
+        const tooltipNode = match.card.querySelector('.info-dot-wrapper .hover-description');
+        const existingTooltip = tooltipNode?.textContent?.trim();
+        return existingTooltip
+            || buildHoverDescription(match.img, orderWord)
+            || match.img.dataset.description
+            || match.img.alt
+            || '';
+    };
+
+    const resolveOrderFromCards = imagePath => {
+        const targetPath = normalizePath(imagePath);
+        const targetFilename = getFilename(imagePath);
+        const cards = Array.from(document.querySelectorAll('.patients-grid > .patient-card'));
+
+        for (const card of cards) {
+            const img = card.querySelector('img.patient-image');
+            if (!img) {
+                continue;
+            }
+
+            const fullpath = normalizePath(img.dataset.fullpath || img.getAttribute('data-fullpath') || '');
+            const filename = getFilename(img.dataset.filename || img.getAttribute('data-filename') || img.getAttribute('src') || '');
+            const matchesPath = targetPath && fullpath && targetPath === fullpath;
+            const matchesFilename = targetFilename && filename && targetFilename === filename;
+
+            if (matchesPath || matchesFilename) {
+                if (card.dataset.patientIndex === '0') {
+                    return 1;
+                }
+                if (card.dataset.patientIndex === '1') {
+                    return 2;
+                }
+            }
+        }
+
+        return null;
+    };
+
+    let originalOrder = data.original_order ?? resolveOrderFromCards(data.original);
+    let suggestionOrder = data.suggestion_order ?? resolveOrderFromCards(data.suggestion);
+    if ((originalOrder == null || originalOrder === '') && (suggestionOrder === 1 || suggestionOrder === '1')) {
+        originalOrder = 2;
+    } else if ((originalOrder == null || originalOrder === '') && (suggestionOrder === 2 || suggestionOrder === '2')) {
+        originalOrder = 1;
+    }
+    if ((suggestionOrder == null || suggestionOrder === '') && (originalOrder === 1 || originalOrder === '1')) {
+        suggestionOrder = 2;
+    } else if ((suggestionOrder == null || suggestionOrder === '') && (originalOrder === 2 || originalOrder === '2')) {
+        suggestionOrder = 1;
+    }
+    const originalOrderWord = getOrderWord(originalOrder);
+    const suggestionOrderWord = getOrderWord(suggestionOrder);
+    let originalTooltip = getTooltipFromChoiceCard(data.original)
+        || computeTooltipFromFilename(data.original, originalOrderWord)
+        || data.original_desc
+        || '';
+    let suggestionTooltip = getTooltipFromChoiceCard(data.suggestion)
+        || computeTooltipFromFilename(data.suggestion, suggestionOrderWord)
+        || data.suggestion_desc
+        || '';
    
     // Check if original path includes the resized_images prefix, if not add it
     const originalPath = data.original.includes('resized_images/') 
@@ -768,24 +942,170 @@ function showReconsiderModal(data) {
         dragSuggestedChoice.setAttribute('data-fullpath', data.suggestion);
     }
 
-    originalDesc.textContent = data.original_desc;
-    suggestedDesc.textContent = data.suggestion_desc;
-    originalChoice.dataset.description = data.original_desc || '';
-    suggestedChoice.dataset.description = data.suggestion_desc || '';
+    const applyModalDescription = (image, order, fallbackText) => {
+        if (!image) {
+            return;
+        }
+        const explicitTooltip = image.dataset.tooltip || '';
+        if (explicitTooltip) {
+            image.dataset.description = explicitTooltip;
+            image.alt = explicitTooltip;
+            return;
+        }
+        const fallback = typeof fallbackText === 'string' ? fallbackText.trim() : '';
+        if (fallback) {
+            image.dataset.description = fallback;
+            image.alt = fallback;
+        }
+        const orderWord = getOrderWord(order);
+        if (!orderWord) {
+            return;
+        }
+        const computed = buildHoverDescription(image, orderWord);
+        if (computed) {
+            image.dataset.description = computed;
+        }
+    };
+
+    const syncModalTooltips = () => {
+        const tooltipEntries = [
+            { image: originalChoice, tooltip: originalTooltip },
+            { image: suggestedChoice, tooltip: suggestionTooltip },
+            { image: dragOriginalChoice, tooltip: originalTooltip },
+            { image: dragSuggestedChoice, tooltip: suggestionTooltip }
+        ];
+
+        tooltipEntries.forEach(({ image, tooltip }) => {
+            if (!image || !tooltip) {
+                return;
+            }
+            image.dataset.description = tooltip;
+            image.dataset.tooltip = tooltip;
+            image.alt = tooltip;
+            const container = image.closest('.decision-visual') || image.parentElement;
+            const tooltipNode = container?.querySelector('.info-dot-wrapper .hover-description');
+            if (tooltipNode) {
+                tooltipNode.textContent = getTooltipForContainer(container, tooltip);
+            }
+        });
+
+        if (!modal) {
+            return;
+        }
+
+        modal.querySelectorAll('.decision-visual').forEach(container => {
+            const img = container.querySelector('img.patient-image');
+            if (!img) {
+                return;
+            }
+            const orderWord = img.dataset.orderWord || '';
+            const tooltip = img.dataset.tooltip
+                || img.dataset.description
+                || buildHoverDescription(img, orderWord)
+                || img.alt
+                || '';
+            if (!tooltip) {
+                return;
+            }
+            const existingWrapper = container.querySelector('.info-dot-wrapper');
+            if (existingWrapper) {
+                const hover = existingWrapper.querySelector('.hover-description');
+                if (hover) {
+                    hover.textContent = getTooltipForContainer(container, tooltip);
+                }
+            } else {
+                buildInfoDot(container, tooltip);
+            }
+        });
+    };
+
+    const setOrderWord = (image, order) => {
+        if (!image) {
+            return;
+        }
+        const orderWord = getOrderWord(order);
+        if (orderWord) {
+            image.dataset.orderWord = orderWord;
+        } else {
+            image.removeAttribute('data-order-word');
+        }
+    };
+
+    setOrderWord(originalChoice, originalOrder);
+    setOrderWord(suggestedChoice, suggestionOrder);
+    setOrderWord(dragOriginalChoice, originalOrder);
+    setOrderWord(dragSuggestedChoice, suggestionOrder);
+
+    const computeModalTooltip = (image, order, fallbackText) => {
+        if (!image) {
+            return '';
+        }
+        const orderWord = getOrderWord(order) || image.dataset.orderWord || '';
+        const filename = image.dataset.filename || image.getAttribute('data-filename') || '';
+        const parsed = parsePatientFilename(filename);
+        if (parsed && orderWord) {
+            return buildHoverDescription(image, orderWord);
+        }
+        if (typeof fallbackText === 'string' && fallbackText.trim()) {
+            return fallbackText.trim();
+        }
+        return image.dataset.description || image.alt || '';
+    };
+
+    originalTooltip = computeModalTooltip(originalChoice, originalOrder, originalTooltip);
+    suggestionTooltip = computeModalTooltip(suggestedChoice, suggestionOrder, suggestionTooltip);
+
+    if (originalDesc) {
+        originalDesc.textContent = originalTooltip;
+    }
+    if (suggestedDesc) {
+        suggestedDesc.textContent = suggestionTooltip;
+    }
+    originalChoice.dataset.description = originalTooltip;
+    originalChoice.dataset.tooltip = originalTooltip;
+    suggestedChoice.dataset.description = suggestionTooltip;
+    suggestedChoice.dataset.tooltip = suggestionTooltip;
     if (dragOriginalDesc) {
-        dragOriginalDesc.textContent = data.original_desc;
+        dragOriginalDesc.textContent = originalTooltip;
     }
     if (dragSuggestedDesc) {
-        dragSuggestedDesc.textContent = data.suggestion_desc;
+        dragSuggestedDesc.textContent = suggestionTooltip;
     }
     if (dragOriginalChoice) {
-        dragOriginalChoice.dataset.description = data.original_desc || '';
+        dragOriginalChoice.dataset.description = originalTooltip;
+        dragOriginalChoice.dataset.tooltip = originalTooltip;
     }
     if (dragSuggestedChoice) {
-        dragSuggestedChoice.dataset.description = data.suggestion_desc || '';
+        dragSuggestedChoice.dataset.description = suggestionTooltip;
+        dragSuggestedChoice.dataset.tooltip = suggestionTooltip;
     }
+
+    applyModalDescription(originalChoice, originalOrder, originalTooltip);
+    applyModalDescription(suggestedChoice, suggestionOrder, suggestionTooltip);
+    applyModalDescription(dragOriginalChoice, originalOrder, originalTooltip);
+    applyModalDescription(dragSuggestedChoice, suggestionOrder, suggestionTooltip);
     modal.dataset.originalChoice = data.original;
     modal.dataset.suggestedChoice = data.suggestion;
+    if (originalOrderWord) {
+        modal.dataset.originalOrderWord = originalOrderWord;
+    } else {
+        modal.removeAttribute('data-original-order-word');
+    }
+    if (suggestionOrderWord) {
+        modal.dataset.suggestionOrderWord = suggestionOrderWord;
+    } else {
+        modal.removeAttribute('data-suggestion-order-word');
+    }
+
+    if (recommendationBadge) {
+        const label = getOrderLabel(suggestionOrder) || recommendationBadge.textContent;
+        recommendationBadge.textContent = label;
+    }
+
+    if (choiceBadge) {
+        const label = getOrderLabel(originalOrder) || choiceBadge.textContent;
+        choiceBadge.textContent = label;
+    }
 
     if (errorMessage) {
         errorMessage.textContent = '';
@@ -820,6 +1140,8 @@ function showReconsiderModal(data) {
     }
 
     attachPatientTooltips(modal);
+    syncModalTooltips();
+    setTimeout(syncModalTooltips, 0);
     initModalDoctorDrag(modal);
 }
 
@@ -949,6 +1271,169 @@ function createReconsiderViewManager(modal) {
     return setView;
 }
 
+const SEVERITY_WORDING = {
+    '1': 'healthy',
+    '2': 'mildly sick',
+    '3': 'sick',
+    '4': 'seriously sick'
+};
+
+const AGE_GENDER_WORDING = {
+    oldman: 'old man',
+    man: 'man',
+    boy: 'boy',
+    oldwoman: 'old woman',
+    woman: 'woman',
+    girl: 'girl',
+    pregnantwoman: 'pregnant woman',
+    pregnant: 'pregnant woman',
+    child: 'child'
+};
+
+const MEDICATION_WORDING = {
+    '1': '1 injection',
+    '2': '2 injections',
+    '3': '3 injections'
+};
+
+function parsePatientFilename(filename) {
+    if (!filename) {
+        return null;
+    }
+
+    const stem = filename
+        .replace(/\.[^.]+$/, '')
+        .replace(/(\s|_)+copy\d*$/i, '')
+        .toLowerCase();
+
+    // Remove separators for a tight match (handles underscores/spaces/hyphens)
+    const compact = stem.replace(/[\s_-]+/g, '').replace(/copy\d*$/i, '');
+
+    const AGE_GENDER_KEYS = Object.keys(AGE_GENDER_WORDING).sort((a, b) => b.length - a.length);
+    const ageGenderPattern = AGE_GENDER_KEYS.join('|');
+
+    // Pattern with separators (spaces/underscores) allowed
+    const spacedPattern = new RegExp(
+        `^(?<age_gender>${ageGenderPattern})\\s*[_-]?\\s*(?<state_before>[1-4])\\s*after\\s*(?<age_gender_after>${ageGenderPattern})\\s*[_-]?\\s*(?<state_after>[1-4])\\s*[_-]?\\s*pill\\s*(?<med>[1-3])`,
+        'i'
+    );
+
+    // Compact pattern (no separators)
+    const compactPattern = new RegExp(
+        `^(?<age_gender>${ageGenderPattern})(?<state_before>[1-4])after(?<age_gender_after>${ageGenderPattern})(?<state_after>[1-4])pill(?<med>[1-3])`,
+        'i'
+    );
+
+    const runMatch = (pattern, value) => {
+        const match = value.match(pattern);
+        if (!match || !match.groups) {
+            return null;
+        }
+        if (match.groups.age_gender !== match.groups.age_gender_after) {
+            return null;
+        }
+        return {
+            ageGender: match.groups.age_gender.toLowerCase(),
+            stateBefore: match.groups.state_before,
+            stateAfter: match.groups.state_after,
+            medication: match.groups.med
+        };
+    };
+
+    return runMatch(spacedPattern, stem) || runMatch(compactPattern, compact);
+}
+
+function humanizeAgeGender(token) {
+    if (!token) {
+        return '';
+    }
+    if (AGE_GENDER_WORDING[token]) {
+        return AGE_GENDER_WORDING[token];
+    }
+    return token.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
+
+function buildHoverDescription(img, orderWord) {
+    if (!orderWord) {
+        return img.dataset?.description || img.alt || '';
+    }
+
+    const filename = img.dataset?.filename || img.getAttribute('data-filename') || '';
+    const parsed = parsePatientFilename(filename);
+    if (!parsed) {
+        return img.dataset?.description || img.alt || '';
+    }
+
+    const severityBefore = SEVERITY_WORDING[parsed.stateBefore] || parsed.stateBefore;
+    const severityAfter = SEVERITY_WORDING[parsed.stateAfter] || parsed.stateAfter;
+    const ageGender = humanizeAgeGender(parsed.ageGender);
+    const medication = MEDICATION_WORDING[parsed.medication] || `${parsed.medication} injections`;
+    const orderText = orderWord || '';
+
+    return `The patient appears ${orderText}. The patient is a ${severityBefore} ${ageGender}. After treatment with ${medication}, the patient will be ${severityAfter}.`;
+}
+
+function getTooltipForContainer(container, fallback = '') {
+    if (!container) {
+        return fallback;
+    }
+    const img = container.querySelector('img.patient-image');
+    if (!img) {
+        return fallback;
+    }
+
+    const normalizeTooltip = value => (value || '').trim();
+    const isPlaceholder = value => {
+        const normalized = normalizeTooltip(value).toLowerCase();
+        return normalized === 'recommended patient from the model'
+            || normalized === 'your original patient choice';
+    };
+
+    let orderWord = img.dataset.orderWord || '';
+    if (!orderWord) {
+        const patientCard = container.closest('.patient-card');
+        if (patientCard) {
+            orderWord = patientCard.dataset.patientIndex === '0' ? 'first' : 'second';
+        }
+    }
+    if (!orderWord) {
+        const card = container.closest('[data-patient-role]');
+        const badgeText = card?.querySelector('.choice-badge')?.textContent || '';
+        if (badgeText.includes('1')) {
+            orderWord = 'first';
+        } else if (badgeText.includes('2')) {
+            orderWord = 'second';
+        }
+        const modal = container.closest('#reconsider-modal');
+        if (modal && card?.dataset.patientRole) {
+            if (card.dataset.patientRole === 'original' && modal.dataset.originalOrderWord) {
+                orderWord = modal.dataset.originalOrderWord;
+            }
+            if (card.dataset.patientRole === 'recommendation' && modal.dataset.suggestionOrderWord) {
+                orderWord = modal.dataset.suggestionOrderWord;
+            }
+        }
+    }
+
+    const currentTooltip = normalizeTooltip(img.dataset.tooltip)
+        || normalizeTooltip(img.dataset.description)
+        || normalizeTooltip(img.alt);
+    const computedTooltip = normalizeTooltip(buildHoverDescription(img, orderWord));
+    const fallbackTooltip = normalizeTooltip(fallback);
+    const candidates = [computedTooltip, currentTooltip, fallbackTooltip].filter(Boolean);
+    const nonPlaceholder = candidates.filter(text => !isPlaceholder(text));
+    const finalTooltip = (nonPlaceholder.length ? nonPlaceholder : candidates)
+        .sort((a, b) => b.length - a.length)[0] || fallbackTooltip;
+
+    if (finalTooltip) {
+        img.dataset.tooltip = finalTooltip;
+        img.dataset.description = finalTooltip;
+        img.alt = finalTooltip;
+    }
+
+    return finalTooltip || fallback;
+}
+
 function buildInfoDot(container, description) {
     if (!container || !description) {
         return;
@@ -960,7 +1445,7 @@ function buildInfoDot(container, description) {
         const tooltip = existingWrapper.querySelector('.hover-description');
         const button = existingWrapper.querySelector('.info-dot');
         if (tooltip) {
-            tooltip.textContent = description;
+            tooltip.textContent = getTooltipForContainer(container, description);
         }
         if (button) {
             button.setAttribute('aria-label', label);
@@ -971,28 +1456,92 @@ function buildInfoDot(container, description) {
     const wrapper = document.createElement('div');
     wrapper.className = 'info-dot-wrapper';
 
-    const button = document.createElement('button');
-    button.type = 'button';
+    const isNestedButton = Boolean(container.closest('button'));
+    const button = document.createElement(isNestedButton ? 'span' : 'button');
+    if (!isNestedButton) {
+        button.type = 'button';
+    } else {
+        button.setAttribute('role', 'button');
+        button.tabIndex = 0;
+    }
     button.className = 'info-dot';
     button.setAttribute('aria-label', label);
     button.textContent = '?';
+    button.setAttribute('aria-expanded', 'false');
 
     const tooltip = document.createElement('span');
     tooltip.className = 'hover-description';
-    tooltip.textContent = description;
+    tooltip.textContent = getTooltipForContainer(container, description);
 
     wrapper.appendChild(button);
     wrapper.appendChild(tooltip);
     container.appendChild(wrapper);
 
-    const show = () => wrapper.classList.add('is-open');
-    const hide = () => wrapper.classList.remove('is-open');
+    const updateTooltip = () => {
+        const latest = getTooltipForContainer(container, tooltip.textContent || description);
+        if (latest) {
+            tooltip.textContent = latest;
+        }
+    };
+    const show = () => {
+        updateTooltip();
+        wrapper.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+    };
+    const hide = () => {
+        wrapper.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+    };
+    const toggle = () => {
+        if (wrapper.classList.contains('is-open')) {
+            hide();
+        } else {
+            updateTooltip();
+            show();
+        }
+    };
+    const stopEvent = event => {
+        event.stopPropagation();
+        event.preventDefault();
+    };
+    const supportsHover = window.matchMedia ? window.matchMedia('(hover: hover)').matches : true;
+    let ignoreFocus = false;
+    const markPointer = () => {
+        ignoreFocus = true;
+    };
+    const handleFocus = () => {
+        if (ignoreFocus) {
+            ignoreFocus = false;
+            return;
+        }
+        show();
+    };
+    const handleBlur = () => {
+        ignoreFocus = false;
+        hide();
+    };
 
-    button.addEventListener('mouseenter', show);
-    button.addEventListener('mouseleave', hide);
-    button.addEventListener('focus', show);
-    button.addEventListener('blur', hide);
-    wrapper.addEventListener('mouseleave', hide);
+    button.addEventListener('pointerdown', markPointer);
+    button.addEventListener('mousedown', markPointer);
+    button.addEventListener('touchstart', markPointer);
+    if (supportsHover) {
+        button.addEventListener('mouseenter', show);
+        button.addEventListener('mouseleave', hide);
+        wrapper.addEventListener('mouseleave', hide);
+    }
+    button.addEventListener('focus', handleFocus);
+    button.addEventListener('blur', handleBlur);
+    button.addEventListener('click', event => {
+        stopEvent(event);
+        ignoreFocus = false;
+        toggle();
+    });
+    button.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            stopEvent(event);
+            toggle();
+        }
+    });
 }
 
 function attachPatientTooltips(root = document) {
@@ -1002,10 +1551,19 @@ function attachPatientTooltips(root = document) {
         if (!img) {
             return;
         }
-        if (container.closest('#reconsider-modal')) {
-            return;
+        const patientCard = container.closest('.patient-card');
+        let orderWord = '';
+        if (img.dataset.orderWord) {
+            orderWord = img.dataset.orderWord;
+        } else if (patientCard) {
+            orderWord = patientCard.dataset.patientIndex === '0' ? 'first' : 'second';
+        } else if (img.dataset.patientOrder === '1' || img.dataset.order === '1') {
+            orderWord = 'first';
+        } else if (img.dataset.patientOrder === '2' || img.dataset.order === '2') {
+            orderWord = 'second';
         }
-        const description = img.dataset.description || img.alt || '';
+        const explicitTooltip = img.dataset.tooltip || img.dataset.tooltipText || '';
+        const description = explicitTooltip || buildHoverDescription(img, orderWord) || img.dataset.description || img.alt || '';
         if (!description) {
             return;
         }
@@ -1308,11 +1866,25 @@ function initModalPatientSwitchers(modal) {
 
     const doctor = modal.querySelector('#modal-draggable-doctor');
     const cards = Array.from(modal.querySelectorAll('[data-patient-role]'));
+    const requiredRoles = new Set(cards.map(card => card.dataset.patientRole).filter(Boolean));
+    const seenRoles = modal._seenPatientRoles instanceof Set ? modal._seenPatientRoles : new Set();
+    modal._seenPatientRoles = seenRoles;
 
     const stage = modal.querySelector('.interactive-stage');
     const recommendationCard = stage?.querySelector('[data-patient-role="recommendation"]') || null;
     const originalCard = stage?.querySelector('[data-patient-role="original"]') || null;
     const doctorColumn = stage?.querySelector('.doctor-drag-column') || null;
+    const lockMessageHost = modal.querySelector('.reconsider-panels') || modal.querySelector('.reconsider-panel') || modal;
+    let lockMessage = modal._lockMessage || modal.querySelector('.doctor-lock-message');
+    if (!lockMessage && lockMessageHost) {
+        lockMessage = document.createElement('div');
+        lockMessage.className = 'doctor-lock-message';
+        lockMessage.setAttribute('role', 'status');
+        lockMessage.setAttribute('aria-live', 'polite');
+        lockMessage.textContent = getDoctorLockMessageText();
+        lockMessageHost.appendChild(lockMessage);
+        modal._lockMessage = lockMessage;
+    }
 
     const updateDoctorTargets = () => {
         if (doctor && doctor._modalDragController) {
@@ -1322,7 +1894,31 @@ function initModalPatientSwitchers(modal) {
         }
     };
 
+    const hasSeenAllRoles = () => {
+        if (requiredRoles.size === 0) {
+            return true;
+        }
+        for (const role of requiredRoles) {
+            if (!seenRoles.has(role)) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const updateLockMessageVisibility = () => {
+        if (!lockMessage) {
+            return;
+        }
+        lockMessage.textContent = getDoctorLockMessageText();
+        lockMessage.classList.toggle('visible', !hasSeenAllRoles());
+    };
+
     const setActivePatient = key => {
+        if (key) {
+            seenRoles.add(key);
+        }
+        const canSelect = hasSeenAllRoles();
         switchers.forEach(switcher => {
             switcher.querySelectorAll('.reconsider-switch-btn').forEach(btn => {
                 const isActive = btn.dataset.patient === key;
@@ -1336,9 +1932,9 @@ function initModalPatientSwitchers(modal) {
             card.classList.toggle('is-active', isActive);
             card.setAttribute('aria-hidden', (!isActive).toString());
             if (typeof card.disabled === 'boolean') {
-                card.disabled = !isActive;
+                card.disabled = canSelect ? !isActive : true;
             }
-            card.tabIndex = isActive ? 0 : -1;
+            card.tabIndex = isActive && canSelect ? 0 : -1;
         });
 
         if (stage && recommendationCard && originalCard && doctorColumn) {
@@ -1352,6 +1948,7 @@ function initModalPatientSwitchers(modal) {
         }
 
         updateDoctorTargets();
+        updateLockMessageVisibility();
     };
 
     // Allow other initializers to reuse the setter without duplicating listeners
