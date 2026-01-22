@@ -22,6 +22,8 @@ function buildAssetUrl(path) {
 }
 
 const DEFAULT_DOCTOR_LOCK_MESSAGE = 'Please take your time to inspect both patients carefully!';
+const DOCTOR_UNLOCK_DELAY_MS = 5000;
+const LOCK_MESSAGE_DURATION_MS = 2400;
 
 function getDoctorLockMessageText() {
     const translated = window.__i18n?.choice_experiment?.doctor_lock_message;
@@ -141,7 +143,6 @@ function initDraggableDoctor() {
     const lockMessageContainer = patientsGrid || doctorSection || instructionText;
     const lockMessageId = 'doctor-lock-message';
     let lockMessage = lockMessageContainer ? lockMessageContainer.querySelector(`#${lockMessageId}`) : null;
-    const UNLOCK_DELAY_MS = 5000;
     const mobileViewportQuery = window.matchMedia('(max-width: 768px)');
 
     if (!doctor || patients.length === 0) {
@@ -219,7 +220,7 @@ function initDraggableDoctor() {
 
         lockMessageTimeout = setTimeout(() => {
             hideDoctorLockMessage();
-        }, 2400);
+        }, LOCK_MESSAGE_DURATION_MS);
     }
 
     function unlockDoctor() {
@@ -343,7 +344,7 @@ function initDraggableDoctor() {
         unlockDelayTimeout = setTimeout(() => {
             unlockDelayTimeout = null;
             unlockDoctor();
-        }, UNLOCK_DELAY_MS);
+        }, DOCTOR_UNLOCK_DELAY_MS);
     }
 
     document.addEventListener('patientShown', event => {
@@ -729,6 +730,14 @@ function showReconsiderModal(data) {
 
     if (modal) {
         modal._seenPatientRoles = new Set();
+        modal._decisionUnlockAt = null;
+        if (modal._lockMessageTimeout) {
+            clearTimeout(modal._lockMessageTimeout);
+            modal._lockMessageTimeout = null;
+        }
+        if (modal._lockMessage) {
+            modal._lockMessage.classList.remove('visible');
+        }
     }
 
     if (recommendationToggle) {
@@ -1116,7 +1125,12 @@ function showReconsiderModal(data) {
     decisionCards.forEach(card => {
         card.disabled = false;
         card.classList.remove('decision-card--selected');
-        card.onclick = () => finalizeReconsider(card.dataset.decision);
+        card.onclick = () => {
+            if (modal && typeof modal._canAttemptDecision === 'function' && !modal._canAttemptDecision()) {
+                return;
+            }
+            finalizeReconsider(card.dataset.decision);
+        };
     });
 
     // Ensure patient tabs are wired up before showing the modal
@@ -1605,6 +1619,13 @@ function setupModalDoctorDrag(modal, doctor, dropZone, dropTargets) {
         touchId: null
     };
 
+    const canAttemptDecision = () => {
+        if (typeof modal._canAttemptDecision === 'function') {
+            return modal._canAttemptDecision();
+        }
+        return true;
+    };
+
     const parseTransform = element => {
         const transform = window.getComputedStyle(element).getPropertyValue('transform');
         if (transform && transform !== 'none') {
@@ -1676,6 +1697,11 @@ function setupModalDoctorDrag(modal, doctor, dropZone, dropTargets) {
             return;
         }
 
+        if (!canAttemptDecision()) {
+            animateBackHome();
+            return;
+        }
+
         const doctorRect = doctor.getBoundingClientRect();
         const targetRect = target.getBoundingClientRect();
         const deltaX = (targetRect.left + targetRect.width / 2) - (doctorRect.left + doctorRect.width / 2);
@@ -1690,6 +1716,10 @@ function setupModalDoctorDrag(modal, doctor, dropZone, dropTargets) {
 
     const beginDrag = (clientX, clientY) => {
         if (state.disabled || state.isDragging) {
+            return false;
+        }
+
+        if (!canAttemptDecision()) {
             return false;
         }
 
@@ -1876,6 +1906,7 @@ function initModalPatientSwitchers(modal) {
     const doctorColumn = stage?.querySelector('.doctor-drag-column') || null;
     const lockMessageHost = modal.querySelector('.reconsider-panels') || modal.querySelector('.reconsider-panel') || modal;
     let lockMessage = modal._lockMessage || modal.querySelector('.doctor-lock-message');
+    let lockMessageTimeout = modal._lockMessageTimeout || null;
     if (!lockMessage && lockMessageHost) {
         lockMessage = document.createElement('div');
         lockMessage.className = 'doctor-lock-message';
@@ -1885,6 +1916,35 @@ function initModalPatientSwitchers(modal) {
         lockMessageHost.appendChild(lockMessage);
         modal._lockMessage = lockMessage;
     }
+
+    const clearLockMessageTimeout = () => {
+        if (lockMessageTimeout) {
+            clearTimeout(lockMessageTimeout);
+            lockMessageTimeout = null;
+            modal._lockMessageTimeout = null;
+        }
+    };
+
+    const hideLockMessage = () => {
+        if (!lockMessage) {
+            return;
+        }
+        lockMessage.classList.remove('visible');
+        clearLockMessageTimeout();
+    };
+
+    const showLockMessage = () => {
+        if (!lockMessage) {
+            return;
+        }
+        lockMessage.textContent = getDoctorLockMessageText();
+        lockMessage.classList.add('visible');
+        clearLockMessageTimeout();
+        lockMessageTimeout = setTimeout(() => {
+            hideLockMessage();
+        }, LOCK_MESSAGE_DURATION_MS);
+        modal._lockMessageTimeout = lockMessageTimeout;
+    };
 
     const updateDoctorTargets = () => {
         if (doctor && doctor._modalDragController) {
@@ -1906,12 +1966,25 @@ function initModalPatientSwitchers(modal) {
         return true;
     };
 
-    const updateLockMessageVisibility = () => {
-        if (!lockMessage) {
-            return;
+    const isDecisionReady = () => {
+        if (!hasSeenAllRoles()) {
+            return false;
         }
-        lockMessage.textContent = getDoctorLockMessageText();
-        lockMessage.classList.toggle('visible', !hasSeenAllRoles());
+        const unlockAt = modal._decisionUnlockAt;
+        return typeof unlockAt === 'number' && Date.now() >= unlockAt;
+    };
+
+    const canAttemptDecision = () => {
+        if (!hasSeenAllRoles()) {
+            showLockMessage();
+            return false;
+        }
+        if (!isDecisionReady()) {
+            showLockMessage();
+            return false;
+        }
+        hideLockMessage();
+        return true;
     };
 
     const setActivePatient = key => {
@@ -1919,6 +1992,9 @@ function initModalPatientSwitchers(modal) {
             seenRoles.add(key);
         }
         const canSelect = hasSeenAllRoles();
+        if (canSelect && modal._decisionUnlockAt == null) {
+            modal._decisionUnlockAt = Date.now() + DOCTOR_UNLOCK_DELAY_MS;
+        }
         switchers.forEach(switcher => {
             switcher.querySelectorAll('.reconsider-switch-btn').forEach(btn => {
                 const isActive = btn.dataset.patient === key;
@@ -1932,9 +2008,9 @@ function initModalPatientSwitchers(modal) {
             card.classList.toggle('is-active', isActive);
             card.setAttribute('aria-hidden', (!isActive).toString());
             if (typeof card.disabled === 'boolean') {
-                card.disabled = canSelect ? !isActive : true;
+                card.disabled = !isActive;
             }
-            card.tabIndex = isActive && canSelect ? 0 : -1;
+            card.tabIndex = isActive ? 0 : -1;
         });
 
         if (stage && recommendationCard && originalCard && doctorColumn) {
@@ -1948,11 +2024,13 @@ function initModalPatientSwitchers(modal) {
         }
 
         updateDoctorTargets();
-        updateLockMessageVisibility();
+        hideLockMessage();
     };
 
     // Allow other initializers to reuse the setter without duplicating listeners
     modal._setActivePatient = setActivePatient;
+    modal._canAttemptDecision = canAttemptDecision;
+    modal._hideDecisionLockMessage = hideLockMessage;
 
     if (modal._patientSwitcherInitialized) {
         setActivePatient('recommendation');

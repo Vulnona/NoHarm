@@ -7,8 +7,8 @@
   "choice_experiment": {
     "title": "Entscheidungsexperiment",
     "instruction_text": "In einem medizinischen Notfall kann nicht jeder Patient behandelt werden. Es muss entschieden werden, welcher Patient behandelt wird. Welcher der unten gezeigten Patienten sollte behandelt werden?",
-    "patient_label_1": "erster Patient",
-    "patient_label_2": "zweiter Patient",
+    "patient_label_1": "Erster Patient",
+    "patient_label_2": "Zweiter Patient",
     "patient_toggle_label": "Zwischen den Patienten wechseln",
     "doctor_instruction": "Bewegen Sie den Arzt zum Patienten, der behandelt werden soll!",
     "doctor_lock_message": "Bitte nehmen Sie sich Zeit, beide Patienten sorgfältig zu betrachten!",
